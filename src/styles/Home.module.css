@@ -1,0 +1,325 @@
+.intro-section {
+  background: #333;
+  padding: 1rem;
+  font-size: 1rem;
+  color: #fff;
+}
+.h2class {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 2rem 0 1rem 1rem;
+  color: #444;
+}
+.card-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 1rem;
+}
+.card-container-2 {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 1rem;
+  flex-wrap: wrap;
+}
+
+.card-container-3 {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  row-gap: 30px;
+  padding: 0.8rem;
+  flex-wrap: wrap;
+  list-style-type: none;
+
+}
+
+.card-container-4{
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 1rem;
+}
+
+.card-container-5 {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.sp-1 {
+  height: fit-content;
+  width: fit-content;
+  background-color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 15px;
+  /* padding: 10px; */
+}
+.sp-2{
+  color: blue;
+  font-size: 24px;
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 15px;
+  padding: 20px;
+  background-color: #fff;
+}
+.sp-3{
+  color: #df8b32;
+  font-size: 24px;
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 15px;
+  padding: 20px;
+  background-color: #fff;
+}
+.card {
+  width: 33%;
+  height: 170px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  font-weight: bold;
+  padding: 10px;
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border-radius: 10px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.card-2 {
+  width: 45%;
+  height: fit-content;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  font-weight: bold;
+  padding: 10px;
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border-radius: 10px;
+  text-decoration: none;
+}
+
+.card-3{
+  width: 40%;
+  height: 80px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  font-weight: bold;
+  padding: 10px;
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border-radius: 10px;
+  text-decoration: none;
+}
+
+.card-4 {
+  background: linear-gradient(to bottom, #dbcfb7, #7297a9);
+  width: 50%;
+  height: 170px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  font-weight: bold;
+  padding: 10px;
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border-radius: 10px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.card-5{
+  background: linear-gradient(to bottom, #dbcfb7, #7297a9);
+  width: 30%;
+  height: 170px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  font-weight: bold;
+  padding: 10px;
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border-radius: 10px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.card-6{
+  background: linear-gradient(to bottom, #dbcfb7, #7297a9);
+  width: fit-content;
+  height: fit-content;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  font-weight: bold;
+  font-size: 14px;
+  padding: 10px;
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border-radius: 10px;
+  text-decoration: none;
+}
+
+
+.card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card-2:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card-3:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card-4:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card-5:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card p {
+  font-size: 10px;
+}
+
+.card-2 p {
+  font-size: 10px;
+}
+.card-3 p {
+  font-size: 10px;
+}
+.card-4 p {
+  font-size: 10px;
+}
+
+.card-5 p {
+  font-size: 10px;
+}
+
+.card img {
+  width: 80px;
+  height: 80px;
+}
+
+
+.card h2 {
+  margin-bottom: 10px;
+  font-size: 14px;
+  display: flex;
+  justify-content: center;
+}
+
+.card-2 h2 {
+  margin-bottom: 0.5rem;
+  font-size: 14px;
+  display: flex;
+  justify-content: center;
+}
+
+.card-3 h2 {
+  margin-bottom: 0.5rem;
+  font-size: 14px;
+  display: flex;
+  justify-content: center;
+}
+
+.card-4 h2 {
+  margin-bottom: 0.5rem;
+  font-size: 14px;
+  display: flex;
+  justify-content: center;
+}
+
+.card-5 h2 {
+  margin-bottom: 0.5rem;
+  font-size: 14px;
+  display: flex;
+  justify-content: center;
+}
+
+@media (min-width: 600px) {
+  .card-container {
+    justify-content: center;
+    gap: 2rem;
+  }
+}
+
+@media (min-width: 768px) {
+
+  .h2class{
+    font-weight: 700;
+    margin: 2rem 0 1rem 4rem;
+  }
+
+  .card {
+    width: 350px;
+    height: 330px;
+  }
+
+  .card-2 {
+    max-width: 400px;
+  }
+
+  .card-3{
+    width: 200px;
+  }
+
+  .card-4 {
+    width: 40%;
+  }
+
+  .card p {
+    font-size: 12px;
+  }
+
+
+  .card img {
+    width: 150px;
+    height: 150px;
+  }
+
+  .card h2 {
+    font-size: 20px;
+  }
+
+  .sp-3{
+    font-size: 52px;
+    height: 150px;
+    width: 150px;
+    margin-bottom: 30px;
+  }
+  .sp-2{
+    font-size: 52px;
+    height: 150px;
+    width: 150px;
+    margin-bottom: 30px;
+  }
+
+}

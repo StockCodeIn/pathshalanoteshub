@@ -1,103 +1,170 @@
-import Image from "next/image";
+import Link from 'next/link';
+import Image from 'next/image';
+import styles from '@/styles/Home.module.css';
+import { assets } from '@/assets/assets';
+
+// Data for the cards - boards information
+const boardsData = [
+  {
+    href: '/rbse',
+    color: '#dbcfb7',
+    img: assets.rbse,
+    title: 'RBSE Notes',
+    description: 'Rajasthan Board of Secondary Education',
+  },
+  {
+    href: '/cbse',
+    color: '#7297a9',
+    img: assets.cbse,
+    title: 'CBSE Notes',
+    description: 'Central Board of Secondary Education',
+  },
+  {
+    href: '/rbse-papers',
+    color: 'linear-gradient(to bottom, #dbcfb7, #7297a9)',
+    img: assets.pastPapers,
+    title: 'RBSE Old Papers',
+    description: 'Get previous years exam papers',
+  },
+];
+
+// Data for subjects links
+const subjectsData = [
+  {
+    href: '/rbse/10/mathematics',
+    background: '#f1e8de',
+    color: '#4a3f35',
+    title: 'Mathematics Notes',
+    description: 'Rbse 10th Mathematics Notes',
+  },
+  {
+    href: '/cbse/10/mathematics',
+    background: '#d0dce0',
+    color: '#2e3c44',
+    title: 'Mathematics Notes',
+    description: 'Cbse 10th Mathematics Notes',
+  },
+  {
+    href: '/rbse/10/science',
+    background: '#f1e8de',
+    color: '#4a3f35',
+    title: 'Science Notes',
+    description: 'Rbse 10th Science Notes',
+  },
+  {
+    href: '/cbse/10/science',
+    background: '#d0dce0',
+    color: '#2e3c44',
+    title: 'Science Notes',
+    description: 'Cbse 10th Science Notes',
+  },
+  {
+    href: '/rbse/12/mathematics',
+    background: '#f1e8de',
+    color: '#4a3f35',
+    title: 'Mathematics Notes',
+    description: 'Rbse 12th Mathematics Notes',
+  },
+  {
+    href: '/cbse/12/mathematics',
+    background: '#d0dce0',
+    color: '#2e3c44',
+    title: 'Mathematics Notes',
+    description: 'Cbse 12th Mathematics Notes',
+  },
+  
+  {
+    href: '/rbse/12/physics',
+    background: '#f1e8de',
+    color: '#4a3f35',
+    title: 'Physics Notes',
+    description: 'Rbse 12th Physics Notes',
+  },
+  {
+    href: '/cbse/12/physics',
+    background: '#d0dce0',
+    color: '#2e3c44',
+    title: 'Physics Notes',
+    description: 'Cbse 12th Physics Notes',
+  },
+  {
+    href: '/rbse/12/chemistry',
+    background: '#f1e8de',
+    color: '#4a3f35',
+    title: 'Chemistry Notes',
+    description: 'Rbse 12th Chemistry Notes',
+  },
+  {
+    href: '/cbse/12/chemistry',
+    background: '#d0dce0',
+    color: '#2e3c44',
+    title: 'Chemistry Notes',
+    description: 'Cbse 12th Chemistry Notes',
+  },
+];
+
+// Data for study resources
+const studyResources = [
+  {
+    href: '/study-plan',
+    color: '#a8c6d9',
+    img: assets.study,
+    title: 'Study Plan',
+  },
+  {
+    href: '/time-management',
+    color: '#c7b398',
+    img: assets.time,
+    title: 'Time Manage',
+  },
+  {
+    href: '/gk',
+    color: '#8ea3d9',
+    img: assets.gk,
+    title: 'Indian GK',
+  },
+];
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <main>
+      <div className={styles['intro-section']}>
+        <p>यहाँ आपको Indian G.K and RBSE, CBSE बोर्ड के 10th, 11th और 12th कक्षा के Important विषयों के Free Notes और Previous Year Papers मिलेंगे।</p>
+      </div>
+      <h2 className={styles['h2class']}>Rbse & Cbse Notes</h2>
+      <div className={styles['card-container']}>
+        {boardsData.map((board, index) => (
+          <Link key={index} href={board.href} className={styles["card"]} style={{ background: board.color }}>
+            <Image src={board.img} alt="img" width={80} height={80} />
+            <h2>{board.title}</h2>
+            <p>{board.description}</p>
+          </Link>
+        ))}
+      </div>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      {/* Study Resources Section */}
+      <h2 className={styles['h2class']}>Study Resources</h2>
+      <div className={styles['card-container']}>
+        {studyResources.map((resource, index) => (
+          <Link key={index} href={resource.href} className={styles["card"]} style={{ background: resource.color }}>
+            <span className={styles['sp-1']}> <Image src={resource.img} alt="img" width={80} height={80} /> </span>
+            <h2 style={{fontSize: '12px'}} >{resource.title}</h2>
+          </Link>
+        ))}
+      </div>
+
+      {/* Subjects Section */}
+      <h2 className={styles['h2class']}>Important Subjects</h2>
+      <div className={styles['card-container-2']}>
+        {subjectsData.map((subject, index) => (
+          <Link key={index} href={subject.href} className={styles["card-2"]} style={{ background: subject.background }}>
+            <h2>{subject.title}</h2>
+            <p>{subject.description}</p>
+          </Link>
+        ))}
+      </div>
+
+      
+    </main>
   );
 }

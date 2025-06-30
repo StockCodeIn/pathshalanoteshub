@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Education Notes Website
 
-## Getting Started
+यह एक Next.js आधारित वेबसाइट है जो RBSE और CBSE के छात्रों के लिए स्टडी मटेरियल और RBSE के पुराने प्रश्नपत्र (Old Papers)  प्रदान करती है।
 
-First, run the development server:
+## विशेषताएं
 
+- RBSE और CBSE के लिए अलग-अलग सेक्शन
+- क्लास 10th, 11th, और 12th के लिए नोट्स
+- विभिन्न विषयों के लिए अध्याय-वार नोट्स
+- पिछले वर्षों के प्रश्नपत्र (2020 तक)
+- PDF फॉर्मेट में स्टडी मटेरियल
+- रेस्पॉन्सिव डिज़ाइन
+- SEO फ्रेंडली
+
+## टेक्नोलॉजीज
+
+- Next.js 14
+- React
+- TypeScript / JavaScript
+- CSS3
+
+## इंस्टॉलेशन
+
+1. प्रोजेक्ट को क्लोन करें:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/StockCodeIn/pathshalanoteshub.git
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. प्रोजेक्ट डायरेक्टरी में जाएं:
+```bash
+cd pathshalanoteshub
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. डिपेंडेंसीज इंस्टॉल करें:
+```bash
+npm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. डेवलपमेंट सर्वर शुरू करें:
+```bash
+npm run dev
+```
 
-## Learn More
+5. ब्राउज़र में खोलें:
+```
+http://localhost:3000
+```
 
-To learn more about Next.js, take a look at the following resources:
+## API इंटीग्रेशन
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+PDF फाइल्स को प्राप्त करने के लिए आपको एक API सेटअप करना होगा। API का URL निम्नलिखित फॉर्मेट में होना चाहिए:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+https://api.example.com/{board}/{class}/{subject}/chapter/{chapterId}
+```
 
-## Deploy on Vercel
+## कॉन्ट्रिब्यूशन
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. इस रिपॉजिटरी को फोर्क करें
+2. एक नई ब्रांच बनाएं (`git checkout -b feature/amazing-feature`)
+3. अपने चेंजेस कमिट करें (`git commit -m 'Add some amazing feature'`)
+4. ब्रांच को पुश करें (`git push origin feature/amazing-feature`)
+5. एक पुल रिक्वेस्ट खोलें
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## लाइसेंस
+
+MIT License - देखें [LICENSE](LICENSE) फाइल 
