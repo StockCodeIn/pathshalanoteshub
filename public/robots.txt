@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://pathshalanoteshub.in
+
+# Sitemaps
+Sitemap: https://pathshalanoteshub.in/sitemap.xml
