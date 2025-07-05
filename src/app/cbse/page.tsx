@@ -10,12 +10,12 @@ const gradesData = [
     title: 'Class 10th',
     description: 'Study materials for CBSE Class 10th students',
   },
-  {
-    href: "/cbse/11",
-    icon: '11',
-    title: 'Class 11th',
-    description: 'Study materials for CBSE Class 11th students',
-  },
+  // {
+  //   href: "/cbse/11",
+  //   icon: '11',
+  //   title: 'Class 11th',
+  //   description: 'Study materials for CBSE Class 11th students',
+  // },
   {
     href: "/cbse/12",
     icon: '12',
@@ -31,7 +31,7 @@ export default function CBSEPage() {
       <h1 className={styles['h2class']}>CBSE Study Materials</h1>
       <div className={styles['card-container']}>
         {gradesData.map((grade, index) => (
-          <Link key={index} href={grade.href} className={styles["card"]}style={{ background: '#d0dce0', color: '#2e3c44' }}>
+          <Link key={index} href={grade.href} className={styles["card-2"]}style={{ background: '#d0dce0', color: '#2e3c44' }}>
             <span className= {styles['sp-2']}>{grade.icon}</span>
             <h2>{grade.title}</h2>
             <p>{grade.description}</p>

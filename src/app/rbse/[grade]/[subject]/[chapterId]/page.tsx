@@ -1,8 +1,9 @@
 import connectDB from '@/lib/mongodb';
 import { Chapter } from '@/models/chapter';
 import styles from '@/styles/Home.module.css';
-
 import PDFViewerWrapper from '@/components/PDFViewerWrapper';
+
+export const dynamic = "force-dynamic"; // ⬅ live update support
 
 interface PageProps {
   params: Promise<{
@@ -12,17 +13,19 @@ interface PageProps {
   }>;
 }
 
+// ✅ Static params generate karne ka function
 export async function generateStaticParams() {
   await connectDB();
-  const chapters = await Chapter.find({ board: 'RBSE' }); // or 'CBSE' accordingly
+  const chapters = await Chapter.find({ board: 'RBSE' });
 
-  return chapters.map(chapter => ({
+  return chapters.map((chapter) => ({
     grade: chapter.grade,
     subject: chapter.subject,
     chapterId: chapter.name,
   }));
 }
 
+// ✅ Main page component
 export default async function RBSECHAPTERPage({ params }: PageProps) {
   const { grade, subject, chapterId } = await params;
 
@@ -38,7 +41,8 @@ export default async function RBSECHAPTERPage({ params }: PageProps) {
   if (!chapterData) {
     return (
       <main className="container">
-        <h1>&quot;Work in Progress&quot;</h1>
+        <h1>📄 Work in Progress</h1>
+        <p>यह अध्याय अभी वेबसाइट पर उपलब्ध नहीं है।</p>
       </main>
     );
   }

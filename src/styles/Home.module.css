@@ -117,6 +117,10 @@
   transition: transform 0.2s, box-shadow 0.2s;
   border-radius: 10px;
   text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
 
 .card-3{
@@ -273,6 +277,11 @@
 
 @media (min-width: 768px) {
 
+  .card-container-4{
+  justify-content: center;
+  gap: 2rem;
+}
+
   .h2class{
     font-weight: 700;
     margin: 2rem 0 1rem 4rem;
@@ -285,6 +294,7 @@
 
   .card-2 {
     max-width: 400px;
+    /* height: 330px; */
   }
 
   .card-3{
@@ -309,17 +319,18 @@
     font-size: 20px;
   }
 
-  .sp-3{
+  /* .sp-3{
     font-size: 52px;
     height: 150px;
     width: 150px;
     margin-bottom: 30px;
-  }
-  .sp-2{
+  } */
+  /* .sp-2{
     font-size: 52px;
     height: 150px;
     width: 150px;
     margin-bottom: 30px;
-  }
+  } */
+  
 
 }

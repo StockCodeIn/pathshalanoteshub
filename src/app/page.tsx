@@ -58,20 +58,20 @@ const subjectsData = [
     title: 'Science Notes',
     description: 'Cbse 10th Science Notes',
   },
-  {
-    href: '/rbse/12/mathematics',
-    background: '#f1e8de',
-    color: '#4a3f35',
-    title: 'Mathematics Notes',
-    description: 'Rbse 12th Mathematics Notes',
-  },
-  {
-    href: '/cbse/12/mathematics',
-    background: '#d0dce0',
-    color: '#2e3c44',
-    title: 'Mathematics Notes',
-    description: 'Cbse 12th Mathematics Notes',
-  },
+  // {
+  //   href: '/rbse/12/mathematics',
+  //   background: '#f1e8de',
+  //   color: '#4a3f35',
+  //   title: 'Mathematics Notes',
+  //   description: 'Rbse 12th Mathematics Notes',
+  // },
+  // {
+  //   href: '/cbse/12/mathematics',
+  //   background: '#d0dce0',
+  //   color: '#2e3c44',
+  //   title: 'Mathematics Notes',
+  //   description: 'Cbse 12th Mathematics Notes',
+  // },
   
   {
     href: '/rbse/12/physics',
@@ -87,20 +87,20 @@ const subjectsData = [
     title: 'Physics Notes',
     description: 'Cbse 12th Physics Notes',
   },
-  {
-    href: '/rbse/12/chemistry',
-    background: '#f1e8de',
-    color: '#4a3f35',
-    title: 'Chemistry Notes',
-    description: 'Rbse 12th Chemistry Notes',
-  },
-  {
-    href: '/cbse/12/chemistry',
-    background: '#d0dce0',
-    color: '#2e3c44',
-    title: 'Chemistry Notes',
-    description: 'Cbse 12th Chemistry Notes',
-  },
+  // {
+  //   href: '/rbse/12/chemistry',
+  //   background: '#f1e8de',
+  //   color: '#4a3f35',
+  //   title: 'Chemistry Notes',
+  //   description: 'Rbse 12th Chemistry Notes',
+  // },
+  // {
+  //   href: '/cbse/12/chemistry',
+  //   background: '#d0dce0',
+  //   color: '#2e3c44',
+  //   title: 'Chemistry Notes',
+  //   description: 'Cbse 12th Chemistry Notes',
+  // },
 ];
 
 // Data for study resources

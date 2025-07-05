@@ -9,12 +9,12 @@ const gradesData = [
     title: 'Class 10th',
     description: 'Study materials for RBSE Class 10th students',
   },
-  {
-    href: "/rbse/11",
-    icon: '11',
-    title: 'Class 11th',
-    description: 'Study materials for RBSE Class 11th students',
-  },
+  // {
+  //   href: "/rbse/11",
+  //   icon: '11',
+  //   title: 'Class 11th',
+  //   description: 'Study materials for RBSE Class 11th students',
+  // },
   {
     href: "/rbse/12", 
     icon: '12',
@@ -30,7 +30,7 @@ export default function RBSEPage() {
       <h1 className={styles['h2class']}>RBSE Study Materials</h1>
       <div className={styles['card-container']}>
         {gradesData.map((grade, index) => (
-          <Link key={index} href={grade.href} className={styles["card"]} style={{ background: '#f1e8de', color: '#4a3f35' }}>
+          <Link key={index} href={grade.href} className={styles["card-2"]} style={{ background: '#f1e8de', color: '#4a3f35' }}>
             <span className= {styles['sp-3']}>{grade.icon}</span>
             <h2>{grade.title}</h2>
             <p>{grade.description}</p>
