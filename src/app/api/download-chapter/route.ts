@@ -41,7 +41,7 @@ export async function GET(request: Request) {
     const pages = pdfDoc.getPages();
     for (const page of pages) {
       const { width, height } = page.getSize();
-      page.drawText('© Education-notes', {
+      page.drawText('© www.pathshalanoteshub.in', {
         x: width / 2 - 100,
         y: height / 2,
         size: 40,

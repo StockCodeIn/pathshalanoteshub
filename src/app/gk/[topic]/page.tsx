@@ -34,7 +34,7 @@ export default function SubtopicListPage() {
   return (
     <div style={{ padding: '20px' }}>
       <h1 style={{ fontSize: '22px', marginBottom: '20px', textAlign: 'center' }}>
-        विषय: {topicSlug.replace(/-/g, ' ')}
+        {topicSlug.replace(/-/g, ' ')}
       </h1>
       <div
         style={{

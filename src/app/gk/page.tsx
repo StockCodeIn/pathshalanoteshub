@@ -19,7 +19,7 @@ export default function GKPage() {
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
       <h1 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '20px', textAlign: 'center' }}>
-        सामान्य ज्ञान विषय
+        सामान्य ज्ञान (GK Topics)
       </h1>
       <div
         style={{

@@ -5,6 +5,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import Script from 'next/script';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -59,6 +60,19 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body className={inter.className}>
+        {/* Google Analytics Script */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-L8Q8MHGLFE"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-L8Q8MHGLFE');
+          `}
+        </Script>
         <Navbar />
         <main className="main">{children}</main>
         <Footer />
