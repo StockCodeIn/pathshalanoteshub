@@ -1,0 +1,26 @@
+{
+    "redirects": [
+        {
+            "source": "/(.*)",
+            "has": [
+                {
+                    "type": "scheme",
+                    "value": "http"
+                }
+            ],
+            "destination": "https://www.pathshalanoteshub.in/$1",
+            "permanent": true
+        },
+        {
+            "source": "/(.*)",
+            "has": [
+                {
+                    "type": "host",
+                    "value": "pathshalanoteshub.in"
+                }
+            ],
+            "destination": "https://www.pathshalanoteshub.in/$1",
+            "permanent": true
+        }
+    ]
+}
