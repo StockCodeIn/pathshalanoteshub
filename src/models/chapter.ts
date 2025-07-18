@@ -24,7 +24,8 @@ const chapterSchema = new mongoose.Schema({
   },
   size: {
     type: Number,
-    required: true,
+    required: false, // <-- Change here
+    default: 0,      // <-- Default value for url-only case
   },
   uploadedAt: {
     type: Date,
@@ -32,4 +33,4 @@ const chapterSchema = new mongoose.Schema({
   },
 })
 
-export const Chapter = mongoose.models.Chapter || mongoose.model('Chapter', chapterSchema) 
+export const Chapter = mongoose.models.Chapter || mongoose.model('Chapter', chapterSchema)

@@ -129,7 +129,7 @@ export default function Home() {
   return (
     <main>
       <div className={styles['intro-section']}>
-        <p>यहाँ आपको Indian G.K and RBSE, CBSE बोर्ड के 10th, 11th और 12th कक्षा के Important विषयों के Free Notes और Previous Year Papers मिलेंगे।</p>
+        <p>यहाँ आपको Indian G.K and RBSE, CBSE बोर्ड के 10th और 12th कक्षा के Important विषयों के Free Notes और Previous Year Papers मिलेंगे।</p>
       </div>
       <h2 className={styles['h2class']}>Rbse & Cbse Notes</h2>
       <div className={styles['card-container']}>

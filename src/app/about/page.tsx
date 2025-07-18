@@ -11,7 +11,7 @@ export default function About() {
 
       <h2>What We Offer</h2>
       <ul>
-        <li>✅ Subject-wise notes for RBSE & CBSE Classes 10, 11, and 12</li>
+        <li>✅ Subject-wise notes for RBSE & CBSE Classes 10 and 12</li>
         <li>✅ Previous years exam papers</li>
         <li>✅ Smart study plans and time management resources</li>
         <li>✅ Updated Indian GK notes</li>

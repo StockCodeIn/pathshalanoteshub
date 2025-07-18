@@ -55,7 +55,7 @@ export async function GET(request: Request) {
     const finalPdfBytes = await pdfDoc.save();
 
     // ✅ Safe filename for Unicode (Hindi, etc.)
-    const safeFilename = encodeURIComponent(`${subtopicDoc.title}-watermarked.pdf`);
+    const safeFilename = encodeURIComponent(`${subtopicDoc.title}.pdf`);
 
     // ✅ Return PDF as download
     return new Response(finalPdfBytes, {

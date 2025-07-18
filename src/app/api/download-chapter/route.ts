@@ -52,7 +52,7 @@ export async function GET(request: Request) {
     }
 
     const finalPdfBytes = await pdfDoc.save();
-    const safeFilename = encodeURIComponent(`${chapterDoc.name}-watermarked.pdf`);
+    const safeFilename = encodeURIComponent(`${chapterDoc.subject}-chapter_${chapterDoc.name}.pdf`);
 
     return new Response(finalPdfBytes, {
       status: 200,
