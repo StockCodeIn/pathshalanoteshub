@@ -15,7 +15,6 @@ interface PDFViewerProps {
 export default function PDFViewerClient({ url, title, board, grade, subject }: PDFViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Responsive scale: mobile par 2, otherwise 1.2
   const [scale, setScale] = useState(
     typeof window !== 'undefined' && window.innerWidth < 600 ? 2 : 1.2
   );
@@ -36,7 +35,6 @@ export default function PDFViewerClient({ url, title, board, grade, subject }: P
         if (cancelled) return;
         const page = await pdf.getPage(pageNumber);
 
-        // Responsive scale: fit to container width
         const containerWidth = container.offsetWidth || window.innerWidth;
         const unscaledViewport = page.getViewport({ scale: 1 });
         const fitScale = containerWidth / unscaledViewport.width;
@@ -45,26 +43,27 @@ export default function PDFViewerClient({ url, title, board, grade, subject }: P
 
         const canvas = document.createElement('canvas');
         const context = canvas.getContext('2d')!;
-
-        // Device pixel ratio for sharpness
         const dpr = window.devicePixelRatio || 1;
+
         canvas.width = viewport.width * dpr;
         canvas.height = viewport.height * dpr;
         canvas.style.width = `${viewport.width}px`;
         canvas.style.height = `${viewport.height}px`;
 
-        context.setTransform(dpr, 0, 0, dpr, 0, 0);
+        // Sharp rendering on mobile by scaling context
+        const transform = dpr !== 1 ? [dpr, 0, 0, dpr, 0, 0] : undefined;
 
         canvas.style.maxWidth = '100%';
         canvas.style.display = 'block';
         canvas.style.margin = '0 auto';
 
-        await page.render({ canvasContext: context, viewport }).promise;
+        await page.render({ canvasContext: context, viewport, transform }).promise;
 
         container.appendChild(canvas);
         container.appendChild(document.createElement('br'));
       }
     }
+
     renderPDF();
     return () => { cancelled = true; };
   }, [url]);
