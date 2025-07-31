@@ -37,7 +37,12 @@ export default function PDFViewerClient({ url, title, board, grade, subject }: P
 
         const containerWidth = container.offsetWidth || window.innerWidth;
         const unscaledViewport = page.getViewport({ scale: 1 });
-        const fitScale = containerWidth / unscaledViewport.width;
+        let fitScale = containerWidth / unscaledViewport.width;
+
+        // ⬅ Mobile devices ke liye zoom manually badhao
+        if (window.innerWidth < 600) {
+          fitScale *= 1.6; // Or 1.8 depending on how zoomed you want
+        }
 
         const viewport = page.getViewport({ scale: fitScale });
 
