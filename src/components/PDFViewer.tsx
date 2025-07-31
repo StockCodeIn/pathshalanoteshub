@@ -39,11 +39,17 @@ export default function PDFViewerClient({ url, title, board, grade, subject }: P
 
         const canvas = document.createElement('canvas');
         const context = canvas.getContext('2d')!;
-        canvas.height = viewport.height;
-        canvas.width = viewport.width;
+
+        // Device pixel ratio for sharpness
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = viewport.width * dpr;
+        canvas.height = viewport.height * dpr;
+        canvas.style.width = `${viewport.width}px`;
+        canvas.style.height = `${viewport.height}px`;
+
+        context.setTransform(dpr, 0, 0, dpr, 0, 0);
 
         canvas.style.maxWidth = '100%';
-        canvas.style.height = 'auto';
         canvas.style.display = 'block';
         canvas.style.margin = '0 auto';
 
