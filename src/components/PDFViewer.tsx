@@ -35,7 +35,13 @@ export default function PDFViewerClient({ url, title, board, grade, subject }: P
       for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
         if (cancelled) return;
         const page = await pdf.getPage(pageNumber);
-        const viewport = page.getViewport({ scale });
+
+        // Responsive scale: fit to container width
+        const containerWidth = container.offsetWidth || window.innerWidth;
+        const unscaledViewport = page.getViewport({ scale: 1 });
+        const fitScale = containerWidth / unscaledViewport.width;
+
+        const viewport = page.getViewport({ scale: fitScale });
 
         const canvas = document.createElement('canvas');
         const context = canvas.getContext('2d')!;
@@ -61,7 +67,7 @@ export default function PDFViewerClient({ url, title, board, grade, subject }: P
     }
     renderPDF();
     return () => { cancelled = true; };
-  }, [url, scale]);
+  }, [url]);
 
   return (
     <div style={{ padding: '20px' }}>
