@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import { getDocument } from 'pdfjs-dist/legacy/build/pdf'; // ✅ legacy path
-import '@/lib/pdfjs'; // ✅ global worker config
+import { useEffect, useRef, useState } from 'react';
+import { getDocument } from 'pdfjs-dist/legacy/build/pdf';
+import '@/lib/pdfjs';
 
 interface PDFViewerProps {
   url: string;
@@ -14,25 +14,27 @@ interface PDFViewerProps {
 
 export default function PDFViewerClient({ url, title, board, grade, subject }: PDFViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const renderedRef = useRef(false);
+  const [scale, setScale] = useState(
+    typeof window !== 'undefined' && window.innerWidth < 600 ? 2 : 1.2
+  );
+  const [pageCount, setPageCount] = useState(0);
 
+  // Render PDF on scale or url change
   useEffect(() => {
-    if (renderedRef.current) return;
-    renderedRef.current = true;
-
+    let cancelled = false;
     async function renderPDF() {
       if (!url || !containerRef.current) return;
-
       const container = containerRef.current;
       container.innerHTML = '';
 
       const loadingTask = getDocument(url);
       const pdf = await loadingTask.promise;
+      setPageCount(pdf.numPages);
 
       for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+        if (cancelled) return;
         const page = await pdf.getPage(pageNumber);
-
-        const viewport = page.getViewport({ scale: 1.2 });
+        const viewport = page.getViewport({ scale });
 
         const canvas = document.createElement('canvas');
         const context = canvas.getContext('2d')!;
@@ -50,13 +52,20 @@ export default function PDFViewerClient({ url, title, board, grade, subject }: P
         container.appendChild(document.createElement('br'));
       }
     }
-
     renderPDF();
-  }, [url]);
+    return () => { cancelled = true; };
+  }, [url, scale]);
 
   return (
     <div style={{ padding: '20px' }}>
       <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Chapter-{title}</h2>
+
+      {/* Zoom Controls */}
+      <div style={{ textAlign: 'center', marginBottom: '10px' }}>
+        <button onClick={() => setScale((s) => Math.max(0.5, s - 0.2))} style={{marginRight: 8}}>Zoom Out</button>
+        <button onClick={() => setScale((s) => Math.min(4, s + 0.2))}>Zoom In</button>
+        <span style={{ marginLeft: 16 }}>Zoom: {(scale * 100).toFixed(0)}%</span>
+      </div>
 
       <div
         ref={containerRef}
