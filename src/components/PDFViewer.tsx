@@ -14,12 +14,13 @@ interface PDFViewerProps {
 
 export default function PDFViewerClient({ url, title, board, grade, subject }: PDFViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Responsive scale: mobile par 2, otherwise 1.2
   const [scale, setScale] = useState(
     typeof window !== 'undefined' && window.innerWidth < 600 ? 2 : 1.2
   );
   const [pageCount, setPageCount] = useState(0);
 
-  // Render PDF on scale or url change
   useEffect(() => {
     let cancelled = false;
     async function renderPDF() {
@@ -59,13 +60,6 @@ export default function PDFViewerClient({ url, title, board, grade, subject }: P
   return (
     <div style={{ padding: '20px' }}>
       <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Chapter-{title}</h2>
-
-      {/* Zoom Controls */}
-      <div style={{ textAlign: 'center', marginBottom: '10px' }}>
-        <button onClick={() => setScale((s) => Math.max(0.5, s - 0.2))} style={{marginRight: 8}}>Zoom Out</button>
-        <button onClick={() => setScale((s) => Math.min(4, s + 0.2))}>Zoom In</button>
-        <span style={{ marginLeft: 16 }}>Zoom: {(scale * 100).toFixed(0)}%</span>
-      </div>
 
       <div
         ref={containerRef}
