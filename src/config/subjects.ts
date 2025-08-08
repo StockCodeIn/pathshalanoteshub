@@ -173,25 +173,25 @@ export const subjects: ClassSubjects = {
       ]
     },
     // Extra subject for Grade 12
-    // {
-    //   id: 'mathematics',
-    //   name: 'Mathematics',
-    //   chapters: [
-    //     'Relations and Functions',
-    //     'Inverse Trigonometric Functions',
-    //     'Matrices',
-    //     'Determinants',
-    //     'Continuity and Differentiability',
-    //     'Application of Derivatives',
-    //     'Integrals',
-    //     'Applications of Integrals',
-    //     'Differential Equations',
-    //     'Vector Algebra',
-    //     'Three Dimensional Geometry',
-    //     'Linear Programming',
-    //     'Probability'
-    //   ]
-    // },
+    {
+      id: 'mathematics',
+      name: 'Mathematics',
+      chapters: [
+        'Relations and Functions',
+        'Inverse Trigonometric Functions',
+        'Matrices',
+        'Determinants',
+        'Continuity and Differentiability',
+        'Application of Derivatives',
+        'Integrals',
+        'Applications of Integrals',
+        'Differential Equations',
+        'Vector Algebra',
+        'Three Dimensional Geometry',
+        'Linear Programming',
+        'Probability'
+      ]
+    },
     // {
     //   id: 'biology',
     //   name: 'Biology',
