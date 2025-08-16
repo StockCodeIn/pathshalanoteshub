@@ -24,7 +24,6 @@ export const subjects: ClassSubjects = {
         'Introduction to Trigonometry',
         'Applications of Trigonometry',
         'Circles',
-        'Constructions',
         'Areas Related to Circles',
         'Surface Areas and Volumes',
         'Statistics',
