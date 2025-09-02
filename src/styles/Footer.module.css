@@ -17,18 +17,22 @@
   }
   
   .footer-links {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    margin-top: 0.5rem;
-  }
-  
-  .footer-link {
-    color: #fff;
-    text-decoration: none;
-    font-size: 0.9rem;
-    transition: color 0.2s;
-  }
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 0.5rem;
+  flex-wrap: wrap; /* mobile pe neeche aa jayenge */
+}
+
+
+.footer-link {
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.9rem;
+  white-space: nowrap; /* link ka text tootega nahi */
+  transition: color 0.2s;
+}
+
   
   .footer-link:hover {
     color: #f0a500;
