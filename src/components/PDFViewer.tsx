@@ -7,10 +7,12 @@ import '@/lib/pdfjs';
 interface PDFViewerProps {
   url: string;
   title: string;
-  board: string;
-  grade: string;
-  subject: string;
-  showDownloadButton?: boolean; // 🔥 नया prop
+  board?: string;   // ✅ optional kar diya
+  grade?: string;
+  subject?: string;
+  topic?: string;   // ✅ GK ke liye extra props
+  subtopic?: string;
+  showDownloadButton?: boolean;
 }
 
 export default function PDFViewerClient({
@@ -19,7 +21,9 @@ export default function PDFViewerClient({
   board,
   grade,
   subject,
-  showDownloadButton = true, // default true
+  topic,
+  subtopic,
+  showDownloadButton = true,
 }: PDFViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -81,6 +85,20 @@ export default function PDFViewerClient({
     };
   }, [url]);
 
+  // ✅ dynamic download URL
+  let downloadUrl = '';
+  if (topic && subtopic) {
+    downloadUrl = `/api/download?topic=${encodeURIComponent(topic)}&subtopic=${encodeURIComponent(
+      subtopic
+    )}`;
+  } else if (board && grade && subject && title) {
+    downloadUrl = `/api/download?board=${encodeURIComponent(
+      board
+    )}&grade=${encodeURIComponent(grade)}&subject=${encodeURIComponent(
+      subject
+    )}&chapter=${encodeURIComponent(title)}`;
+  }
+
   return (
     <div style={{ padding: '20px' }}>
       <div
@@ -92,15 +110,10 @@ export default function PDFViewerClient({
         }}
       ></div>
 
-      {/* 🔥 अब ये button optional हो गया */}
-      {showDownloadButton && (
+      {showDownloadButton && downloadUrl && (
         <div style={{ textAlign: 'center', marginTop: '20px' }}>
           <a
-            href={`/api/download-chapter?board=${encodeURIComponent(
-              board
-            )}&grade=${encodeURIComponent(grade)}&subject=${encodeURIComponent(
-              subject
-            )}&chapter=${encodeURIComponent(title)}`}
+            href={downloadUrl}
             target="_blank"
             rel="noopener noreferrer"
             style={{

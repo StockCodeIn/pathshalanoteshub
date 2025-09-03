@@ -1,30 +1,53 @@
+// app/api/download/route.ts
 import { PDFDocument, rgb, degrees } from 'pdf-lib';
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import GK from '@/models/gk';
+import { Chapter } from '@/models/chapter';
 
-// ✅ GET API - Download PDF with Watermark
 export async function GET(request: Request) {
   try {
-    // Connect MongoDB
     await connectDB();
 
     const { searchParams } = new URL(request.url);
+
+    // GK params
     const topic = searchParams.get('topic');
     const subtopic = searchParams.get('subtopic');
 
-    if (!topic || !subtopic) {
-      return NextResponse.json({ success: false, error: 'Missing query parameters' }, { status: 400 });
+    // Chapter params
+    const board = searchParams.get('board');
+    const grade = searchParams.get('grade');
+    const subject = searchParams.get('subject');
+    const chapter = searchParams.get('chapter');
+
+    let pdfUrl = '';
+    let safeFilename = '';
+
+    // ✅ Case 1: GK PDF
+    if (topic && subtopic) {
+      const subtopicDoc = await GK.findOne({ topic, subtopic });
+      if (!subtopicDoc) {
+        return NextResponse.json({ error: 'Subtopic not found' }, { status: 404 });
+      }
+      pdfUrl = subtopicDoc.pdfUrl;
+      safeFilename = encodeURIComponent(`${subtopicDoc.title}.pdf`);
     }
 
-    // Find PDF URL from MongoDB
-    const subtopicDoc = await GK.findOne({ topic, subtopic });
-
-    if (!subtopicDoc) {
-      return NextResponse.json({ success: false, error: 'Subtopic not found' }, { status: 404 });
+    // ✅ Case 2: Chapter PDF
+    else if (board && grade && subject && chapter) {
+      const chapterDoc = await Chapter.findOne({ board, grade, subject, name: chapter });
+      if (!chapterDoc) {
+        return NextResponse.json({ error: 'Chapter not found' }, { status: 404 });
+      }
+      pdfUrl = chapterDoc.pdfUrl;
+      safeFilename = encodeURIComponent(`${chapterDoc.subject}-chapter_${chapterDoc.name}.pdf`);
     }
 
-    const pdfUrl = subtopicDoc.pdfUrl;
+    // ❌ No valid params
+    else {
+      return NextResponse.json({ error: 'Missing query parameters' }, { status: 400 });
+    }
 
     // ✅ Fetch PDF from Cloudinary
     const response = await fetch(pdfUrl);
@@ -34,10 +57,8 @@ export async function GET(request: Request) {
 
     const pdfBytes = await response.arrayBuffer();
 
-    // ✅ Load PDF
+    // ✅ Add watermark
     const pdfDoc = await PDFDocument.load(pdfBytes);
-
-    // ✅ Add watermark to each page
     const pages = pdfDoc.getPages();
     for (const page of pages) {
       const { width, height } = page.getSize();
@@ -51,13 +72,9 @@ export async function GET(request: Request) {
       });
     }
 
-    // ✅ Final PDF bytes
     const finalPdfBytes = await pdfDoc.save();
 
-    // ✅ Safe filename for Unicode (Hindi, etc.)
-    const safeFilename = encodeURIComponent(`${subtopicDoc.title}.pdf`);
-
-    // ✅ Return PDF as download
+    // ✅ Return single PDF response
     return new Response(finalPdfBytes, {
       status: 200,
       headers: {
@@ -66,7 +83,7 @@ export async function GET(request: Request) {
       },
     });
   } catch (error) {
-    // console.error('Download API Error:', error);
+    console.error('Download API Error:', error);
     return NextResponse.json({ error: 'Failed to process PDF download' }, { status: 500 });
   }
 }

@@ -4,7 +4,7 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 
-// NOTE: relative path -> from app/gk/[topic]/[subtopic]/page.tsx to components/PDFViewer.tsx
+// NOTE: relative path -> from app/gk/[topic]/[subtopic]/page.tsx to components/PDFViewerClient.tsx
 const PDFViewer = dynamic(() => import('@/components/PDFViewer'), {
   ssr: false,
 });
@@ -48,33 +48,13 @@ export default function SubtopicPDFPage() {
         {subtopic}
       </h1>
 
-      {/* PDFViewer component will only load in browser (no SSR) */}
+      {/* ✅ Download button ab PDFViewerClient ke andar hi hoga */}
       <PDFViewer
         url={pdfUrl}
         title={subtopic}
-        board="GK"
-        grade="General"
-        subject={topic}
+        topic={topic}
+        subtopic={subtopic}
       />
-
-      <div style={{ marginTop: '20px', textAlign: 'center' }}>
-        <a
-          href={`/api/download?topic=${encodeURIComponent(topic)}&subtopic=${encodeURIComponent(
-            subtopic
-          )}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            padding: '10px 20px',
-            backgroundColor: '#0070f3',
-            color: '#fff',
-            borderRadius: '5px',
-            textDecoration: 'none',
-          }}
-        >
-          Download Watermarked PDF
-        </a>
-      </div>
     </div>
   );
 }
