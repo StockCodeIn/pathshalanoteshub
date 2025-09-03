@@ -75,7 +75,7 @@ export default function PDFViewerClient({ url, title, board, grade, subject }: P
 
   return (
     <div style={{ padding: '20px' }}>
-      <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Chapter-{title}</h2>
+      {/* <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Chapter-{title}</h2> */}
 
       <div
         ref={containerRef}
