@@ -10,9 +10,17 @@ interface PDFViewerProps {
   board: string;
   grade: string;
   subject: string;
+  showDownloadButton?: boolean; // 🔥 नया prop
 }
 
-export default function PDFViewerClient({ url, title, board, grade, subject }: PDFViewerProps) {
+export default function PDFViewerClient({
+  url,
+  title,
+  board,
+  grade,
+  subject,
+  showDownloadButton = true, // default true
+}: PDFViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [scale, setScale] = useState(
@@ -39,9 +47,8 @@ export default function PDFViewerClient({ url, title, board, grade, subject }: P
         const unscaledViewport = page.getViewport({ scale: 1 });
         let fitScale = containerWidth / unscaledViewport.width;
 
-        // ⬅ Mobile devices ke liye zoom manually badhao
         if (window.innerWidth < 600) {
-          fitScale *= 2; // Or 1.8 depending on how zoomed you want
+          fitScale *= 2;
         }
 
         const viewport = page.getViewport({ scale: fitScale });
@@ -55,7 +62,6 @@ export default function PDFViewerClient({ url, title, board, grade, subject }: P
         canvas.style.width = `${viewport.width}px`;
         canvas.style.height = `${viewport.height}px`;
 
-        // Sharp rendering on mobile by scaling context
         const transform = dpr !== 1 ? [dpr, 0, 0, dpr, 0, 0] : undefined;
 
         canvas.style.maxWidth = '100%';
@@ -70,13 +76,13 @@ export default function PDFViewerClient({ url, title, board, grade, subject }: P
     }
 
     renderPDF();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [url]);
 
   return (
     <div style={{ padding: '20px' }}>
-      {/* <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Chapter-{title}</h2> */}
-
       <div
         ref={containerRef}
         style={{
@@ -86,24 +92,29 @@ export default function PDFViewerClient({ url, title, board, grade, subject }: P
         }}
       ></div>
 
-      <div style={{ textAlign: 'center', marginTop: '20px' }}>
-        <a
-          href={`/api/download-chapter?board=${encodeURIComponent(board)}&grade=${encodeURIComponent(
-            grade
-          )}&subject=${encodeURIComponent(subject)}&chapter=${encodeURIComponent(title)}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            padding: '10px 20px',
-            backgroundColor: '#0070f3',
-            color: '#fff',
-            borderRadius: '5px',
-            textDecoration: 'none',
-          }}
-        >
-          Download Watermarked PDF
-        </a>
-      </div>
+      {/* 🔥 अब ये button optional हो गया */}
+      {showDownloadButton && (
+        <div style={{ textAlign: 'center', marginTop: '20px' }}>
+          <a
+            href={`/api/download-chapter?board=${encodeURIComponent(
+              board
+            )}&grade=${encodeURIComponent(grade)}&subject=${encodeURIComponent(
+              subject
+            )}&chapter=${encodeURIComponent(title)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              padding: '10px 20px',
+              backgroundColor: '#0070f3',
+              color: '#fff',
+              borderRadius: '5px',
+              textDecoration: 'none',
+            }}
+          >
+            Download Watermarked PDF
+          </a>
+        </div>
+      )}
     </div>
   );
 }
