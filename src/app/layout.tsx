@@ -58,6 +58,11 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+
+        {/* 🔥 Google AdSense Script */}
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9763514386679989"
+          crossOrigin="anonymous"></script>
+
       </head>
       <body className={inter.className}>
         {/* Google Analytics Script */}
