@@ -41,39 +41,38 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
+// ✅ RBSE Past Papers Page (year-wise)
 export default async function RBSEPastPapersPage({ params }: PageProps) {
   const { grade, subject } = await params;
 
+  // Convert route param to DB format
+  const dbGrade = grade.endsWith("th") ? grade : `${grade}th`;
+
   await connectDB();
 
-  // ✅ MongoDB से उस subject के available years निकालना
+  // ✅ MongoDB query
   const papers = await PastPaper.find({
     board: "RBSE",
-    grade,
+    grade: dbGrade,
     subject,
   }).select("year");
 
-  // ✅ Unique years (descending order)
-  const uniqueYears = Array.from(new Set(papers.map((p) => p.year))).sort(
-    (a, b) => b - a
-  );
+  // ✅ Unique years (descending)
+  const uniqueYears = Array.from(new Set(papers.map((p) => p.year))).sort((a, b) => b - a);
 
   return (
     <main>
-      {/* ✅ Hero Section */}
       <section className={styles.hero}>
         <div className={styles.heroContent}>
           <h1>
             RBSE Class {grade} - {subject} Previous Year Papers
           </h1>
           <p>
-            Access <strong>RBSE Class {grade} {subject}</strong> past question
-            papers year-wise to prepare effectively for exams.
+            Access <strong>RBSE Class {grade} {subject}</strong> past question papers year-wise to prepare effectively for exams.
           </p>
         </div>
       </section>
 
-      {/* ✅ Years Section */}
       <h2 className={styles.sectionTitle}>Available Years</h2>
       <div className={styles.cardContainer2}>
         {uniqueYears.length > 0 ? (
@@ -83,7 +82,6 @@ export default async function RBSEPastPapersPage({ params }: PageProps) {
               href={`/rbse-papers/${grade}/${subject}/${year}`}
               className={styles.card2}
             >
-              {/* <span className={styles.cardIcon}>📄</span> */}
               <h3>{year}</h3>
               <p>View {year} RBSE {subject} paper</p>
             </Link>
@@ -93,7 +91,6 @@ export default async function RBSEPastPapersPage({ params }: PageProps) {
         )}
       </div>
 
-      {/* ✅ Trust Section */}
       <section className={styles.trust}>
         <h2>Why Practice Previous Year Papers?</h2>
         <ul>

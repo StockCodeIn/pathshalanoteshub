@@ -40,16 +40,21 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
+// ✅ RBSE Paper Viewer Page
 export default async function RBSEPaperViewerPage({ params }: PageProps) {
   const { grade, subject, year } = await params;
 
+  // Convert grade to DB format
+  const dbGrade = grade.endsWith("th") ? grade : `${grade}th`;
+
   await connectDB();
 
+  // ✅ Fetch paper from DB (match grade as string)
   const paper = await PastPaper.findOne({
     board: "RBSE",
-    grade,
+    grade: dbGrade,
     subject,
-    year: parseInt(year, 10),
+    year: year, // keep string, since DB has string
   });
 
   if (!paper) {
@@ -66,7 +71,6 @@ export default async function RBSEPaperViewerPage({ params }: PageProps) {
 
   return (
     <main>
-      {/* ✅ Hero Section */}
       <section className={styles.hero}>
         <div className={styles.heroContent}>
           <h1>
@@ -79,7 +83,6 @@ export default async function RBSEPaperViewerPage({ params }: PageProps) {
         </div>
       </section>
 
-      {/* ✅ Download Section */}
       <div className={styles.downloadSection}>
         <a
           href={paper.pdfUrl}
@@ -91,7 +94,6 @@ export default async function RBSEPaperViewerPage({ params }: PageProps) {
         </a>
       </div>
 
-      {/* ✅ Notes & Tips Section */}
       <section className={styles.trust}>
         <h2>Why Practice RBSE Past Papers?</h2>
         <ul>

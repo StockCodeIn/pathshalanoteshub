@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import styles from "@/styles/Home.module.css";
 
+// ✅ Params interface
 interface PageProps {
   params: Promise<{ grade: string }>;
 }
@@ -22,34 +23,23 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       "Rajasthan Board previous papers",
       "RBSE past papers",
     ],
-    openGraph: {
-      title: `RBSE Class ${grade} Previous Year Papers | Pathshala Notes Hub`,
-      description: `Select subject to view RBSE Class ${grade} previous year question papers.`,
-      url: process.env.NEXT_PUBLIC_SITE_URL + `/rbse-papers/${grade}`,
-      siteName: "Pathshala Notes Hub",
-      images: [
-        {
-          url: "/og-image.png",
-          width: 1200,
-          height: 630,
-          alt: `RBSE Class ${grade} Previous Year Papers`,
-        },
-      ],
-      locale: "en_IN",
-      type: "website",
-    },
   };
 }
 
+// ✅ RBSE Subjects Page
 export default async function RBSESubjectsPage({ params }: PageProps) {
   const { grade } = await params;
 
+  // Route grade to DB grade (10 → 10th)
+  const dbGrade = grade.endsWith("th") ? grade : `${grade}th`;
+
+  // Connect to MongoDB
   await connectDB();
 
-  // ✅ MongoDB से उस grade के subjects निकालना
-  const papers = await PastPaper.find({ board: "RBSE", grade }).select("subject");
+  // Fetch subjects for this grade
+  const papers = await PastPaper.find({ board: "RBSE", grade: dbGrade }).select("subject");
 
-  // ✅ Duplicate हटाना और Alphabetical order में sort करना
+  // Remove duplicates and sort alphabetically
   const uniqueSubjects = Array.from(new Set(papers.map((p) => p.subject))).sort();
 
   return (
@@ -57,11 +47,8 @@ export default async function RBSESubjectsPage({ params }: PageProps) {
       {/* ✅ Hero Section */}
       <section className={styles.hero}>
         <div className={styles.heroContent}>
-          <h1>RBSE Class {grade} - Previous Year Papers</h1>
-          <p>
-            Select a subject to explore{" "}
-            <strong>RBSE Class {grade} Previous Year Papers</strong>.
-          </p>
+          <h1>RBSE Class {grade} - Select Subject</h1>
+          <p>Select a subject to explore <strong>RBSE Class {grade} previous year papers</strong>.</p>
         </div>
       </section>
 
@@ -75,9 +62,8 @@ export default async function RBSESubjectsPage({ params }: PageProps) {
               href={`/rbse-papers/${grade}/${subject}`}
               className={styles.card2}
             >
-              {/* <span className={styles.cardIcon}>📘</span> */}
               <h3>{subject}</h3>
-              <p>View RBSE {grade} {subject} papers</p>
+              <p>View previous years question papers.</p>
             </Link>
           ))
         ) : (
@@ -97,4 +83,3 @@ export default async function RBSESubjectsPage({ params }: PageProps) {
     </main>
   );
 }
-
