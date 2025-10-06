@@ -1,5 +1,4 @@
 // app/layout.tsx
-
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
@@ -14,8 +13,13 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
+// ✅ Updated Metadata with fixed domain
 export const metadata: Metadata = {
-  title: 'Pathshala Notes Hub – Free RBSE & CBSE Notes & Papers (10th & 12th)',
+  metadataBase: new URL('https://www.pathshalanoteshub.in'), // fixed domain
+  title: {
+    default: 'Pathshala Notes Hub – Free RBSE & CBSE Notes & Papers (10th & 12th)',
+    template: '%s | Pathshala Notes Hub', // har page ka title unique
+  },
   description:
     'Download free RBSE and CBSE notes and previous year question papers for Class 10 & 12. Includes Maths, Science, and Indian GK study materials for 2024–25 exams.',
   keywords: [
@@ -41,12 +45,28 @@ export const metadata: Metadata = {
     type: 'website',
     url: 'https://www.pathshalanoteshub.in',
     siteName: 'Pathshala Notes Hub',
+    images: [
+      {
+        url: '/og-image.png', // default OG image (1200x630 recommended)
+        width: 1200,
+        height: 630,
+        alt: 'Pathshala Notes Hub – Free Notes',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Pathshala Notes Hub – Free RBSE & CBSE Notes & Papers',
+    description:
+      'Free notes & previous year papers for Class 10 & 12 (RBSE & CBSE). Maths, Science, GK & more.',
+    images: ['/og-image.png'],
   },
   icons: {
     icon: '/favicon.ico',
     apple: '/apple-touch-icon.png',
   },
 };
+
 
 export default function RootLayout({
   children,

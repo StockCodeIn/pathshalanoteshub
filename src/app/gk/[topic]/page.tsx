@@ -1,77 +1,43 @@
-'use client';
-import { useParams } from 'next/navigation';
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import type { Metadata } from 'next';
+import SubtopicListPage from '@/components/SubtopicListPage';
+import styles from '@/styles/Home.module.css';
 
-export default function SubtopicListPage() {
-  const params = useParams();
-  const topicSlug = params?.topic as string;
+interface PageProps {
+  params: Promise<{ topic: string }>;
+}
 
-  const [subtopics, setSubtopics] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+// ✅ Dynamic SEO Metadata
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { topic } = await params; // ✅ await params
+  const topicName = topic.replace(/-/g, ' ');
 
-  useEffect(() => {
-    const fetchSubtopics = async () => {
-      try {
-        const res = await fetch(`/api/gk?topic=${topicSlug}`);
-        const data = await res.json();
-        if (data.success) {
-          setSubtopics(data.subtopics);
-        }
-      } catch (error) {
-        // console.error('Error fetching subtopics:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  return {
+    title: `GK - ${topicName} | Pathshala Notes Hub`,
+    description: `सामान्य ज्ञान (GK) के लिए ${topicName} से संबंधित महत्वपूर्ण टॉपिक्स और प्रश्न। UPSC, SSC, RPSC, Bank, Railway परीक्षा तैयारी के लिए उपयोगी सामग्री।`,
+    keywords: [`GK`, topicName, 'सामान्य ज्ञान', 'Competitive Exam GK', 'UPSC GK', 'SSC GK'],
+  };
+}
 
-    fetchSubtopics();
-  }, [topicSlug]);
-
-  if (loading) return <p style={{ padding: '20px' }}>लोड हो रहा है...</p>;
-  if (subtopics.length === 0) return <p style={{ padding: '20px' }}>कोई डेटा नहीं मिला।</p>;
+// ✅ Server component renders client component
+export default async function GKTopicPage({ params }: PageProps) {
+  const { topic } = await params; // ✅ await params
+  const topicSlug = topic;
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h1 style={{ fontSize: '22px', marginBottom: '20px', textAlign: 'center' }}>
-        {topicSlug.replace(/-/g, ' ')}
-      </h1>
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: '20px',
-          justifyContent: 'center',
-        }}
-      >
-        {subtopics.map((sub) => (
-          <Link href={`/gk/${topicSlug}/${sub.subtopic}`} key={sub._id}>
-            <div
-              style={{
-                maxWidth: '250px',
-                margin: '0 auto',
-                border: '1px solid #ccc',
-                padding: '15px',
-                borderRadius: '12px',
-                background: '#f9f9f9',
-                textAlign: 'center',
-                cursor: 'pointer',
-                transition: 'transform 0.2s, box-shadow 0.2s',
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.transform = 'scale(1.05)';
-                (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.transform = 'scale(1)';
-                (e.currentTarget as HTMLElement).style.boxShadow = 'none';
-              }}
-            >
-              {sub.title}
-            </div>
-          </Link>
-        ))}
-      </div>
-    </div>
+    <main>
+      {/* Hero Section */}
+      <section className={styles.hero}>
+        <div className={styles.heroContent}>
+          <h1>सामान्य ज्ञान (GK) - {topicSlug.replace(/-/g, ' ')}</h1>
+          <p>
+            यहां आपको {topicSlug.replace(/-/g, ' ')} से संबंधित सभी महत्वपूर्ण सबटॉपिक्स और नोट्स मिलेंगे,।
+            इन नोट्स की मदद से आप UPSC, SSC, RPSC, Bank, Railway और अन्य प्रतियोगी परीक्षाओं की तैयारी कर सकते हैं।
+          </p>
+        </div>
+      </section>
+
+      {/* Client Component */}
+      <SubtopicListPage topicSlug={topicSlug} />
+    </main>
   );
 }

@@ -1,60 +1,69 @@
-'use client';
+import type { Metadata } from "next";
+import SubtopicPDFPageClient from "@/components/SubtopicPDFPageClient";
+import styles from "@/styles/Home.module.css";
 
-import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import dynamic from 'next/dynamic';
+interface PageProps {
+  params: Promise<{
+    topic: string;
+    subtopic: string;
+  }>;
+}
 
-// NOTE: relative path -> from app/gk/[topic]/[subtopic]/page.tsx to components/PDFViewerClient.tsx
-const PDFViewer = dynamic(() => import('@/components/PDFViewer'), {
-  ssr: false,
-});
+// ✅ Dynamic SEO Metadata (fixed with async params)
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { topic, subtopic } = await params; // ✅ await params
 
-export default function SubtopicPDFPage() {
-  const params = useParams();
-  const topic = decodeURIComponent((params?.topic as string) || '');
-  const subtopic = decodeURIComponent((params?.subtopic as string) || '');
+  const topicName = decodeURIComponent(topic).replace(/-/g, " ");
+  const subtopicName = decodeURIComponent(subtopic).replace(/-/g, " ");
 
-  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const title = `${subtopicName} - ${topicName} GK Notes | Pathshala Notes Hub`;
+  const description = `${topicName} विषय के अंतर्गत "${subtopicName}" के महत्वपूर्ण सामान्य ज्ञान (GK) नोट्स और अध्ययन सामग्री PDF। प्रतियोगी परीक्षाओं जैसे UPSC, SSC, RPSC, Railway, Bank के लिए उपयोगी सामग्री।`;
 
-  useEffect(() => {
-    if (!topic || !subtopic) return;
+  return {
+    title,
+    description,
+    keywords: [
+      subtopicName,
+      topicName,
+      "GK Notes",
+      "सामान्य ज्ञान",
+      "Pathshala Notes Hub",
+      "UPSC GK Notes",
+      "SSC GK Notes",
+    ],
+    openGraph: {
+      title,
+      description,
+      type: "article",
+      locale: "hi_IN",
+    },
+  };
+}
 
-    const fetchPDF = async () => {
-      try {
-        const res = await fetch(
-          `/api/gk?topic=${encodeURIComponent(topic)}&subtopic=${encodeURIComponent(subtopic)}`
-        );
-        const data = await res.json();
-        if (data.success && data.subtopic) {
-          setPdfUrl(data.subtopic.pdfUrl);
-        }
-      } catch (err) {
-        console.error('PDF fetch error:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
+// ✅ Server component renders the client component
+export default async function SubtopicPDFPage({ params }: PageProps) {
+  const { topic, subtopic } = await params; // ✅ await params
 
-    fetchPDF();
-  }, [topic, subtopic]);
-
-  if (loading) return <p style={{ padding: '20px' }}>लोड हो रहा है...</p>;
-  if (!pdfUrl) return <p style={{ padding: '20px' }}>PDF नहीं मिला।</p>;
+  const topicName = decodeURIComponent(topic).replace(/-/g, " ");
+  const subtopicName = decodeURIComponent(subtopic).replace(/-/g, " ");
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h1 style={{ marginBottom: '20px', fontSize: '22px', textAlign: 'center' }}>
-        {subtopic}
-      </h1>
+    <main>
+      {/* ✅ Hero Section (Same Styling as GKTopicPage) */}
+      <section className={styles.hero}>
+        <div className={styles.heroContent}>
+          <h1>
+            {subtopicName} - {topicName}
+          </h1>
+          <p>
+             यह पेज {topicName} विषय के अंतर्गत &quot;{subtopicName}&quot; से संबंधित महत्वपूर्ण नोट्स,
+          जानकारी और PDF अध्ययन सामग्री प्रदान करता है।
+          </p>
+        </div>
+      </section>
 
-      {/* ✅ Download button ab PDFViewerClient ke andar hi hoga */}
-      <PDFViewer
-        url={pdfUrl}
-        title={subtopic}
-        topic={topic}
-        subtopic={subtopic}
-      />
-    </div>
+      {/* ✅ PDF Viewer (Client component) */}
+      <SubtopicPDFPageClient topic={topic} subtopic={subtopic} />
+    </main>
   );
 }

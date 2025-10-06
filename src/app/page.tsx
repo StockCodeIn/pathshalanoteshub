@@ -1,170 +1,245 @@
-import Link from 'next/link';
-import Image from 'next/image';
-import styles from '@/styles/Home.module.css';
-import { assets } from '@/assets/assets';
+import Link from "next/link";
+import Script from "next/script";
+import styles from "@/styles/Home.module.css";
+import type { Metadata } from "next";
 
-// Data for the cards - boards information
+// ✅ SEO Metadata
+export const metadata: Metadata = {
+  title:
+    "Pathshala Notes Hub - Free RBSE & CBSE Notes, Old Papers, Study Material",
+  description:
+    "Download free RBSE & CBSE class 10th and 12th notes, previous year question papers, Indian GK, study plans and time management tips. Perfect resource for board exam preparation.",
+  keywords: [
+    "RBSE notes",
+    "CBSE notes",
+    "Class 10 notes",
+    "Class 12 notes",
+    "RBSE previous year papers",
+    "CBSE study material",
+    "Indian GK notes",
+  ],
+  openGraph: {
+    title: 'Pathshala Notes Hub - Free RBSE & CBSE Notes & Indian GK',
+    description:
+      "Free RBSE & CBSE notes for 10th & 12th, old papers, Indian GK and study resources.",
+    url:
+      process.env.NEXT_PUBLIC_SITE_URL ||
+      "https://www.pathshalanoteshub.in",
+    siteName: "Pathshala Notes Hub",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Pathshala Notes Hub",
+      },
+    ],
+    locale: "en_IN",
+    type: "website",
+  },
+};
+
+// Boards Data
 const boardsData = [
   {
-    href: '/rbse',
-    color: '#dbcfb7',
-    img: assets.rbse,
-    title: 'RBSE Notes',
-    description: 'Rajasthan Board of Secondary Education',
+    href: "/rbse",
+    title: "RBSE Notes",
+    description: "Rajasthan Board of Secondary Education",
   },
   {
-    href: '/cbse',
-    color: '#7297a9',
-    img: assets.cbse,
-    title: 'CBSE Notes',
-    description: 'Central Board of Secondary Education',
+    href: "/cbse",
+    title: "CBSE Notes",
+    description: "Central Board of Secondary Education",
   },
   {
-    href: '/rbse-papers',
-    color: 'linear-gradient(to bottom, #dbcfb7, #7297a9)',
-    img: assets.pastPapers,
-    title: 'RBSE Old Papers',
-    description: 'Get previous years exam papers',
+    href: "/rbse-papers",
+    title: "RBSE Old Papers",
+    description: "Previous years exam papers with solutions",
   },
 ];
 
-// Data for subjects links
+// Subjects Data
 const subjectsData = [
   {
-    href: '/rbse/10/mathematics',
-    background: '#f1e8de',
-    color: '#4a3f35',
-    title: 'Mathematics Notes',
-    description: 'Rbse 10th Mathematics Notes',
+    href: "/rbse/10/mathematics",
+    title: "RBSE 10 Mathematics",
+    description: "Complete notes with examples",
   },
   {
-    href: '/cbse/10/mathematics',
-    background: '#d0dce0',
-    color: '#2e3c44',
-    title: 'Mathematics Notes',
-    description: 'Cbse 10th Mathematics Notes',
+    href: "/rbse/10/science",
+    title: "RBSE 10 Science",
+    description: "Easy and exam-focused notes",
   },
   {
-    href: '/rbse/10/science',
-    background: '#f1e8de',
-    color: '#4a3f35',
-    title: 'Science Notes',
-    description: 'Rbse 10th Science Notes',
+    href: "/rbse/12/mathematics",
+    title: "RBSE 12 Mathematics",
+    description: "Chapter-wise notes",
   },
   {
-    href: '/cbse/10/science',
-    background: '#d0dce0',
-    color: '#2e3c44',
-    title: 'Science Notes',
-    description: 'Cbse 10th Science Notes',
+    href: "/rbse/12/physics",
+    title: "RBSE 12 Physics",
+    description: "Well explained concepts + numericals",
   },
   {
-    href: '/rbse/12/mathematics',
-    background: '#f1e8de',
-    color: '#4a3f35',
-    title: 'Mathematics Notes',
-    description: 'Rbse 12th Mathematics Notes',
+    href: "/rbse/12/chemistry",
+    title: "RBSE 12 Chemistry",
+    description: "Chapter-wise notes with diagrams",
   },
   {
-    href: '/cbse/12/mathematics',
-    background: '#d0dce0',
-    color: '#2e3c44',
-    title: 'Mathematics Notes',
-    description: 'Cbse 12th Mathematics Notes',
+    href: "/cbse/10/mathematics",
+    title: "CBSE 10 Mathematics",
+    description: "Step-by-step solutions",
+  },
+  {
+    href: "/cbse/10/science",
+    title: "CBSE 10 Science",
+    description: "Detailed notes with NCERT ref",
+  },
+  {
+    href: "/cbse/12/mathematics",
+    title: "CBSE 12 Mathematics",
+    description: "Chapter-wise + PYQs",
   },
   
   {
-    href: '/rbse/12/physics',
-    background: '#f1e8de',
-    color: '#4a3f35',
-    title: 'Physics Notes',
-    description: 'Rbse 12th Physics Notes',
+    href: "/cbse/12/physics",
+    title: "CBSE 12 Physics",
+    description: "Numerical + Theory Notes",
   },
   {
-    href: '/cbse/12/physics',
-    background: '#d0dce0',
-    color: '#2e3c44',
-    title: 'Physics Notes',
-    description: 'Cbse 12th Physics Notes',
-  },
-  {
-    href: '/rbse/12/chemistry',
-    background: '#f1e8de',
-    color: '#4a3f35',
-    title: 'Chemistry Notes',
-    description: 'Rbse 12th Chemistry Notes',
-  },
-  {
-    href: '/cbse/12/chemistry',
-    background: '#d0dce0',
-    color: '#2e3c44',
-    title: 'Chemistry Notes',
-    description: 'Cbse 12th Chemistry Notes',
+    href: "/cbse/12/chemistry",
+    title: "CBSE 12 Chemistry",
+    description: "Chapter Notes + Equations",
   },
 ];
 
-// Data for study resources
+// Study Resources Data
 const studyResources = [
+  { href: "/study-plan", title: "Study Plan" },
+  { href: "/time-management", title: "Time Management" },
+  { href: "/gk", title: "Indian GK" },
+];
+
+// FAQ Data
+const faqData = [
   {
-    href: '/study-plan',
-    color: '#a8c6d9',
-    img: assets.study,
-    title: 'Study Plan',
+    q: "What is Pathshala Notes Hub?",
+    a: "It is a free platform providing RBSE & CBSE Class 10 and 12 notes, old papers, and study resources for board exam preparation.",
   },
   {
-    href: '/time-management',
-    color: '#c7b398',
-    img: assets.time,
-    title: 'Time Manage',
+    q: "Are the notes free?",
+    a: "Yes, all notes and resources on Pathshala Notes Hub are completely free to access.",
   },
   {
-    href: '/gk',
-    color: '#8ea3d9',
-    img: assets.gk,
-    title: 'Indian GK',
+    q: "Which boards do you cover?",
+    a: "Currently, we provide study material for RBSE (Rajasthan Board) and CBSE (Central Board of Secondary Education).",
   },
+  {
+  "q": "Is Indian GK content useful for exams?",
+  "a": "Yes, our Indian GK notes cover important topics for board exams and various competitive exams in India."
+},
+
 ];
 
 export default function Home() {
   return (
     <main>
-      <div className={styles['intro-section']}>
-        <p>यहाँ आपको Indian G.K and RBSE, CBSE बोर्ड के 10th और 12th कक्षा के Important विषयों के Free Notes और Previous Year Papers मिलेंगे।</p>
-      </div>
-      <h2 className={styles['h2class']}>Rbse & Cbse Notes</h2>
-      <div className={styles['card-container']}>
-        {boardsData.map((board, index) => (
-          <Link key={index} href={board.href} className={styles["card"]} style={{ background: board.color }}>
-            <Image src={board.img} alt="img" width={80} height={80} />
-            <h2>{board.title}</h2>
-            <p>{board.description}</p>
+      {/* ✅ Hero Section */}
+      <section className={styles.hero}>
+        <div className={styles.heroContent}>
+          <h1>Pathshala Notes Hub</h1>
+          <p>
+             Trusted by thousands of students for <strong>RBSE & CBSE Board Exam Preparation</strong> and <strong>Indian GK</strong>. Free notes, old papers, and study guides for Class 10 & 12.
+          </p>
+          <div className={styles.heroButtons}>
+            <Link href="/rbse" className={styles.ctaButton}>
+              Explore RBSE
+            </Link>
+            <Link href="/cbse" className={styles.ctaButtonSecondary}>
+              Explore CBSE
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ✅ Boards Section */}
+      <h2 className={styles.sectionTitle}>RBSE & CBSE Notes</h2>
+      <ul className={styles.listContainer}>
+        {boardsData.map((board, i) => (
+          <li key={i}>
+            <Link href={board.href} className={styles.listCard}>
+              <h3>{board.title}</h3>
+              <p>{board.description}</p>
+            </Link>
+          </li>
+        ))}
+      </ul>
+
+      {/* ✅ Study Resources Section */}
+      <h2 className={styles.sectionTitle}>Study Resources</h2>
+      <ul className={styles.listContainer}>
+        {studyResources.map((res, i) => (
+          <li key={i}>
+            <Link href={res.href} className={styles.listCard}>
+              <h3>{res.title}</h3>
+            </Link>
+          </li>
+        ))}
+      </ul>
+
+      {/* ✅ Important Subjects */}
+      <h2 className={styles.sectionTitle}>Important Subjects</h2>
+      <div className={styles.cardContainer2}>
+        {subjectsData.map((sub, i) => (
+          <Link key={i} href={sub.href} className={styles.card2}>
+            <h3>{sub.title}</h3>
+            <p>{sub.description}</p>
           </Link>
         ))}
       </div>
 
-      {/* Study Resources Section */}
-      <h2 className={styles['h2class']}>Study Resources</h2>
-      <div className={styles['card-container']}>
-        {studyResources.map((resource, index) => (
-          <Link key={index} href={resource.href} className={styles["card"]} style={{ background: resource.color }}>
-            <span className={styles['sp-1']}> <Image src={resource.img} alt="img" width={80} height={80} /> </span>
-            <h2 style={{fontSize: '12px'}} >{resource.title}</h2>
-          </Link>
-        ))}
-      </div>
+      {/* ✅ Trust Section */}
+      <section className={styles.trust}>
+        <h2>Why Students Trust Us?</h2>
+        <ul>
+          <li>✔ 100% Free study resources</li>
+          <li>✔ Updated & Board-specific notes</li>
+          <li>✔ Student-friendly explanations</li>
+        </ul>
+      </section>
 
-      {/* Subjects Section */}
-      <h2 className={styles['h2class']}>Important Subjects</h2>
-      <div className={styles['card-container-2']}>
-        {subjectsData.map((subject, index) => (
-          <Link key={index} href={subject.href} className={styles["card-2"]} style={{ background: subject.background }}>
-            <h2>{subject.title}</h2>
-            <p>{subject.description}</p>
-          </Link>
-        ))}
-      </div>
+      {/* ✅ FAQ Accordion */}
+      <section className={styles.faq}>
+        <h2>Frequently Asked Questions</h2>
+        <div className={styles.faqList}>
+          {faqData.map((faq, i) => (
+            <details key={i} className={styles.faqItem}>
+              <summary>{faq.q}</summary>
+              <p>{faq.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
 
-      
+      {/* ✅ FAQ JSON-LD */}
+      <Script
+        id="faq-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: faqData.map((faq) => ({
+              "@type": "Question",
+              name: faq.q,
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: faq.a,
+              },
+            })),
+          }),
+        }}
+      />
     </main>
   );
 }
