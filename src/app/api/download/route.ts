@@ -74,14 +74,18 @@ export async function GET(request: Request) {
 
     const finalPdfBytes = await pdfDoc.save();
 
+    // Ensure Blob receives a compatible ArrayBufferView by copying into a standard Uint8Array
+    const pdfArray = new Uint8Array(finalPdfBytes);
+
     // ✅ Return single PDF response
-    return new Response(finalPdfBytes, {
+    return new Response(new Blob([pdfArray], { type: 'application/pdf' }), {
       status: 200,
       headers: {
-        'Content-Type': 'application/pdf',
         'Content-Disposition': `attachment; filename*=UTF-8''${safeFilename}`,
       },
     });
+
+
   } catch (error) {
     console.error('Download API Error:', error);
     return NextResponse.json({ error: 'Failed to process PDF download' }, { status: 500 });

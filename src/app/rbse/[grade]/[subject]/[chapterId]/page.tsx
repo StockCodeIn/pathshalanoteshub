@@ -1,3 +1,4 @@
+// src/app/rbse/[grade]/[subject]/[chapterId]/page.tsx
 import connectDB from "@/lib/mongodb";
 import { Chapter } from "@/models/chapter";
 import styles from "@/styles/Home.module.css";
@@ -80,15 +81,19 @@ export default async function RBSEChapterPage({ params }: PageProps) {
         </div>
       </section>
 
-      {/* ✅ PDF Viewer Section */}
+      {/*  PDF Viewer / Extracted HTML */}
       <div className="container" style={{ marginTop: "2rem" }}>
-        <PDFViewerWrapper
-          url={chapterData.pdfUrl}
-          title={chapterData.name}
-          board={chapterData.board}
-          grade={chapterData.grade}
-          subject={chapterData.subject}
-        />
+        {chapterData.extractedHtml ? (
+          <article className="prose" dangerouslySetInnerHTML={{ __html: chapterData.extractedHtml }} />
+        ) : (
+          <PDFViewerWrapper
+            url={chapterData.pdfUrl}
+            title={chapterData.name}
+            board={chapterData.board}
+            grade={chapterData.grade}
+            subject={chapterData.subject}
+          />
+        )}
       </div>
 
       {/* ✅ Trust / Extra Info Section */}

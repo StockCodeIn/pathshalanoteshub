@@ -1,3 +1,4 @@
+//src/app/api/chapters/route.ts
 import { NextResponse } from 'next/server';
 import cloudinary from '@/lib/cloudinary';
 import connectDB from '@/lib/mongodb';
@@ -63,6 +64,8 @@ export async function POST(request: Request) {
       size: fileSize,
       uploadedAt: new Date(),
     });
+
+    // No background extraction trigger — keep behavior same as original
 
     return NextResponse.json({ success: true, chapter: chapterDoc });
   } catch (error) {

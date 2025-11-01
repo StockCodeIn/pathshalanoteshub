@@ -1,21 +1,20 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { getDocument } from 'pdfjs-dist/legacy/build/pdf';
-import '@/lib/pdfjs';
+import { pdfjsLib } from '@/lib/pdfjs';
 
-interface PDFViewerProps {
+export interface PDFViewerProps {
   url: string;
   title: string;
-  board?: string;   // ✅ optional kar diya
+  board?: string;
   grade?: string;
   subject?: string;
-  topic?: string;   // ✅ GK ke liye extra props
+  topic?: string;
   subtopic?: string;
   showDownloadButton?: boolean;
 }
 
-export default function PDFViewerClient({
+export default function PDFViewer({
   url,
   title,
   board,
@@ -26,87 +25,123 @@ export default function PDFViewerClient({
   showDownloadButton = true,
 }: PDFViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const [scale, setScale] = useState(
-    typeof window !== 'undefined' && window.innerWidth < 600 ? 2 : 1.2
-  );
+  const observerRef = useRef<IntersectionObserver | null>(null);
   const [pageCount, setPageCount] = useState(0);
+  const [pdf, setPdf] = useState<any>(null);
 
+  // ✅ Load PDF only once
   useEffect(() => {
     let cancelled = false;
-    async function renderPDF() {
-      if (!url || !containerRef.current) return;
-      const container = containerRef.current;
-      container.innerHTML = '';
+    async function loadPDF() {
+      if (!url) return;
 
-      const loadingTask = getDocument(url);
-      const pdf = await loadingTask.promise;
-      setPageCount(pdf.numPages);
-
-      for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+      try {
+        const loadingTask = pdfjsLib.getDocument(url);
+        const pdfDoc = await loadingTask.promise;
         if (cancelled) return;
-        const page = await pdf.getPage(pageNumber);
-
-        const containerWidth = container.offsetWidth || window.innerWidth;
-        const unscaledViewport = page.getViewport({ scale: 1 });
-        let fitScale = containerWidth / unscaledViewport.width;
-
-        if (window.innerWidth < 600) {
-          fitScale *= 2;
-        }
-
-        const viewport = page.getViewport({ scale: fitScale });
-
-        const canvas = document.createElement('canvas');
-        const context = canvas.getContext('2d')!;
-        const dpr = window.devicePixelRatio || 1;
-
-        canvas.width = viewport.width * dpr;
-        canvas.height = viewport.height * dpr;
-        canvas.style.width = `${viewport.width}px`;
-        canvas.style.height = `${viewport.height}px`;
-
-        const transform = dpr !== 1 ? [dpr, 0, 0, dpr, 0, 0] : undefined;
-
-        canvas.style.maxWidth = '100%';
-        canvas.style.display = 'block';
-        canvas.style.margin = '0 auto';
-
-        await page.render({ canvasContext: context, viewport, transform }).promise;
-
-        container.appendChild(canvas);
-        container.appendChild(document.createElement('br'));
+        setPdf(pdfDoc);
+        setPageCount(pdfDoc.numPages);
+      } catch (err) {
+        console.error('PDF loading error:', err);
       }
     }
-
-    renderPDF();
+    loadPDF();
     return () => {
       cancelled = true;
     };
   }, [url]);
 
-  // ✅ dynamic download URL
+  // ✅ Smart Lazy Rendering for each page
+  useEffect(() => {
+    if (!pdf || !containerRef.current) return;
+    const container = containerRef.current;
+    container.innerHTML = '';
+
+    observerRef.current?.disconnect();
+
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(async (entry) => {
+          if (entry.isIntersecting) {
+            const pageNumber = parseInt(entry.target.getAttribute('data-page')!);
+            const alreadyRendered = entry.target.getAttribute('data-rendered');
+            if (alreadyRendered === 'true') return;
+
+            const page = await pdf.getPage(pageNumber);
+
+            const parentWidth =
+              (entry.target as HTMLElement).offsetWidth || window.innerWidth;
+            const viewport = page.getViewport({ scale: 1 });
+            const scale = parentWidth / viewport.width;
+
+            const scaledViewport = page.getViewport({ scale });
+
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d')!;
+            const dpr = window.devicePixelRatio || 1;
+
+            canvas.width = scaledViewport.width * dpr;
+            canvas.height = scaledViewport.height * dpr;
+            canvas.style.width = '100%';
+            canvas.style.height = `${scaledViewport.height}px`;
+
+            const transform = dpr !== 1 ? [dpr, 0, 0, dpr, 0, 0] : undefined;
+            await page.render({
+              canvasContext: context,
+              viewport: scaledViewport,
+              transform,
+            }).promise;
+
+            // ✅ Optional watermark
+            context.save();
+            context.font = 'bold 36px Arial';
+            context.globalAlpha = 0.1;
+            context.fillStyle = 'gray';
+            context.rotate(-0.3);
+            context.fillText('© pathshalanoteshub.in', canvas.width / 6, canvas.height / 1.5);
+            context.restore();
+
+            entry.target.appendChild(canvas);
+            entry.target.setAttribute('data-rendered', 'true');
+          }
+        });
+      },
+      { rootMargin: '250px 0px' }
+    );
+
+    // Create lazy divs
+    for (let i = 1; i <= pageCount; i++) {
+      const pageDiv = document.createElement('div');
+      pageDiv.dataset.page = i.toString();
+      pageDiv.style.minHeight = window.innerWidth < 600 ? '600px' : '850px';
+      pageDiv.style.marginBottom = '12px';
+      container.appendChild(pageDiv);
+      observerRef.current.observe(pageDiv);
+    }
+
+    return () => observerRef.current?.disconnect();
+  }, [pdf, pageCount]);
+
+  // ✅ Dynamic download URL
   let downloadUrl = '';
   if (topic && subtopic) {
-    downloadUrl = `/api/download?topic=${encodeURIComponent(topic)}&subtopic=${encodeURIComponent(
-      subtopic
-    )}`;
+    downloadUrl = `/api/download?topic=${encodeURIComponent(topic)}&subtopic=${encodeURIComponent(subtopic)}`;
   } else if (board && grade && subject && title) {
-    downloadUrl = `/api/download?board=${encodeURIComponent(
-      board
-    )}&grade=${encodeURIComponent(grade)}&subject=${encodeURIComponent(
-      subject
-    )}&chapter=${encodeURIComponent(title)}`;
+    downloadUrl = `/api/download?board=${encodeURIComponent(board)}&grade=${encodeURIComponent(
+      grade
+    )}&subject=${encodeURIComponent(subject)}&chapter=${encodeURIComponent(title)}`;
   }
 
   return (
-    <div style={{ padding: '20px' }}>
+    <div style={{ padding: '10px', overflowX: 'hidden' }}>
       <div
         ref={containerRef}
         style={{
           textAlign: 'center',
-          overflowX: 'auto',
+          width: '100vw',
           maxWidth: '100%',
+          margin: '0 auto',
+          boxSizing: 'border-box',
         }}
       ></div>
 

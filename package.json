@@ -8,7 +8,6 @@
   "start": "next start",
   "lint": "next lint",
   "postbuild": "next-sitemap"
-
  },
  "dependencies": {
   "cloudinary": "^2.6.0",
@@ -18,9 +17,11 @@
   "next": "15.2.2",
   "next-sitemap": "^4.2.3",
   "pdf-lib": "^1.17.1",
-  "pdfjs-dist": "^5.3.31",
+  "pdf-parse": "^1.1.1",
+  "pdfjs-dist": "^4.4.168",
   "react": "^18",
-  "react-dom": "^18"
+  "react-dom": "^18",
+  "sanitize-html": "^2.17.0"
  },
  "devDependencies": {
   "@types/node": "^20",

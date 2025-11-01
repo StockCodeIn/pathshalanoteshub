@@ -1,3 +1,4 @@
+// src/lib/mongodb.ts
 import mongoose from "mongoose";
 import * as dotenv from "dotenv"; // ✅ यह ES module के लिए सही है
 dotenv.config();

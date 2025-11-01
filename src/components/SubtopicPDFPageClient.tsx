@@ -1,3 +1,4 @@
+// src/components/SubtopicPDFPageClient.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -9,40 +10,55 @@ const PDFViewer = dynamic(() => import("@/components/PDFViewer"), { ssr: false }
 interface Props {
   topic: string;
   subtopic: string;
+  subsub?: string | null;
 }
 
-export default function SubtopicPDFPageClient({ topic, subtopic }: Props) {
-  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+export default function SubtopicPDFPageClient({ topic, subtopic, subsub }: Props) {
+  const [html, setHtml] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!topic || !subtopic) return;
-
-    const fetchPDF = async () => {
+    const fetchContent = async () => {
+      setLoading(true);
+      setError(null);
       try {
-        const res = await fetch(
-          `/api/gk?topic=${encodeURIComponent(topic)}&subtopic=${encodeURIComponent(subtopic)}`
-        );
-        const data = await res.json();
-        if (data.success && data.subtopic) {
-          setPdfUrl(data.subtopic.pdfUrl);
+        if (subsub) {
+          const res = await fetch(
+            `/api/gk/${encodeURIComponent(topic)}/${encodeURIComponent(subtopic)}/${encodeURIComponent(
+              subsub
+            )}`
+          );
+          if (!res.ok) throw new Error('Not found');
+          const data = await res.json();
+          if (data.success && data.item) setHtml(data.item.htmlContent || null);
+          else setHtml(null);
+        } else {
+          // Backwards-compatible: fetch subtopic (may contain pdfUrl or extractedHtml)
+          const res = await fetch(
+            `/api/gk?topic=${encodeURIComponent(topic)}&subtopic=${encodeURIComponent(subtopic)}`
+          );
+          const data = await res.json();
+          if (data.success && data.subtopic) setHtml(data.subtopic.extractedHtml || null);
+          else setHtml(null);
         }
-      } catch (error) {
-        console.error("Error fetching PDF:", error);
+      } catch (err) {
+        setError('Content not found');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchPDF();
-  }, [topic, subtopic]);
+    fetchContent();
+  }, [topic, subtopic, subsub]);
 
-  if (loading) return <p style={{ textAlign: "center", padding: "20px" }}>लोड हो रहा है...</p>;
-  if (!pdfUrl) return <p style={{ textAlign: "center", padding: "20px" }}>PDF नहीं मिला।</p>;
+  if (loading) return <p style={{ textAlign: 'center', padding: '20px' }}>लोड हो रहा है...</p>;
+  if (error) return <p style={{ textAlign: 'center', padding: '20px' }}>{error}</p>;
+  if (!html) return <p style={{ textAlign: 'center', padding: '20px' }}>सामग्री उपलब्ध नहीं है।</p>;
 
   return (
-    <div style={{ padding: "20px", maxWidth: "900px", margin: "0 auto" }}>
-      <PDFViewer url={pdfUrl} title={subtopic} topic={topic} subtopic={subtopic} />
+    <div style={{ padding: '20px', maxWidth: '900px', margin: '0 auto' }}>
+      <article dangerouslySetInnerHTML={{ __html: html }} />
     </div>
   );
 }

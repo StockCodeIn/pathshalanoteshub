@@ -1,3 +1,4 @@
+// src/app/api/past-papers/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import PastPaper from '@/models/PastPaper';
@@ -37,6 +38,8 @@ export async function POST(req: NextRequest) {
 
     const newPaper = new PastPaper({ board, grade, subject, year, pdfUrl: link });
     await newPaper.save();
+
+    // No background extraction trigger — keep original behavior
 
     return NextResponse.json({ message: "Paper link uploaded successfully", pdfUrl: link }, { status: 201 });
   } catch (error) {

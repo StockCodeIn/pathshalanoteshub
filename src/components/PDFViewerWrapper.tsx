@@ -1,20 +1,17 @@
+
+// components/PDFViewerWrapper.tsx
 'use client';
 
 import dynamic from 'next/dynamic';
+import type { PDFViewerProps } from './PDFViewer';
 
-// ✅ Dynamically import the actual PDFViewer component (with SSR disabled)
-const PDFViewer = dynamic(() => import('./PDFViewer'), { ssr: false });
-
-interface PDFViewerProps {
-  url: string;
-  title: string;
-  board?: string;
-  grade?: string;
-  subject?: string;
-  topic?: string;
-  subtopic?: string;
-}
+// ✅ TypeScript-safe dynamic import
+const PDFViewer = dynamic<PDFViewerProps>(
+  () => import('./PDFViewer').then((mod) => mod.default),
+  { ssr: false }
+);
 
 export default function PDFViewerWrapper(props: PDFViewerProps) {
   return <PDFViewer {...props} />;
 }
+

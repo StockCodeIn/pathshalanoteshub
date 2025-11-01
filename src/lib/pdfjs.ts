@@ -1,4 +1,16 @@
 // src/lib/pdfjs.ts
-import { GlobalWorkerOptions } from 'pdfjs-dist/legacy/build/pdf';
+import * as pdfjsLib from 'pdfjs-dist';
 
-GlobalWorkerOptions.workerSrc = '/pdf.worker.js';
+// browser में ही worker set करें
+if (typeof window !== 'undefined' && 'Worker' in window) {
+  try {
+    const workerSrc = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString();
+    pdfjsLib.GlobalWorkerOptions.workerSrc = workerSrc;
+  }
+  catch (e) {
+    console.error('Failed to set PDF.js worker source:', e);
+  }
+}
+
+export { pdfjsLib };
+

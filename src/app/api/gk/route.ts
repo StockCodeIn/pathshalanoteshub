@@ -1,100 +1,101 @@
+//src/app/api/gk/route.ts
 import { NextResponse } from 'next/server';
-import cloudinary from '@/lib/cloudinary';
 import connectDB from '@/lib/mongodb';
 import GK from '@/models/gk';
+import sanitizeHtml from 'sanitize-html';
+import { verifyAdminToken } from '@/lib/adminAuth';
+import mongoose from 'mongoose';
 
-// ✅ POST API - Upload PDF & Save to DB
+// POST /api/gk -> create or update sub-subtopic HTML content
 export async function POST(request: Request) {
   try {
-    const formData = await request.formData();
-    const file = formData.get('file') as File;
-    const topic = formData.get('topic') as string;
-    const subtopic = formData.get('subtopic') as string;
-    const title = formData.get('title') as string;
-
-    if (!file || !topic || !subtopic || !title) {
-      return NextResponse.json({ error: 'All fields are required' }, { status: 400 });
+    // ✅ Validate admin token cookie
+    const cookie = request.headers.get('cookie') || '';
+    const match = cookie.match(/admin_token=([^;]+)/);
+    const token = match ? decodeURIComponent(match[1]) : null;
+    const payload = verifyAdminToken(token, process.env.GK_ADMIN_KEY || '');
+    if (!payload) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Convert File to Buffer
-    const buffer = Buffer.from(await file.arrayBuffer());
+    // ✅ Get request body
+    const body = await request.json();
+    const { topic, subtopic, name, displayName, htmlContent, order } = body;
+    if (!topic || !subtopic || !name) {
+      return NextResponse.json({ success: false, error: 'Missing fields' }, { status: 400 });
+    }
 
-    // Upload to Cloudinary
-    const result = await new Promise((resolve, reject) => {
-      cloudinary.uploader.upload_stream(
-        {
-          resource_type: 'auto', // Auto-detect file type
-          folder: `education-notes/gk/${topic}/${subtopic}`,
-        },
-        (error, result) => {
-          if (error) {
-            // console.error('Cloudinary upload error:', error);
-            reject(error);
-          } else {
-            // console.log('Cloudinary upload result:', result);
-            resolve(result);
-          }
-        }
-      ).end(buffer);
+    // ✅ Sanitize HTML before saving
+    const clean = sanitizeHtml(htmlContent || '', {
+      allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img', 'h1', 'h2', 'h3', 'figure']),
+      allowedAttributes: {
+        a: ['href', 'name', 'target', 'rel'],
+        img: ['src', 'alt', 'title', 'width', 'height'],
+        '*': ['class', 'id', 'style'],
+      },
+      allowedSchemesByTag: {
+        img: ['http', 'https', 'data'],
+      },
     });
 
-    // Check if Upload was successful
-    if (!result || !(result as any).secure_url) {
-      throw new Error('Failed to upload file to Cloudinary');
-    }
-
-    // Connect to MongoDB
+    // ✅ Connect to MongoDB
     await connectDB();
-    // console.log('✅ Connected to MongoDB');
 
-    // Save subtopic info to database
-    const subtopicDoc = await GK.create({
-      topic,
-      subtopic,
-      title,
-      pdfUrl: (result as any).secure_url,
-      uploadedAt: new Date(),
+    // Determine order handling:
+    // - If order provided in request, use it.
+    // - If updating existing record and no order provided, keep existing order.
+    // - If creating new record and no order provided, assign max(order)+1 within the subtopic.
+    await connectDB();
+    const existing = (await GK.findOne({ topic, subtopic, name }).lean()) as
+      | { order?: number }
+      | null;
+
+    let finalOrder: number | undefined = undefined;
+    if (typeof order === 'number') {
+      finalOrder = Math.floor(order);
+    } else if (!existing) {
+      // new record: pick next order
+      const highest = await GK.find({ topic, subtopic }).sort({ order: -1 }).limit(1).lean();
+      if (highest && highest.length > 0 && typeof highest[0].order === 'number') {
+        finalOrder = (highest[0].order || 0) + 1;
+      } else {
+        finalOrder = 1;
+      }
+    } else {
+      // updating existing and order not provided: preserve
+  finalOrder = existing?.order ?? 0;
+    }
+
+    // ✅ Create or update record (include displayName and order)
+    await GK.findOneAndUpdate(
+      { topic, subtopic, name },
+      {
+        $set: {
+          displayName: displayName || "",
+          htmlContent: clean,
+          updatedAt: new Date(),
+          order: finalOrder,
+        },
+      },
+      { upsert: true, new: true }
+    );
+
+    // ✅ Read back and confirm
+  const saved = await GK.findOne({ topic, subtopic, name }).lean();
+    const conn = mongoose.connection;
+
+    return NextResponse.json({
+      success: true,
+      item: saved,
+      db: { name: conn.name, host: conn.host },
     });
-    // console.log('✅ Subtopic saved to DB:', subtopicDoc);
-
-    return NextResponse.json({ success: true, subtopic: subtopicDoc });
-  } catch (error) {
-    // console.error('Upload error:', error);
-    return NextResponse.json({ error: 'Failed to process upload' }, { status: 500 });
+  } catch (err) {
+    console.error("GK API Error:", err);
+    return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
   }
 }
 
-// ✅ GET API - Fetch Subtopics List
-export async function GET(request: Request) {
-  try {
-    await connectDB();
-    // console.log('✅ Connected to MongoDB');
-
-    const { searchParams } = new URL(request.url);
-    const topic = searchParams.get('topic');
-    const subtopic = searchParams.get('subtopic');
-
-    // Agar subtopic query nahi hai to list return karo
-    if (topic && !subtopic) {
-      const subtopics = await GK.find({ topic });
-      return NextResponse.json({ success: true, subtopics });
-    }
-
-    // Agar topic + subtopic dono diye hain to single PDF return karo
-    if (topic && subtopic) {
-      const subtopicDoc = await GK.findOne({ topic, subtopic });
-      if (!subtopicDoc) {
-        return NextResponse.json({ success: false, error: 'Subtopic not found' }, { status: 404 });
-      }
-      return NextResponse.json({ success: true, subtopic: subtopicDoc });
-    }
-
-    return NextResponse.json({ success: false, error: 'Missing query parameters' }, { status: 400 });
-  } catch (error) {
-    // console.error('GET API Error:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to fetch data' },
-      { status: 500 }
-    );
-  }
+// ❌ Disable direct GET on /api/gk
+export async function GET() {
+  return NextResponse.json({ success: false, error: 'Use specific endpoints' }, { status: 405 });
 }

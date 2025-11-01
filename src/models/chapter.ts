@@ -24,8 +24,8 @@ const chapterSchema = new mongoose.Schema({
   },
   size: {
     type: Number,
-    required: false, // <-- Change here
-    default: 0,      // <-- Default value for url-only case
+    required: false, 
+    default: 0,      
   },
   uploadedAt: {
     type: Date,

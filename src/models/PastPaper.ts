@@ -1,3 +1,4 @@
+// src/models/PastPaper.ts
 import mongoose from 'mongoose';
 
 const PastPaperSchema = new mongoose.Schema({
@@ -6,6 +7,7 @@ const PastPaperSchema = new mongoose.Schema({
   subject: { type: String, required: true }, // Physics, Chemistry, etc.
   year: { type: String, required: true }, // Year of the paper
   pdfUrl: { type: String, required: true }, // Cloudinary URL
+  
 });
 
 const PastPaper = mongoose.models.PastPaper || mongoose.model('PastPaper', PastPaperSchema);
