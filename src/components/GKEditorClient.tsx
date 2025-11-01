@@ -1,10 +1,39 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
-interface Props { }
+export default function GKEditorClient() {
+  const router = useRouter();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-export default function GKEditorClient({ }: Props) {
+  // ✅ Check login status on mount
+  useEffect(() => {
+    const loggedIn = localStorage.getItem('admin_logged_in');
+    if (loggedIn === 'true') {
+      setIsLoggedIn(true);
+    } else {
+      router.push('/admin/login');
+    }
+  }, [router]);
+
+  // ✅ Logout system (clears cookie + localStorage)
+  const handleLogout = async () => {
+    try {
+      setIsLoggingOut(true);
+      await fetch('/api/admin/logout', { method: 'POST' }); // Backend logout
+      localStorage.removeItem('admin_logged_in'); // Remove frontend flag
+      setIsLoggedIn(false);
+      router.push('/admin/login');
+    } catch (err) {
+      console.error('Logout failed', err);
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
+
+  // === Existing editor states ===
   const [topic, setTopic] = useState('current-affairs');
   const [subtopic, setSubtopic] = useState('national-affairs');
   const [name, setName] = useState('example-subsub');
@@ -14,6 +43,8 @@ export default function GKEditorClient({ }: Props) {
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [lastSaved, setLastSaved] = useState<any | null>(null);
+
+  // ✅ Save content to server
   const handleSave = async () => {
     setLoading(true);
     setMsg(null);
@@ -28,83 +59,225 @@ export default function GKEditorClient({ }: Props) {
         body: JSON.stringify(payload),
       });
       const data = await res.json();
+
       if (data.success) {
-        setMsg('Saved successfully');
+        setMsg('✅ Saved successfully');
         setLastSaved(data.item || null);
       } else {
-        setMsg('Failed: ' + (data.error || 'unknown'));
-        setLastSaved(data || null);
+        setMsg('❌ Failed: ' + (data.error || 'unknown'));
       }
-    } catch (err) {
-      setMsg('Error saving');
+    } catch {
+      setMsg('⚠️ Error saving');
     } finally {
       setLoading(false);
     }
   };
 
+  if (!isLoggedIn) return null;
+
   return (
-    <div style={{ maxWidth: 900, margin: '0 auto', padding: 20 }}>
-      <h2>GK Admin Editor</h2>
-      <div style={{ marginBottom: 8 }}>
-        <label>Topic (slug): </label>
+    <div className="editor-container">
+      <div className="editor-header">
+        <h2 className="editor-title">GK Admin Editor</h2>
+        <button onClick={handleLogout} disabled={isLoggingOut} className="logout-btn">
+          {isLoggingOut ? 'Logging out...' : '🚪 Logout'}
+        </button>
+      </div>
+
+      {/* === Form === */}
+      <div className="form-group">
+        <label>Topic (slug):</label>
         <input value={topic} onChange={(e) => setTopic(e.target.value)} />
       </div>
-      <div style={{ marginBottom: 8 }}>
-        <label>Subtopic (slug): </label>
+
+      <div className="form-group">
+        <label>Subtopic (slug):</label>
         <input value={subtopic} onChange={(e) => setSubtopic(e.target.value)} />
       </div>
-      <div style={{ marginBottom: 8 }}>
-        <label>Sub-subtopic name (slug): </label>
+
+      <div className="form-group">
+        <label>Sub-subtopic name (slug):</label>
         <input value={name} onChange={(e) => setName(e.target.value)} />
       </div>
-      <div style={{ marginBottom: 8 }}>
+
+      <div className="form-group">
         <label>Display Name:</label>
         <input
           type="text"
           value={displayName}
           onChange={(e) => setDisplayName(e.target.value)}
         />
-
       </div>
-      <div style={{ marginBottom: 8 }}>
+
+      <div className="form-group">
         <label>Order (1 = first):</label>
         <input
           type="number"
           min={1}
           value={order}
-          onChange={(e) => setOrder(e.target.value === '' ? '' : Number(e.target.value))}
-          style={{ width: 120 }}
+          onChange={(e) =>
+            setOrder(e.target.value === '' ? '' : Number(e.target.value))
+          }
+          style={{ width: '120px' }}
         />
-        <div style={{ fontSize: 12, color: '#666' }}>Lower numbers appear first. Leave blank to auto-append.</div>
+        <small>Lower numbers appear first. Leave blank to auto-append.</small>
       </div>
-      <div style={{ marginBottom: 8 }}>
+
+      <div className="form-group">
         <label>HTML Content:</label>
-        <textarea rows={12} style={{ width: '100%' }} value={html} onChange={(e) => setHtml(e.target.value)} />
+        <textarea rows={10} value={html} onChange={(e) => setHtml(e.target.value)} />
       </div>
 
-      <div style={{ display: 'flex', gap: 8 }}>
+      {/* === Buttons === */}
+      <div className="button-group">
         <button onClick={handleSave} disabled={loading}>
-          {loading ? 'Saving...' : 'Save'}
+          {loading ? 'Saving...' : '💾 Save'}
         </button>
-        <button onClick={() => navigator.clipboard?.writeText(html)}>Copy HTML</button>
-        <button onClick={() => setHtml('')}>Clear</button>
+        <button onClick={() => navigator.clipboard?.writeText(html)}>📋 Copy HTML</button>
+        <button onClick={() => setHtml('')}>🧹 Clear</button>
       </div>
 
-      {msg && <p style={{ marginTop: 12 }}>{msg}</p>}
+      {msg && <p className="status-msg">{msg}</p>}
 
       {lastSaved && (
-        <div style={{ marginTop: 12 }}>
+        <div className="response-box">
           <h4>Server response (saved item):</h4>
-          <pre style={{ whiteSpace: 'pre-wrap', background: '#fafafa', padding: 8, border: '1px solid #eee' }}>
-            {JSON.stringify(lastSaved, null, 2)}
-          </pre>
+          <pre>{JSON.stringify(lastSaved, null, 2)}</pre>
         </div>
       )}
 
-      <div style={{ marginTop: 20 }}>
+      <div className="preview-box">
         <h3>Preview</h3>
-        <div dangerouslySetInnerHTML={{ __html: html }} style={{ border: '1px solid #eee', padding: 10 }} />
+        <div
+          className="preview-content"
+          dangerouslySetInnerHTML={{ __html: html }}
+        />
       </div>
+
+      {/* ✅ Styles */}
+      <style jsx>{`
+        .editor-container {
+          max-width: 900px;
+          margin: 0 auto;
+          padding: 20px;
+          background: #fff;
+          border-radius: 8px;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .editor-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 20px;
+        }
+
+        .editor-title {
+          font-size: 24px;
+          color: #333;
+          margin: 0;
+        }
+
+        .logout-btn {
+          background-color: #dc3545;
+          color: white;
+          border: none;
+          border-radius: 6px;
+          padding: 8px 14px;
+          cursor: pointer;
+          font-size: 15px;
+          transition: background 0.2s;
+        }
+        .logout-btn:hover {
+          background-color: #c82333;
+        }
+
+        .form-group {
+          margin-bottom: 16px;
+          display: flex;
+          flex-direction: column;
+        }
+
+        label {
+          font-weight: 600;
+          margin-bottom: 6px;
+        }
+
+        input,
+        textarea {
+          padding: 10px;
+          font-size: 15px;
+          border: 1px solid #ccc;
+          border-radius: 6px;
+        }
+
+        .button-group {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 10px;
+          margin-top: 12px;
+        }
+
+        button {
+          flex: 1;
+          min-width: 100px;
+          padding: 10px;
+          font-size: 15px;
+          border: none;
+          border-radius: 6px;
+          cursor: pointer;
+        }
+
+        button:nth-child(1) {
+          background-color: #007bff;
+          color: white;
+        }
+
+        button:nth-child(2) {
+          background-color: #28a745;
+          color: white;
+        }
+
+        button:nth-child(3) {
+          background-color: #ffc107;
+          color: #222;
+        }
+
+        .status-msg {
+          margin-top: 12px;
+          font-weight: 600;
+        }
+
+        .preview-box {
+          margin-top: 30px;
+          border-top: 2px solid #eee;
+          padding-top: 10px;
+        }
+
+        .preview-content {
+          border: 1px solid #ddd;
+          padding: 12px;
+          border-radius: 6px;
+        }
+
+        /* ✅ Mobile */
+        @media (max-width: 600px) {
+          .editor-title {
+            font-size: 20px;
+          }
+          .editor-container {
+            padding: 15px;
+          }
+          .editor-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+          }
+          .logout-btn {
+            align-self: flex-end;
+          }
+        }
+      `}</style>
     </div>
   );
 }

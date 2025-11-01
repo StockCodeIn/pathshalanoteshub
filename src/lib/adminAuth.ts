@@ -1,3 +1,4 @@
+// src/lib/adminAuth.ts
 import crypto from 'crypto';
 
 const SEP = '.';
