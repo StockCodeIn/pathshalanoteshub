@@ -9,22 +9,30 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, error: 'Invalid credentials' }, { status: 401 });
     }
 
-  // create token
-  const token = createAdminToken(process.env.GK_ADMIN_KEY || '', 60 * 60); // 1 hour
+    // ✅ Generate token (ensure it is string)
+    const token = await Promise.resolve(
+      createAdminToken(process.env.GK_ADMIN_KEY || '', 60 * 60)
+    );
 
-  const res = NextResponse.json({ success: true });
+    const res = NextResponse.json({ success: true });
 
-  // Set cookie options: add Secure in production and keep SameSite=Lax for normal flows.
-  // If your production site requires cross-site cookies (e.g., different domain), change SameSite to 'None' and include 'Secure'.
-  const isProd = process.env.NODE_ENV === 'production';
-  const cookieParts = [`admin_token=${encodeURIComponent(token)}`, 'HttpOnly', 'Path=/', `Max-Age=3600`];
-  // Use Lax by default; can be switched to 'None' if cross-site behavior is needed
-  cookieParts.push('SameSite=Lax');
-  if (isProd) cookieParts.push('Secure');
+    // ✅ Cookie settings
+    const isProd = process.env.NODE_ENV === 'production';
+    const cookieParts = [
+      `admin_token=${encodeURIComponent(token)}`,
+      'HttpOnly',
+      'Path=/',
+      'Max-Age=3600',
+    ];
 
-  res.headers.append('Set-Cookie', cookieParts.join('; '));
-  return res;
+    cookieParts.push('SameSite=Lax');
+    if (isProd) cookieParts.push('Secure');
+
+    res.headers.append('Set-Cookie', cookieParts.join('; '));
+
+    return res;
   } catch (err) {
+    console.error('Login route error:', err);
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
   }
 }

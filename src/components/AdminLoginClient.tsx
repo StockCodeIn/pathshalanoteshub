@@ -1,3 +1,4 @@
+// src/components/AdminLoginClient.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -8,12 +9,21 @@ export default function AdminLoginClient() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loggedIn = localStorage.getItem('admin_logged_in');
-    if (loggedIn === 'true') {
-      // ✅ Already logged in, redirect to editor
-      window.location.href = '/admin/gk-editor';
-    }
-  }, []);
+  const loggedIn = localStorage.getItem('admin_logged_in');
+  if (loggedIn === 'true') {
+    // ✅ Check if token is still valid by calling a protected API
+    fetch('/api/admin/check', { method: 'GET' })
+      .then((res) => {
+        if (res.ok) {
+          window.location.href = '/admin/gk-editor';
+        } else {
+          localStorage.removeItem('admin_logged_in'); // token invalid
+        }
+      })
+      .catch(() => localStorage.removeItem('admin_logged_in'));
+  }
+}, []);
+
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();

@@ -1,3 +1,4 @@
+// src/app/api/gk/debug/route.ts
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import GK from '@/models/gk';
