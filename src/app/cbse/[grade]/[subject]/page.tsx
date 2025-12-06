@@ -1,7 +1,9 @@
+// src/app/cbse/[grade]/[subject]/page.tsx
 import Link from "next/link";
 import { subjects } from "@/config/subjects";
 import styles from "@/styles/Home.module.css";
 import type { Metadata } from "next";
+import AdsenseAd from "@/components/AdsenseAd"; // <-- import the ad component
 
 interface PageProps {
   params: Promise<{
@@ -10,7 +12,8 @@ interface PageProps {
   }>;
 }
 
-// ✅ Metadata for SEO
+// ... generateMetadata and generateStaticParams unchanged (keep your existing functions) ...
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { grade, subject } = await params;
   const subjectName =
@@ -28,7 +31,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-// ✅ Static params generate karne ka function
 export async function generateStaticParams() {
   const params = [];
   for (const grade of Object.keys(subjects)) {
@@ -42,7 +44,6 @@ export async function generateStaticParams() {
   return params;
 }
 
-// ✅ Main Page Component
 export default async function CBSESubjectPage({ params }: PageProps) {
   const gradeValue = (await params).grade;
   const subjectId = (await params).subject;
@@ -73,22 +74,36 @@ export default async function CBSESubjectPage({ params }: PageProps) {
         </div>
       </section>
 
+      {/* ===== Top in-article ad (just after hero) ===== */}
+      <div style={{ margin: "1rem 0" }}>
+        <AdsenseAd slot="4962547015" />
+        {/* Replace SLOT_LISTING_TOP with your real ad slot id */}
+      </div>
+
       {/* ✅ Chapter Cards */}
       <div className={styles.cardContainer2}>
         {subject.chapters.map((chapter, index) => (
-          <Link
-            key={index}
-            href={`/cbse/${gradeValue}/${subjectId}/${index + 1}`}
-            className={styles.card2}
-          >
-            {/* <span className={styles.cardIcon}>📘</span> */}
-            <h3>Chapter {index + 1}</h3>
-            <p>
-              {chapter.split(" ").length > 5
-                ? chapter.split(" ").slice(0, 5).join(" ") + "..."
-                : chapter}
-            </p>
-          </Link>
+          <div key={index} style={{ width: "100%" }}>
+            <Link
+              href={`/cbse/${gradeValue}/${subjectId}/${index + 1}`}
+              className={styles.card2}
+            >
+              <h3>Chapter {index + 1}</h3>
+              <p>
+                {chapter.split(" ").length > 5
+                  ? chapter.split(" ").slice(0, 5).join(" ") + "..."
+                  : chapter}
+              </p>
+            </Link>
+
+            {/* ===== Mid-list ad: insert AFTER the 6th chapter (index === 5) ===== */}
+            {index === 5 && (
+              <div style={{ margin: "1.25rem 0" }}>
+                <AdsenseAd slot="9855958653" />
+                {/* Replace SLOT_LISTING_INSET with your real ad slot id */}
+              </div>
+            )}
+          </div>
         ))}
       </div>
 
@@ -101,6 +116,12 @@ export default async function CBSESubjectPage({ params }: PageProps) {
           <li>✔ Helps in board exam preparation</li>
         </ul>
       </section>
+
+      {/* ===== Footer multiplex ad (end of page) ===== */}
+      <div style={{ marginTop: "2rem", marginBottom: "2rem" }}>
+        <AdsenseAd slot="7421367001" />
+        {/* Replace SLOT_FOOTER_MULTIPLEX with your real ad slot id */}
+      </div>
     </main>
   );
 }

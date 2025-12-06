@@ -6,11 +6,6 @@ import Attribution from '@/components/Attribution';
 import connectDB from '@/lib/mongodb';
 import GK from '@/models/gk';
 
-// 🔥 always fresh data (no caching)
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
-export const fetchCache = 'force-no-store';
-
 interface PageProps {
   params: Promise<{ topic: string }>;
 }

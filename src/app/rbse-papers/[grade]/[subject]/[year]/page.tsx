@@ -3,6 +3,8 @@ import PastPaper from "@/models/PastPaper";
 import Link from "next/link";
 import styles from "@/styles/Home.module.css";
 import type { Metadata } from "next";
+import OpenPaperButtonClient from "@/components/OpenPaperButtonClient";
+
 
 interface PageProps {
   params: Promise<{ grade: string; subject: string; year: string }>;
@@ -77,22 +79,16 @@ export default async function RBSEPaperViewerPage({ params }: PageProps) {
             RBSE Class {grade} - {subject} - {year} Question Paper
           </h1>
           <p>
-            Access the official RBSE {subject} question paper for Class {grade} ({year}) in PDF format. 
+            Access the official RBSE {subject} question paper for Class {grade} ({year}) in PDF format.
             Perfect for exam practice and understanding the board exam pattern.
           </p>
         </div>
       </section>
 
       <div className={styles.downloadSection}>
-        <a
-          href={paper.pdfUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={styles.ctaDownloadButton}
-        >
-          📄 View / Download Question Paper
-        </a>
+        <OpenPaperButtonClient url={paper.pdfUrl} label={`${subject} ${year} Paper`} />
       </div>
+
 
       <section className={styles.trust}>
         <h2>Why Practice RBSE Past Papers?</h2>

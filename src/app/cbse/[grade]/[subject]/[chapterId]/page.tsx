@@ -4,6 +4,8 @@ import { Chapter } from '@/models/chapter';
 import styles from '@/styles/Home.module.css';
 import PDFViewerWrapper from '@/components/PDFViewerWrapper';
 import type { Metadata } from "next";
+import AdsenseAd from "@/components/AdsenseAd";
+
 
 export const dynamic = "force-dynamic"; // ⬅ Live updates के लिए ज़रूरी
 
@@ -81,19 +83,32 @@ export default async function CBSECHAPTERPage({ params }: PageProps) {
           </p>
         </div>
       </section>
+      {/* After hero */}
+      <AdsenseAd slot="3294419739" />
+
 
       {/*  PDF Viewer / Extracted HTML */}
       <section className="container">
         {chapterData.extractedHtml ? (
-          <article className="prose" dangerouslySetInnerHTML={{ __html: chapterData.extractedHtml }} />
+          <>
+            <article className="prose" dangerouslySetInnerHTML={{ __html: chapterData.extractedHtml }} />
+            <div style={{ margin: "1rem 0" }}>
+              <AdsenseAd slot="8355174726" />
+            </div>
+          </>
         ) : (
-          <PDFViewerWrapper
-            url={chapterData.pdfUrl}
-            title={chapterData.name}
-            board={chapterData.board}
-            grade={chapterData.grade}
-            subject={chapterData.subject}
-          />
+          <>
+            <PDFViewerWrapper
+              url={chapterData.pdfUrl}
+              title={chapterData.name}
+              board={chapterData.board}
+              grade={chapterData.grade}
+              subject={chapterData.subject}
+            />
+            <div style={{ margin: "1rem 0" }}>
+              <AdsenseAd slot="7612938696" />
+            </div>
+          </>
         )}
       </section>
 
@@ -106,6 +121,8 @@ export default async function CBSECHAPTERPage({ params }: PageProps) {
           <li>✔ Helps you score high in board exams</li>
         </ul>
       </section>
+      <AdsenseAd slot="7421367001" />
+
     </main>
   );
 }

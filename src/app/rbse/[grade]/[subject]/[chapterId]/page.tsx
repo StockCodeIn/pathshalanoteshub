@@ -4,6 +4,8 @@ import { Chapter } from "@/models/chapter";
 import styles from "@/styles/Home.module.css";
 import PDFViewerWrapper from "@/components/PDFViewerWrapper";
 import type { Metadata } from "next";
+import AdsenseAd from "@/components/AdsenseAd";
+
 
 export const dynamic = "force-dynamic"; // ⬅ live update support
 
@@ -71,28 +73,41 @@ export default async function RBSEChapterPage({ params }: PageProps) {
       <section className={styles.hero}>
         <div className={styles.heroContent}>
           <h1>
-            RBSE Class {grade} - {subject}  
+            RBSE Class {grade} - {subject}
             <br /> Chapter {chapterData.name}
           </h1>
           <p>
-            Free RBSE Class {grade} {subject} notes for Chapter {chapterData.name}.  
+            Free RBSE Class {grade} {subject} notes for Chapter {chapterData.name}.
             Download and study in PDF format to prepare better for your board exams.
           </p>
         </div>
       </section>
+      {/* After hero */}
+      <AdsenseAd slot="3928666945" />
+
 
       {/*  PDF Viewer / Extracted HTML */}
       <div className="container" style={{ marginTop: "2rem" }}>
         {chapterData.extractedHtml ? (
-          <article className="prose" dangerouslySetInnerHTML={{ __html: chapterData.extractedHtml }} />
+          <>
+            <article className="prose" dangerouslySetInnerHTML={{ __html: chapterData.extractedHtml }} />
+            <div style={{ margin: "1rem 0" }}>
+              <AdsenseAd slot="4412060289" />
+            </div>
+          </>
         ) : (
-          <PDFViewerWrapper
-            url={chapterData.pdfUrl}
-            title={chapterData.name}
-            board={chapterData.board}
-            grade={chapterData.grade}
-            subject={chapterData.subject}
-          />
+          <>
+            <PDFViewerWrapper
+              url={chapterData.pdfUrl}
+              title={chapterData.name}
+              board={chapterData.board}
+              grade={chapterData.grade}
+              subject={chapterData.subject}
+            />
+            <div style={{ margin: "1rem 0" }}>
+              <AdsenseAd slot="9472815276" />
+            </div>
+          </>
         )}
       </div>
 
@@ -108,6 +123,8 @@ export default async function RBSEChapterPage({ params }: PageProps) {
           📌 All notes are collected and organized chapter-wise for Class {grade} {subject}.
         </p>
       </section>
+      <AdsenseAd slot="5729011389" />
+
     </main>
   );
 }

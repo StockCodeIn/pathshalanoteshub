@@ -2,6 +2,7 @@ import Link from "next/link";
 import { subjects } from "@/config/subjects";
 import styles from "@/styles/Home.module.css";
 import type { Metadata } from "next";
+import AdsenseAd from "@/components/AdsenseAd"; // <-- import the ad component
 
 interface PageProps {
   params: Promise<{
@@ -72,23 +73,39 @@ export default async function RBSESubjectPage({ params }: PageProps) {
         </div>
       </section>
 
+      {/* ===== Top in-article ad (just after hero) ===== */}
+      <div style={{ margin: "1rem 0" }}>
+        <AdsenseAd slot="2863174890" />
+        {/* Replace SLOT_LISTING_TOP with your real ad slot id */}
+      </div>
+
       {/* ✅ Chapters Section */}
       <h2 className={styles.sectionTitle}>Available Chapters</h2>
       <div className={styles.cardContainer2}>
         {subjectData.chapters.map((chapter, index) => (
-          <Link
-            key={index}
-            href={`/rbse/${grade}/${subject}/${index + 1}`}
-            className={styles.card2}
-          >
-            {/* <span className={styles.cardIcon}>📖</span> */}
-            <h3>Chapter {index + 1}</h3>
-            <p>
-              {chapter.split(" ").length > 5
-                ? chapter.split(" ").slice(0, 5).join(" ") + "..."
-                : chapter}
-            </p>
-          </Link>
+          <div key={index} style={{ width: "100%" }}>
+            <Link
+              key={index}
+              href={`/rbse/${grade}/${subject}/${index + 1}`}
+              className={styles.card2}
+            >
+              {/* <span className={styles.cardIcon}>📖</span> */}
+              <h3>Chapter {index + 1}</h3>
+              <p>
+                {chapter.split(" ").length > 5
+                  ? chapter.split(" ").slice(0, 5).join(" ") + "..."
+                  : chapter}
+              </p>
+            </Link>
+            {/* ===== Mid-list ad: insert AFTER the 6th chapter (index === 5) ===== */}
+            {index === 5 && (
+              <div style={{ margin: "1.25rem 0" }}>
+                <AdsenseAd slot="2863174890" />
+                {/* Replace SLOT_LISTING_INSET with your real ad slot id */}
+              </div>
+            )}
+          </div>
+
         ))}
       </div>
 
@@ -101,6 +118,12 @@ export default async function RBSESubjectPage({ params }: PageProps) {
           <li>✔ Helps in exam preparation with organized content</li>
         </ul>
       </section>
+      
+      {/* ===== Footer multiplex ad (end of page) ===== */}
+            <div style={{ marginTop: "2rem", marginBottom: "2rem" }}>
+              <AdsenseAd slot="7484768575" />
+              {/* Replace SLOT_FOOTER_MULTIPLEX with your real ad slot id */}
+            </div>
     </main>
   );
 }

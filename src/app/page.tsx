@@ -2,6 +2,8 @@ import Link from "next/link";
 import Script from "next/script";
 import styles from "@/styles/Home.module.css";
 import type { Metadata } from "next";
+import AdsenseAd from "@/components/AdsenseAd";
+
 
 // ✅ SEO Metadata
 export const metadata: Metadata = {
@@ -100,7 +102,7 @@ const subjectsData = [
     title: "CBSE 12 Mathematics",
     description: "Chapter-wise + PYQs",
   },
-  
+
   {
     href: "/cbse/12/physics",
     title: "CBSE 12 Physics",
@@ -135,9 +137,9 @@ const faqData = [
     a: "Currently, we provide study material for RBSE (Rajasthan Board) and CBSE (Central Board of Secondary Education).",
   },
   {
-  "q": "Is Indian GK content useful for exams?",
-  "a": "Yes, our Indian GK notes cover important topics for board exams and various competitive exams in India."
-},
+    "q": "Is Indian GK content useful for exams?",
+    "a": "Yes, our Indian GK notes cover important topics for board exams and various competitive exams in India."
+  },
 
 ];
 
@@ -149,7 +151,7 @@ export default function Home() {
         <div className={styles.heroContent}>
           <h1>Pathshala Notes Hub</h1>
           <p>
-             Trusted by thousands of students for <strong>RBSE & CBSE Board Exam Preparation</strong> and <strong>Indian GK</strong>. Free notes, old papers, and study guides for Class 10 & 12.
+            Trusted by thousands of students for <strong>RBSE & CBSE Board Exam Preparation</strong> and <strong>Indian GK</strong>. Free notes, old papers, and study guides for Class 10 & 12.
           </p>
           <div className={styles.heroButtons}>
             <Link href="/rbse" className={styles.ctaButton}>
@@ -162,6 +164,10 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Top banner ad */}
+      <AdsenseAd slot="SLOT_TOP_BANNER" className={styles.adTop} />
+
+
       {/* ✅ Boards Section */}
       <h2 className={styles.sectionTitle}>RBSE & CBSE Notes</h2>
       <ul className={styles.listContainer}>
@@ -171,6 +177,11 @@ export default function Home() {
               <h3>{board.title}</h3>
               <p>{board.description}</p>
             </Link>
+            {i === 1 && (
+              <div style={{ margin: "1rem 0" }}>
+                <AdsenseAd slot="SLOT_LISTING_INSET" />
+              </div>
+            )}
           </li>
         ))}
       </ul>
@@ -197,6 +208,12 @@ export default function Home() {
           </Link>
         ))}
       </div>
+
+      {/* Mid page ad */}
+      <div style={{ margin: "1.5rem 0" }}>
+        <AdsenseAd slot="SLOT_MID_PAGE" />
+      </div>
+
 
       {/* ✅ Trust Section */}
       <section className={styles.trust}>
@@ -240,6 +257,12 @@ export default function Home() {
           }),
         }}
       />
+
+      {/* Footer multiplex */}
+      <div style={{ marginTop: "2rem" }}>
+        <AdsenseAd slot="SLOT_FOOTER_MULTIPLEX" />
+      </div>
+
     </main>
   );
 }

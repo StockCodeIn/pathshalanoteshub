@@ -3,6 +3,9 @@
 const nextConfig = {
   reactStrictMode: true,
 
+  // Keep Turbopack config empty to avoid conflict with custom webpack
+  turbopack: {},
+
   // ⚙️ Custom webpack rule for pdf.worker
   webpack: (config) => {
     config.module.rules.push({

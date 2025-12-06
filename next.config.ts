@@ -10,6 +10,9 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   compress: true,
   generateEtags: false,
+  // keep an empty turbopack config so Next won't fail when Turbopack is enabled
+  // cast export to `any` below to avoid strict type errors for this key
+  turbopack: {},
 };
 
-export default nextConfig;
+export default nextConfig as any;
