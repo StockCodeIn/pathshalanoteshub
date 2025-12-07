@@ -84,7 +84,9 @@ export default async function CBSECHAPTERPage({ params }: PageProps) {
         </div>
       </section>
       {/* After hero */}
-      <AdsenseAd slot="3294419739" />
+      <div className="ad-block">
+        <AdsenseAd slot="3294419739" />
+      </div>
 
 
       {/*  PDF Viewer / Extracted HTML */}
@@ -92,7 +94,7 @@ export default async function CBSECHAPTERPage({ params }: PageProps) {
         {chapterData.extractedHtml ? (
           <>
             <article className="prose" dangerouslySetInnerHTML={{ __html: chapterData.extractedHtml }} />
-            <div style={{ margin: "1rem 0" }}>
+            <div className="ad-block">
               <AdsenseAd slot="8355174726" />
             </div>
           </>
@@ -105,7 +107,7 @@ export default async function CBSECHAPTERPage({ params }: PageProps) {
               grade={chapterData.grade}
               subject={chapterData.subject}
             />
-            <div style={{ margin: "1rem 0" }}>
+            <div className="ad-block">
               <AdsenseAd slot="7612938696" />
             </div>
           </>
@@ -121,7 +123,9 @@ export default async function CBSECHAPTERPage({ params }: PageProps) {
           <li>✔ Helps you score high in board exams</li>
         </ul>
       </section>
-      <AdsenseAd slot="7421367001" />
+      <div className="ad-block">
+        <AdsenseAd slot="7421367001" />
+      </div>
 
     </main>
   );

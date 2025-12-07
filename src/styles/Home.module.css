@@ -29,7 +29,7 @@
   background: #facc15;
   color: #1e3a8a;
   padding: 0.6rem 1.2rem;
-  border-radius: 6px;
+  border-radius: 20px;
   text-decoration: none;
   font-weight: 600;
 }
@@ -43,7 +43,7 @@
   background: #36af95;
   color: #1e3a8a;
   padding: 0.6rem 1.2rem;
-  border-radius: 6px;
+  border-radius: 20px;
   text-decoration: none;
   font-weight: 600;
 }
@@ -53,10 +53,24 @@
   color: white;
 }
 
+.ctaButtonTertiary {
+  background: #5baad8;
+  color: #000000;
+  padding: 0.6rem 1.2rem;
+  border-radius: 20px;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.ctaButtonTertiary:hover {
+  background: #1e3a8a;
+  color: white;
+}
+
 /* Sections */
 .sectionTitle {
-  font-size: 1.4rem;
-  font-weight: 600;
+  font-size: 1.2rem;
+  font-weight: 700;
   margin: 2rem 1rem 1rem;
   color: #333;
 }
@@ -68,10 +82,10 @@
   gap: 1rem;
 }
 .listCard {
-  background: #fff;
+  background: #f7f7f7;
   border: 1px solid #eee;
   padding: 1rem;
-  border-radius: 8px;
+  border-radius: 20px;
   box-shadow: 0 3px 8px rgba(0,0,0,0.1);
   text-decoration: none;
   display: block;
@@ -93,28 +107,46 @@
 }
 
 /* Subjects Grid */
+/* Card Grid */
 .cardContainer2 {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1rem;
   margin: 1rem;
 }
+
+/* Card Style (same as Home Page) */
 .card2 {
-  background: #fff;
+  background: #f7f7f7;
   border: 1px solid #eee;
   padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  border-radius: 20px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
   text-decoration: none;
+  color: #333;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
+
+.card2:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+}
+
 .card2 h3 {
-  font-size: 1rem;
-  margin-bottom: 0.5rem;
+  margin: 0.5rem 0;
+  font-size: 1.2rem;
+  font-weight: 600;
 }
+
 .card2 p {
   font-size: 0.85rem;
-  color: #666;
+  color: #555;
 }
+
 
 /* Trust Section */
 .trust {
@@ -164,44 +196,6 @@
   color: #555;
 }
 
-/* Card Grid */
-.cardContainer2 {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1.5rem;
-  padding: 0 1rem 2rem 1rem;
-}
-
-/* Card Style (same as Home Page) */
-.card2 {
-  background: #fff;
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
-  text-decoration: none;
-  color: #333;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-.card2:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
-}
-
-.card2 h3 {
-  margin: 0.5rem 0;
-  font-size: 1.2rem;
-  font-weight: 600;
-}
-
-.card2 p {
-  font-size: 0.95rem;
-  color: #555;
-}
-
 /* Card Icon */
 .cardIcon {
   display: inline-block;
@@ -229,6 +223,54 @@
 
 .ctaDownloadButton:hover {
   background-color: #005bb5;
+}
+
+
+.aboutSection {
+  margin: 2.5rem auto;
+  padding: 1.5rem;
+  max-width: 900px;
+  background: linear-gradient(135deg, #f8f9ff, #eef2ff);
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  text-align: center;
+}
+
+.aboutSection h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+  color: #1f2933;
+}
+
+.aboutSection p {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #374151;
+}
+
+.aboutSection strong {
+  color: #4338ca;
+  font-weight: 600;
+}
+
+/* ✅ Mobile responsive */
+@media (max-width: 600px) {
+  .aboutSection {
+    padding: 1.2rem 1rem;
+  }
+
+  .aboutSection h2 {
+    font-size: 1.3rem;
+  }
+
+  .aboutSection p {
+    font-size: 0.95rem;
+  }
+
+  .ctaButtonTertiary {
+    padding: 1.4rem 1.2rem;
+  }
 }
 
 

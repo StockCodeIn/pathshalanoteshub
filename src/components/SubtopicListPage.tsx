@@ -27,7 +27,6 @@ export default function SubtopicListPage({ topicSlug }: Props) {
             href={`/gk/${topic.slug}/${sub.slug}`}
             key={sub.slug}
             className={styles.card2}
-            style={{ background: '#fff', color: '#333', border: '1px solid #eee' }}
           >
             <h3>{sub.title}</h3>
             <p>{sub.title} से जुड़े महत्वपूर्ण नोट्स</p>

@@ -48,14 +48,6 @@ export default function GKPageClient() {
               href={`/gk/${topic.slug}`}
               key={topic.slug}
               className={styles.card2}
-              style={{
-                background: '#fff',
-                color: '#222',
-                border: '1px solid #eee',
-                borderRadius: '12px',
-                boxShadow: '0 1px 6px rgba(0,0,0,0.05)',
-                transition: 'all 0.2s ease',
-              }}
             >
               <h3 style={{ fontSize: '1.1rem', marginBottom: '0.4rem' }}>{topic.title}</h3>
               <p style={{ color: '#666', fontSize: '0.9rem' }}>Explore {topic.title}</p>

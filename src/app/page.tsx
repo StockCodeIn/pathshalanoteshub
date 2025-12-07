@@ -4,40 +4,70 @@ import styles from "@/styles/Home.module.css";
 import type { Metadata } from "next";
 import AdsenseAd from "@/components/AdsenseAd";
 
-
 // ✅ SEO Metadata
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://www.pathshalanoteshub.in";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title:
-    "Pathshala Notes Hub - Free RBSE & CBSE Notes, Old Papers, Study Material",
+    "Pathshala Notes Hub - RBSE, CBSE Notes & Indian GK (Current Affairs, History, Polity)",
   description:
-    "Download free RBSE & CBSE class 10th and 12th notes, previous year question papers, Indian GK, study plans and time management tips. Perfect resource for board exam preparation.",
+    "Pathshala Notes Hub पर RBSE और CBSE कक्षा 10वीं व 12वीं के chapter-wise notes, previous year question papers, Indian GK (Current Affairs, History, Polity, Geography) और study material बिल्कुल free उपलब्ध है। बोर्ड परीक्षा और competitive exams की तैयारी के लिए उपयोगी सामग्री।",
   keywords: [
     "RBSE notes",
     "CBSE notes",
-    "Class 10 notes",
-    "Class 12 notes",
+    "RBSE class 10 notes",
+    "RBSE class 12 notes",
+    "CBSE class 10 notes",
+    "CBSE class 12 notes",
     "RBSE previous year papers",
+    "RBSE old papers",
     "CBSE study material",
     "Indian GK notes",
+    "Indian GK current affairs",
+    "Indian history notes",
+    "Indian polity notes",
+    "Indian geography notes",
+    "current affairs in Hindi",
+    "board exam notes",
+    "10th class notes RBSE",
+    "12th class notes RBSE",
+    "10th class notes CBSE",
+    "12th class notes CBSE",
   ],
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
-    title: 'Pathshala Notes Hub - Free RBSE & CBSE Notes & Indian GK',
+    title:
+      "Pathshala Notes Hub - Free RBSE & CBSE Notes, Old Papers & Indian GK",
     description:
-      "Free RBSE & CBSE notes for 10th & 12th, old papers, Indian GK and study resources.",
-    url:
-      process.env.NEXT_PUBLIC_SITE_URL ||
-      "https://www.pathshalanoteshub.in",
+      "Free RBSE & CBSE class 10th & 12th notes, previous year question papers, Indian GK (current affairs, history, polity, geography) and study resources for board & competitive exams.",
+    url: siteUrl,
     siteName: "Pathshala Notes Hub",
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Pathshala Notes Hub",
+        alt: "Pathshala Notes Hub - RBSE, CBSE & Indian GK Notes",
       },
     ],
     locale: "en_IN",
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title:
+      "Pathshala Notes Hub - RBSE, CBSE Notes & Indian GK (Current Affairs)",
+    description:
+      "RBSE & CBSE 10th/12th notes, old papers, Indian GK, current affairs और study resources एक ही जगह पर।",
+    images: ["/og-image.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 
@@ -45,18 +75,21 @@ export const metadata: Metadata = {
 const boardsData = [
   {
     href: "/rbse",
-    title: "RBSE Notes",
-    description: "Rajasthan Board of Secondary Education",
+    title: "RBSE Notes (Class 10 & 12)",
+    description:
+      "Rajasthan Board (RBSE) 10वीं व 12वीं के chapter-wise Hindi notes.",
   },
   {
     href: "/cbse",
-    title: "CBSE Notes",
-    description: "Central Board of Secondary Education",
+    title: "CBSE Notes (Class 10 & 12)",
+    description:
+      "CBSE 10th & 12th chapter-wise English notes.",
   },
   {
     href: "/rbse-papers",
-    title: "RBSE Old Papers",
-    description: "Previous years exam papers with solutions",
+    title: "RBSE Previous Year Question Papers",
+    description:
+      "RBSE 10वीं और 12वीं के पिछले 5 वर्षों के प्रश्न पत्र और उनके solutions.",
   },
 ];
 
@@ -64,83 +97,113 @@ const boardsData = [
 const subjectsData = [
   {
     href: "/rbse/10/mathematics",
-    title: "RBSE 10 Mathematics",
-    description: "Complete notes with examples",
+    title: "RBSE Class 10 Mathematics Notes",
+    description: "पूरे syllabus के chapter-wise notes और उदाहरण।",
   },
   {
     href: "/rbse/10/science",
-    title: "RBSE 10 Science",
-    description: "Easy and exam-focused notes",
+    title: "RBSE Class 10 Science Notes",
+    description: "Exam-focused और आसान भाषा में notes।",
   },
   {
     href: "/rbse/12/mathematics",
-    title: "RBSE 12 Mathematics",
-    description: "Chapter-wise notes",
+    title: "RBSE Class 12 Mathematics Notes",
+    description: "Chapter-wise theory + questions practice के लिए।",
   },
   {
     href: "/rbse/12/physics",
-    title: "RBSE 12 Physics",
-    description: "Well explained concepts + numericals",
+    title: "RBSE Class 12 Physics Notes",
+    description: "Concepts + numericals को आसान तरीके से समझाया गया है।",
   },
   {
     href: "/rbse/12/chemistry",
-    title: "RBSE 12 Chemistry",
-    description: "Chapter-wise notes with diagrams",
+    title: "RBSE Class 12 Chemistry Notes",
+    description: "Chapter-wise notes, equations और diagrams के साथ।",
   },
   {
     href: "/cbse/10/mathematics",
-    title: "CBSE 10 Mathematics",
-    description: "Step-by-step solutions",
+    title: "CBSE Class 10 Mathematics Notes",
+    description: "Step-by-step solutions और important questions।",
   },
   {
     href: "/cbse/10/science",
-    title: "CBSE 10 Science",
-    description: "Detailed notes with NCERT ref",
+    title: "CBSE Class 10 Science Notes",
+    description: "Detailed notes with NCERT reference points।",
   },
   {
     href: "/cbse/12/mathematics",
-    title: "CBSE 12 Mathematics",
-    description: "Chapter-wise + PYQs",
+    title: "CBSE Class 12 Mathematics Notes",
+    description: "Chapter-wise theory, examples और PYQs।",
   },
-
   {
     href: "/cbse/12/physics",
-    title: "CBSE 12 Physics",
-    description: "Numerical + Theory Notes",
+    title: "CBSE Class 12 Physics Notes",
+    description: "Numerical + theory notes, exam point of view से।",
   },
   {
     href: "/cbse/12/chemistry",
-    title: "CBSE 12 Chemistry",
-    description: "Chapter Notes + Equations",
+    title: "CBSE Class 12 Chemistry Notes",
+    description: "Chapter notes, reactions और equations के साथ।",
+  },
+];
+
+// ✅ Indian GK & Current Affairs Data
+const gkData = [
+  {
+    href: "/gk/current-affairs",
+    title: "Current Affairs 2025",
+    description:
+      "Indian current affairs 2025 – daily और monthly updates, exams को ध्यान में रखकर।",
+  },
+  {
+    href: "/gk/indian-history",
+    title: "Indian History Notes",
+    description:
+      "प्राचीन, मध्यकालीन और आधुनिक भारत का इतिहास topic-wise notes के रूप में।",
+  },
+  {
+    href: "/gk/polity",
+    title: "Indian Polity Notes",
+    description:
+      "भारतीय संविधान, संसद, राष्ट्रपति, न्यायपालिका आदि से जुड़े महत्वपूर्ण टॉपिक।",
+  },
+  {
+    href: "/gk/geography",
+    title: "Indian Geography Notes",
+    description:
+      "भारत का भूगोल – नदियाँ, पर्वत, कृषि, जलवायु आदि पर विस्तृत notes।",
   },
 ];
 
 // Study Resources Data
 const studyResources = [
-  { href: "/study-plan", title: "Study Plan" },
-  { href: "/time-management", title: "Time Management" },
-  { href: "/gk", title: "Indian GK" },
+  { href: "/study-plan", title: "Study Plan (पढ़ाई की योजना)" },
+  { href: "/time-management", title: "Time Management (समय प्रबंधन टिप्स)" },
+  { href: "/gk", title: "Indian GK & Current Affairs" },
 ];
 
 // FAQ Data
 const faqData = [
   {
     q: "What is Pathshala Notes Hub?",
-    a: "It is a free platform providing RBSE & CBSE Class 10 and 12 notes, old papers, and study resources for board exam preparation.",
+    a: "Pathshala Notes Hub एक free online study platform है जहाँ RBSE और CBSE कक्षा 10 व 12 के notes, previous year question papers, Indian GK और study resources उपलब्ध हैं।",
   },
   {
-    q: "Are the notes free?",
-    a: "Yes, all notes and resources on Pathshala Notes Hub are completely free to access.",
+    q: "Are the notes and question papers free?",
+    a: "हाँ, Pathshala Notes Hub पर उपलब्ध सभी notes, question papers और Indian GK content पूरी तरह से free हैं।",
   },
   {
     q: "Which boards do you cover?",
-    a: "Currently, we provide study material for RBSE (Rajasthan Board) and CBSE (Central Board of Secondary Education).",
+    a: "हम फिलहाल RBSE (Rajasthan Board) और CBSE (Central Board of Secondary Education) के लिए class 10 और 12 के notes व question papers provide कर रहे हैं।",
   },
   {
-    "q": "Is Indian GK content useful for exams?",
-    "a": "Yes, our Indian GK notes cover important topics for board exams and various competitive exams in India."
+    q: "Is Indian GK content useful for exams?",
+    a: "हाँ, हमारा Indian GK content board exams, competitive exams (जैसे police, Patwari, सरकारी नौकरी की तैयारी) और सामान्य ज्ञान बढ़ाने के लिए helpful है।",
   },
-
+  {
+    q: "What type of Indian GK topics are covered?",
+    a: "हम Indian GK में Current Affairs, Indian History, Indian Polity, Indian Geography और अन्य महत्वपूर्ण विषयों को topic-wise notes के रूप में cover करते हैं।",
+  },
 ];
 
 export default function Home() {
@@ -149,27 +212,37 @@ export default function Home() {
       {/* ✅ Hero Section */}
       <section className={styles.hero}>
         <div className={styles.heroContent}>
-          <h1>Pathshala Notes Hub</h1>
+          <h1>Pathshala Notes Hub - RBSE, CBSE & Indian GK</h1>
           <p>
-            Trusted by thousands of students for <strong>RBSE & CBSE Board Exam Preparation</strong> and <strong>Indian GK</strong>. Free notes, old papers, and study guides for Class 10 & 12.
+            RBSE एवं CBSE बोर्ड परीक्षा की तैयारी के साथ-साथ{" "}
+            <strong>Indian GK, Current Affairs, History, Polity और Geography</strong> 
+            के लिए भरोसेमंद प्लेटफॉर्म। यहां पर आपको{" "}
+            <strong>Class 10 &amp; 12 notes, previous year question papers</strong> और{" "}
+            <strong>Indian GK topic-wise notes</strong> बिल्कुल free मिलते हैं।
           </p>
           <div className={styles.heroButtons}>
             <Link href="/rbse" className={styles.ctaButton}>
-              Explore RBSE
+              Explore RBSE Notes
             </Link>
             <Link href="/cbse" className={styles.ctaButtonSecondary}>
-              Explore CBSE
+              Explore CBSE Notes
+            </Link>
+          </div>
+          <div className={styles.heroButtons} style={{ marginTop: "0.75rem" }}>
+            <Link href="/gk" className={styles.ctaButtonTertiary}>
+              Explore Indian GK &amp; Current Affairs
             </Link>
           </div>
         </div>
       </section>
 
       {/* Top banner ad */}
-      <AdsenseAd slot="SLOT_TOP_BANNER" className={styles.adTop} />
-
+      <div className="ad-block">
+      <AdsenseAd slot="6017620145" />
+      </div>
 
       {/* ✅ Boards Section */}
-      <h2 className={styles.sectionTitle}>RBSE & CBSE Notes</h2>
+      <h2 className={styles.sectionTitle}>RBSE &amp; CBSE Notes / Question Papers</h2>
       <ul className={styles.listContainer}>
         {boardsData.map((board, i) => (
           <li key={i}>
@@ -177,17 +250,12 @@ export default function Home() {
               <h3>{board.title}</h3>
               <p>{board.description}</p>
             </Link>
-            {i === 1 && (
-              <div style={{ margin: "1rem 0" }}>
-                <AdsenseAd slot="SLOT_LISTING_INSET" />
-              </div>
-            )}
           </li>
         ))}
       </ul>
 
       {/* ✅ Study Resources Section */}
-      <h2 className={styles.sectionTitle}>Study Resources</h2>
+      <h2 className={styles.sectionTitle}>Study Resources &amp; Exam Guidance</h2>
       <ul className={styles.listContainer}>
         {studyResources.map((res, i) => (
           <li key={i}>
@@ -198,8 +266,19 @@ export default function Home() {
         ))}
       </ul>
 
+      {/* ✅ Indian GK & Current Affairs Section */}
+      <h2 className={styles.sectionTitle}>Indian GK, Current Affairs &amp; Static GK</h2>
+      <div className={styles.cardContainer2}>
+        {gkData.map((item, i) => (
+          <Link key={i} href={item.href} className={styles.card2}>
+            <h3>{item.title}</h3>
+            <p>{item.description}</p>
+          </Link>
+        ))}
+      </div>
+
       {/* ✅ Important Subjects */}
-      <h2 className={styles.sectionTitle}>Important Subjects</h2>
+      <h2 className={styles.sectionTitle}>Important Subjects for Class 10 &amp; 12</h2>
       <div className={styles.cardContainer2}>
         {subjectsData.map((sub, i) => (
           <Link key={i} href={sub.href} className={styles.card2}>
@@ -210,24 +289,24 @@ export default function Home() {
       </div>
 
       {/* Mid page ad */}
-      <div style={{ margin: "1.5rem 0" }}>
-        <AdsenseAd slot="SLOT_MID_PAGE" />
+      <div className="ad-block">
+        <AdsenseAd slot="5035533356" />
       </div>
-
 
       {/* ✅ Trust Section */}
       <section className={styles.trust}>
-        <h2>Why Students Trust Us?</h2>
+        <h2>Why Students Trust Pathshala Notes Hub?</h2>
         <ul>
-          <li>✔ 100% Free study resources</li>
-          <li>✔ Updated & Board-specific notes</li>
-          <li>✔ Student-friendly explanations</li>
+          <li>✔ 100% Free RBSE, CBSE और Indian GK study resources</li>
+          <li>✔ Board-specific, updated और exam-focused notes</li>
+          <li>✔ आसान भाषा में समझाए गए concepts और examples</li>
+          <li>✔ Indian GK के लिए Current Affairs + Static GK दोनों cover</li>
         </ul>
       </section>
 
       {/* ✅ FAQ Accordion */}
       <section className={styles.faq}>
-        <h2>Frequently Asked Questions</h2>
+        <h2>Frequently Asked Questions (FAQ)</h2>
         <div className={styles.faqList}>
           {faqData.map((faq, i) => (
             <details key={i} className={styles.faqItem}>
@@ -258,11 +337,66 @@ export default function Home() {
         }}
       />
 
-      {/* Footer multiplex */}
-      <div style={{ marginTop: "2rem" }}>
-        <AdsenseAd slot="SLOT_FOOTER_MULTIPLEX" />
-      </div>
+      {/* ✅ Website & Breadcrumb JSON-LD for better SEO */}
+      <Script
+        id="website-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: "Pathshala Notes Hub",
+            url: siteUrl,
+            potentialAction: {
+              "@type": "SearchAction",
+              target: `${siteUrl}/search?q={search_term_string}`,
+              "query-input": "required name=search_term_string",
+            },
+          }),
+        }}
+      />
 
+      <Script
+        id="breadcrumb-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "Home",
+                item: siteUrl,
+              },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "RBSE Notes",
+                item: `${siteUrl}/rbse`,
+              },
+              {
+                "@type": "ListItem",
+                position: 3,
+                name: "CBSE Notes",
+                item: `${siteUrl}/cbse`,
+              },
+              {
+                "@type": "ListItem",
+                position: 4,
+                name: "Indian GK",
+                item: `${siteUrl}/gk`,
+              },
+            ],
+          }),
+        }}
+      />
+
+      {/* Footer multiplex */}
+      <div className="ad-block">
+        <AdsenseAd slot="2409370012" />
+      </div>
     </main>
   );
 }

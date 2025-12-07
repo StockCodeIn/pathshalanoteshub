@@ -94,3 +94,15 @@ a {
   font-size: 2rem;
 }
 
+
+.ad-block {
+  margin: 0.75rem 0;
+}
+
+ins.adsbygoogle[data-ad-status="unfilled"] {
+  display: none !important;
+}
+
+/* Jab ad collapse ho jayega to parent div ki height almost 0 ho jayegi,
+   margin ke alawa kuch nahi rahega — agar gap zyada lag raha ho to
+   margins kam kar do: 0.75rem ya 0.5rem */

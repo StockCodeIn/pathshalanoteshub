@@ -83,7 +83,9 @@ export default async function RBSEChapterPage({ params }: PageProps) {
         </div>
       </section>
       {/* After hero */}
-      <AdsenseAd slot="3928666945" />
+      <div className="ad-block">
+        <AdsenseAd slot="3928666945" />
+      </div>
 
 
       {/*  PDF Viewer / Extracted HTML */}
@@ -91,7 +93,7 @@ export default async function RBSEChapterPage({ params }: PageProps) {
         {chapterData.extractedHtml ? (
           <>
             <article className="prose" dangerouslySetInnerHTML={{ __html: chapterData.extractedHtml }} />
-            <div style={{ margin: "1rem 0" }}>
+            <div className="ad-block">
               <AdsenseAd slot="4412060289" />
             </div>
           </>
@@ -104,7 +106,7 @@ export default async function RBSEChapterPage({ params }: PageProps) {
               grade={chapterData.grade}
               subject={chapterData.subject}
             />
-            <div style={{ margin: "1rem 0" }}>
+            <div className="ad-block">
               <AdsenseAd slot="9472815276" />
             </div>
           </>
@@ -123,8 +125,10 @@ export default async function RBSEChapterPage({ params }: PageProps) {
           📌 All notes are collected and organized chapter-wise for Class {grade} {subject}.
         </p>
       </section>
-      <AdsenseAd slot="5729011389" />
+      <div className="ad-block">
+        <AdsenseAd slot="5729011389" />
+      </div>
 
-    </main>
+    </main >
   );
 }

@@ -79,15 +79,6 @@ export default function SubsubListPage({ topic, subtopic }: Props) {
               href={`/gk/${encodeURIComponent(topic)}/${encodeURIComponent(subtopic)}/${encodeURIComponent(s.name)}`}
               key={s._id}
               className={styles.card2}
-              style={{
-                background: '#fff',
-                color: '#222',
-                border: '1px solid #eee',
-                padding: '1.25rem',
-                borderRadius: '12px',
-                textAlign: 'center',
-                transition: 'all 0.2s ease',
-              }}
             >
               <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 600 }}>{displayText}</h3>
               <p style={{ marginTop: 6, color: '#555', fontSize: '0.9rem' }}>

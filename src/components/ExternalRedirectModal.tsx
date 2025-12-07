@@ -103,7 +103,7 @@ export default function ExternalRedirectModal({ externalUrl, label = "Official s
               fontSize: 16,
             }}
           >
-            Proceed to Official Site {countdown > 0 ? `(${countdown}s)` : ""}
+            View Question Paper {countdown > 0 ? `(${countdown}s)` : ""}
           </button>
 
           <button
