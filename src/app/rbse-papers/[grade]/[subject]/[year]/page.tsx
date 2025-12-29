@@ -35,24 +35,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     },
   };
 }
-/* ------------------ STATIC PARAMS WITH ISR ------------------ */
-export async function generateStaticParams() {
-  await connectDB();
+/* Child paper pages: generated on-demand; parent year-list pages pre-generate listings */
 
-  const papers = await PastPaper.find(
-    { board: "RBSE" },
-    { grade: 1, subject: 1, year: 1 }
-  ).lean().limit(20); // Maximum 20 pages build time par
-
-  return papers.map((p) => ({
-    grade: p.grade,      // example: "10th"
-    subject: p.subject,  // example: "Hindi"
-    year: p.year,        // example: "2024"
-  }));
-}
-
-// ⏱️ Har 604800 seconds (7 days) baad revalidate hoga
-export const revalidate = 604800;
+// ⏱️ Har 86400 seconds (7 days) baad revalidate hoga
+export const revalidate = 604800; // 7 days
 
 // ✅ RBSE Paper Viewer Page
 export default async function RBSEPaperViewerPage({ params }: PageProps) {

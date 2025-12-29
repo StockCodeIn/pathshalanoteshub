@@ -41,6 +41,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
+// ✅ Static params (parent) - limited prebuild
+export async function generateStaticParams() {
+  await connectDB();
+  const items = await PastPaper.find({}, { grade: 1, subject: 1 }).lean().limit(60);
+  return items.map((p) => ({ grade: p.grade, subject: p.subject }));
+}
+
 // ✅ RBSE Past Papers Page (year-wise)
 export default async function RBSEPastPapersPage({ params }: PageProps) {
   const { grade, subject } = await params;
