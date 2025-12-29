@@ -1,3 +1,4 @@
+// src/app/gk/[topic]/[subtopic]/page.tsx
 import type { Metadata } from 'next';
 import styles from '@/styles/Home.module.css';
 import SubsubListPage from '@/components/SubsubListPage';
@@ -5,11 +6,6 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import Attribution from '@/components/Attribution';
 import connectDB from '@/lib/mongodb';
 import GK from '@/models/gk';
-
-// 🔥 always fresh data (no caching)
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
-export const fetchCache = 'force-no-store';
 
 interface PageProps {
   params: Promise<{
@@ -118,7 +114,7 @@ export default async function SubtopicPDFPage({ params }: PageProps) {
 
       {/* Breadcrumbs Navigation */}
       <section style={{ maxWidth: 900, margin: '1rem auto', padding: '0 1rem' }}>
-        <Breadcrumbs/>
+        <Breadcrumbs />
       </section>
 
       {/* GK Sub-Subtopics List */}
@@ -146,8 +142,9 @@ export default async function SubtopicPDFPage({ params }: PageProps) {
               name: 'Pathshala Notes Hub',
               logo: { '@type': 'ImageObject', url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/android-chrome-512x512.png` },
             },
-            datePublished: new Date().toISOString(),
+            datePublished: lastModified,
             dateModified: lastModified,
+
             mainEntityOfPage: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/gk/${topic}/${subtopic}`,
           }),
         }}

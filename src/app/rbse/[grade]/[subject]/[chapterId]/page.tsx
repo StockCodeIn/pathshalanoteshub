@@ -6,9 +6,6 @@ import PDFViewerWrapper from "@/components/PDFViewerWrapper";
 import type { Metadata } from "next";
 import AdsenseAd from "@/components/AdsenseAd";
 
-
-export const dynamic = "force-dynamic"; // ⬅ live update support
-
 interface PageProps {
   params: Promise<{
     grade: string;
@@ -24,24 +21,23 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: `RBSE Class ${grade} ${subject} - Chapter ${chapterId} Notes | Pathshala Notes Hub`,
     description: `Access RBSE Class ${grade} ${subject} Chapter ${chapterId} notes in PDF format. Free study material for exam preparation.`,
-    keywords: [
-      `RBSE Class ${grade} ${subject} chapter ${chapterId} notes`,
-      `RBSE ${subject} chapter ${chapterId} pdf`,
-      `RBSE Class ${grade} study material`,
-      "RBSE notes PDF",
-    ],
+    
   };
 }
 
 // ✅ Static params generate karne ka function
 export async function generateStaticParams() {
   await connectDB();
-  const chapters = await Chapter.find({ board: "RBSE" });
 
-  return chapters.map((chapter) => ({
-    grade: chapter.grade,
-    subject: chapter.subject,
-    chapterId: chapter.name,
+  const chapters = await Chapter.find(
+    { board: 'RBSE' },
+    { grade: 1, subject: 1, name: 1 }
+  ).lean();
+
+  return chapters.map((ch) => ({
+    grade: ch.grade,
+    subject: ch.subject,
+    chapterId: ch.name,
   }));
 }
 

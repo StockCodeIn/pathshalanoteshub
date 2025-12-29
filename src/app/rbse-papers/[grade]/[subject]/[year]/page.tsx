@@ -1,10 +1,10 @@
+// src/app/rbse-papers/[grade]/[subject]/[year]/page.tsx
 import connectDB from "@/lib/mongodb";
 import PastPaper from "@/models/PastPaper";
 import Link from "next/link";
 import styles from "@/styles/Home.module.css";
 import type { Metadata } from "next";
 import OpenPaperButtonClient from "@/components/OpenPaperButtonClient";
-
 
 interface PageProps {
   params: Promise<{ grade: string; subject: string; year: string }>;
@@ -13,33 +13,42 @@ interface PageProps {
 // ✅ Dynamic SEO Metadata
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { grade, subject, year } = await params;
-
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL;
   return {
     title: `RBSE Class ${grade} ${subject} Question Paper ${year} | Pathshala Notes Hub`,
     description: `Download RBSE Class ${grade} ${subject} ${year} question paper PDF. Practice past papers for better exam preparation.`,
     keywords: [
       `RBSE Class ${grade} ${subject} ${year} question paper`,
       `RBSE ${subject} ${year} PDF`,
-      `RBSE previous year papers`,
-      "RBSE past question papers",
+      "RBSE previous year papers",
     ],
+    alternates: {
+      canonical: `${baseUrl}/rbse-papers/${grade}/${subject}/${year}`,
+    },
     openGraph: {
       title: `RBSE Class ${grade} ${subject} Question Paper ${year}`,
-      description: `Access RBSE Class ${grade} ${subject} ${year} past paper PDF for free.`,
-      url: process.env.NEXT_PUBLIC_SITE_URL + `/rbse-papers/${grade}/${subject}/${year}`,
+      description: `Free RBSE Class ${grade} ${subject} ${year} past paper PDF.`,
+      url: `${baseUrl}/rbse-papers/${grade}/${subject}/${year}`,
       siteName: "Pathshala Notes Hub",
-      images: [
-        {
-          url: "/og-image.png",
-          width: 1200,
-          height: 630,
-          alt: `RBSE Class ${grade} ${subject} ${year} Paper`,
-        },
-      ],
       locale: "en_IN",
-      type: "website",
+      type: "article",
     },
   };
+}
+/* ------------------ STATIC PARAMS ------------------ */
+export async function generateStaticParams() {
+  await connectDB();
+
+  const papers = await PastPaper.find(
+    { board: "RBSE" },
+    { grade: 1, subject: 1, year: 1 }
+  ).lean();
+
+  return papers.map((p) => ({
+    grade: p.grade,      // example: "10th"
+    subject: p.subject,  // example: "Hindi"
+    year: p.year,        // example: "2024"
+  }));
 }
 
 // ✅ RBSE Paper Viewer Page
@@ -93,12 +102,12 @@ export default async function RBSEPaperViewerPage({ params }: PageProps) {
       <section className={styles.trust}>
         <h2>Why Practice RBSE Past Papers?</h2>
         <ul>
-          <li>✔ Understand exam pattern & marking scheme</li>
-          <li>✔ Identify important topics and questions</li>
-          <li>✔ Improve time management for exams</li>
+          <li>✔ Understand exam pattern</li>
+          <li>✔ Improve time management</li>
+          <li>✔ Identify important questions</li>
         </ul>
         <p>
-          📌 All papers sourced from official RBSE website (rajeduboard.rajasthan.gov.in).
+          📌 Papers sourced from official RBSE website.
         </p>
       </section>
     </main>

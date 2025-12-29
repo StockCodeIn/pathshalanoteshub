@@ -1,3 +1,4 @@
+// src/app/page.tsx
 import Link from "next/link";
 import Script from "next/script";
 import styles from "@/styles/Home.module.css";
@@ -9,61 +10,11 @@ const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL || "https://www.pathshalanoteshub.in";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
-  title:
-    "Pathshala Notes Hub - RBSE, CBSE Notes & Indian GK (Current Affairs, History, Polity)",
+  title: "Pathshala Notes Hub – RBSE, CBSE Notes & Indian GK",
   description:
-    "Pathshala Notes Hub पर RBSE और CBSE कक्षा 10वीं व 12वीं के chapter-wise notes, previous year question papers, Indian GK (Current Affairs, History, Polity, Geography) और study material बिल्कुल free उपलब्ध है। बोर्ड परीक्षा और competitive exams की तैयारी के लिए उपयोगी सामग्री।",
-  keywords: [
-    "RBSE notes",
-    "CBSE notes",
-    "RBSE class 10 notes",
-    "RBSE class 12 notes",
-    "CBSE class 10 notes",
-    "CBSE class 12 notes",
-    "RBSE previous year papers",
-    "RBSE old papers",
-    "CBSE study material",
-    "Indian GK notes",
-    "Indian GK current affairs",
-    "Indian history notes",
-    "Indian polity notes",
-    "Indian geography notes",
-    "current affairs in Hindi",
-    "board exam notes",
-    "10th class notes RBSE",
-    "12th class notes RBSE",
-    "10th class notes CBSE",
-    "12th class notes CBSE",
-  ],
+    "Pathshala Notes Hub provides free RBSE and CBSE Class 10 & 12 notes, previous year question papers, and Indian GK study material for board and competitive exam preparation.",
   alternates: {
-    canonical: "/",
-  },
-  openGraph: {
-    title:
-      "Pathshala Notes Hub - Free RBSE & CBSE Notes, Old Papers & Indian GK",
-    description:
-      "Free RBSE & CBSE class 10th & 12th notes, previous year question papers, Indian GK (current affairs, history, polity, geography) and study resources for board & competitive exams.",
-    url: siteUrl,
-    siteName: "Pathshala Notes Hub",
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "Pathshala Notes Hub - RBSE, CBSE & Indian GK Notes",
-      },
-    ],
-    locale: "en_IN",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title:
-      "Pathshala Notes Hub - RBSE, CBSE Notes & Indian GK (Current Affairs)",
-    description:
-      "RBSE & CBSE 10th/12th notes, old papers, Indian GK, current affairs और study resources एक ही जगह पर।",
-    images: ["/og-image.png"],
+    canonical: "https://www.pathshalanoteshub.in",
   },
   robots: {
     index: true,
@@ -236,10 +187,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Top banner ad */}
-      <div className="ad-block">
-      <AdsenseAd slot="6017620145" />
-      </div>
+      
 
       {/* ✅ Boards Section */}
       <h2 className={styles.sectionTitle}>RBSE &amp; CBSE Notes / Question Papers</h2>
@@ -253,6 +201,11 @@ export default function Home() {
           </li>
         ))}
       </ul>
+
+      {/* Top banner ad */}
+      <div className="ad-block">
+      <AdsenseAd slot="6017620145" />
+      </div>
 
       {/* ✅ Study Resources Section */}
       <h2 className={styles.sectionTitle}>Study Resources &amp; Exam Guidance</h2>

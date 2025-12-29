@@ -1,3 +1,4 @@
+// src/app/gk/[topic]/page.tsx
 import type { Metadata } from 'next';
 import SubtopicListPage from '@/components/SubtopicListPage';
 import styles from '@/styles/Home.module.css';
@@ -37,12 +38,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       type: 'article',
       locale: 'hi_IN',
     },
-    // canonical absolute url
     alternates: {
-      canonical:
-        process.env.NODE_ENV === 'production'
-          ? `${process.env.NEXT_PUBLIC_BASE_URL}/gk/${topic}`
-          : `http://localhost:3000/gk/${topic}`,
+      canonical: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/gk/${topic}`,
     },
   };
 }
@@ -53,11 +50,9 @@ export default async function GKTopicPage({ params }: PageProps) {
   const topicName = decodeURIComponent(topic).replace(/-/g, ' ');
 
   const baseUrl =
-    process.env.NODE_ENV === 'production'
-      ? process.env.NEXT_PUBLIC_BASE_URL
-      : 'http://localhost:3000';
+    process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
-  // ✅ Breadcrumb Schema for SEO
+  // ✅ Breadcrumb Schema
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -67,47 +62,48 @@ export default async function GKTopicPage({ params }: PageProps) {
       { '@type': 'ListItem', position: 3, name: topicName, item: `${baseUrl}/gk/${topic}` },
     ],
   };
-  // determine lastModified from DB (latest updatedAt for this topic)
+
+  // ✅ lastModified from DB
   let lastModified = new Date().toISOString();
   try {
     await connectDB();
     const latest = await GK.findOne({ topic }).sort({ updatedAt: -1 });
-    if (latest && latest.updatedAt) lastModified = new Date(latest.updatedAt).toISOString();
-  } catch (e) {
-    // ignore DB errors for SEO metadata; fall back to now
+    if (latest?.updatedAt) {
+      lastModified = new Date(latest.updatedAt).toISOString();
+    }
+  } catch {
+    // silent fallback
   }
 
   return (
     <main>
-      {/* Hero Section */}
+      {/* Hero */}
       <section className={styles.hero}>
         <div className={styles.heroContent}>
           <h1>{topicName} - सामान्य ज्ञान (GK)</h1>
           <p>
-            इस सेक्शन में आपको <strong>{topicName}</strong> विषय से संबंधित सभी
-            सबटॉपिक्स और उनके महत्वपूर्ण सामान्य ज्ञान नोट्स मिलेंगे।
-            यह सामग्री UPSC, SSC, RPSC, Railway, Bank आदि प्रतियोगी परीक्षाओं के लिए अत्यंत उपयोगी है।
+            इस सेक्शन में <strong>{topicName}</strong> से जुड़े सभी सबटॉपिक्स और
+            उनके महत्वपूर्ण GK Notes उपलब्ध हैं। यह सामग्री UPSC, SSC, RPSC,
+            Railway, Bank जैसी परीक्षाओं के लिए उपयोगी है।
           </p>
         </div>
       </section>
 
-      {/* Breadcrumbs Navigation */}
+      {/* Breadcrumbs */}
       <section style={{ maxWidth: 900, margin: '1rem auto', padding: '0 1rem' }}>
-        <Breadcrumbs/>
+        <Breadcrumbs />
       </section>
 
-      {/* GK Subtopics List */}
-      <section>
-        <SubtopicListPage topicSlug={topic} />
-      </section>
+      {/* Subtopics */}
+      <SubtopicListPage topicSlug={topic} />
 
-      {/* ✅ SEO Structured Data */}
+      {/* Breadcrumb JSON-LD */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
 
-      {/* Article JSON-LD for ownership & SEO */}
+      {/* Article Schema */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -119,11 +115,14 @@ export default async function GKTopicPage({ params }: PageProps) {
             publisher: {
               '@type': 'Organization',
               name: 'Pathshala Notes Hub',
-              logo: { '@type': 'ImageObject', url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/android-chrome-512x512.png` },
+              logo: {
+                '@type': 'ImageObject',
+                url: `${baseUrl}/android-chrome-512x512.png`,
+              },
             },
-            datePublished: new Date().toISOString(),
+            datePublished: lastModified,
             dateModified: lastModified,
-            mainEntityOfPage: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/gk/${topic}`,
+            mainEntityOfPage: `${baseUrl}/gk/${topic}`,
           }),
         }}
       />

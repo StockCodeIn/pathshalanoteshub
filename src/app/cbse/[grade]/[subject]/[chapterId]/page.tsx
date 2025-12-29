@@ -6,9 +6,6 @@ import PDFViewerWrapper from '@/components/PDFViewerWrapper';
 import type { Metadata } from "next";
 import AdsenseAd from "@/components/AdsenseAd";
 
-
-export const dynamic = "force-dynamic"; // ⬅ Live updates के लिए ज़रूरी
-
 interface PageProps {
   params: Promise<{
     grade: string;
@@ -24,24 +21,22 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: `CBSE Class ${grade} ${subject} - Chapter ${chapterId} Notes PDF | Pathshala`,
     description: `Download free CBSE Class ${grade} ${subject} Chapter ${chapterId} notes in PDF format. Easy to understand, NCERT-based study material for exam preparation.`,
-    keywords: [
-      `CBSE Class ${grade} ${subject} Chapter ${chapterId} notes`,
-      `CBSE ${grade} ${subject} PDF`,
-      "CBSE study material",
-      "NCERT based notes",
-    ],
   };
 }
 
-// ✅ Static params generate function
+/* ------------------ STATIC PATHS ------------------ */
 export async function generateStaticParams() {
   await connectDB();
-  const chapters = await Chapter.find({ board: 'CBSE' });
 
-  return chapters.map((chapter) => ({
-    grade: chapter.grade,
-    subject: chapter.subject,
-    chapterId: chapter.name,
+  const chapters = await Chapter.find(
+    { board: 'CBSE' },
+    { grade: 1, subject: 1, name: 1 }
+  ).lean();
+
+  return chapters.map((ch) => ({
+    grade: ch.grade,
+    subject: ch.subject,
+    chapterId: ch.name,
   }));
 }
 

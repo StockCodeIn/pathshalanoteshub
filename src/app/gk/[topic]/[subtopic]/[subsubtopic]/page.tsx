@@ -7,15 +7,14 @@ import '@/styles/notes.css';
 import Attribution from '@/components/Attribution';
 import connectDB from '@/lib/mongodb';
 import GK from '@/models/gk';
-import AdsenseAd from '@/components/AdsenseAd'; // ✅ normal manual ad component
-
-// 🔥 always fresh data (no caching)
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
-export const fetchCache = 'force-no-store';
+import AdsenseAd from '@/components/AdsenseAd';
 
 interface PageProps {
-  params: Promise<{ topic: string; subtopic: string; subsubtopic: string }>;
+  params: Promise<{
+    topic: string;
+    subtopic: string;
+    subsubtopic: string;
+  }>;
 }
 
 interface GKType {
@@ -28,159 +27,69 @@ interface GKType {
   updatedAt?: Date;
 }
 
+/* -------------------- Metadata -------------------- */
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { topic, subtopic, subsubtopic } = await params;
-  const titleText = `${decodeURIComponent(subsubtopic).replace(/-/g, ' ')} - ${decodeURIComponent(
-    subtopic
-  ).replace(/-/g, ' ')} | GK Notes`;
-  const description = `${titleText} - Pathshala Notes Hub`;
+
+  const decodedTopic = decodeURIComponent(topic).replace(/-/g, ' ');
+  const decodedSubtopic = decodeURIComponent(subtopic).replace(/-/g, ' ');
+  const decodedTitle = decodeURIComponent(subsubtopic).replace(/-/g, ' ');
+
+  const title = `${decodedTitle} - ${decodedSubtopic} | GK Notes`;
+  const description = `${decodedTitle} GK notes under ${decodedSubtopic} - Pathshala Notes Hub`;
+
+  const baseUrl =
+    process.env.NODE_ENV === 'production'
+      ? process.env.NEXT_PUBLIC_BASE_URL
+      : 'http://localhost:3000';
+
+  const url = `${baseUrl}/gk/${topic}/${subtopic}/${subsubtopic}`;
 
   return {
-    title: titleText,
+    title,
     description,
-    keywords: [
-      decodeURIComponent(subsubtopic).replace(/-/g, ' '),
-      decodeURIComponent(subtopic).replace(/-/g, ' '),
-      'GK Notes',
-      'Pathshala Notes Hub',
-    ],
+    keywords: [decodedTitle, decodedSubtopic, decodedTopic, 'GK Notes'],
+    alternates: { canonical: url },
     openGraph: {
-      title: titleText,
+      title,
       description,
       type: 'article',
       locale: 'hi_IN',
-      url:
-        process.env.NODE_ENV === 'production'
-          ? `${process.env.NEXT_PUBLIC_BASE_URL}/gk/${topic}/${subtopic}/${subsubtopic}`
-          : `http://localhost:3000/gk/${topic}/${subtopic}/${subsubtopic}`,
+      url,
       images: [
         {
-          url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/android-chrome-512x512.png`,
+          url: `${baseUrl}/android-chrome-512x512.png`,
           alt: 'Pathshala Notes Hub',
         },
       ],
     },
-    alternates: {
-      canonical:
-        process.env.NODE_ENV === 'production'
-          ? `${process.env.NEXT_PUBLIC_BASE_URL}/gk/${topic}/${subtopic}/${subsubtopic}`
-          : `http://localhost:3000/gk/${topic}/${subtopic}/${subsubtopic}`,
-    },
   };
 }
 
+/* -------------------- Static Params -------------------- */
+export async function generateStaticParams() {
+  await connectDB();
+
+  const items = await GK.find(
+    {},
+    { topic: 1, subtopic: 1, name: 1, _id: 0 }
+  ).lean();
+
+  return items.map((item) => ({
+    topic: item.topic,
+    subtopic: item.subtopic,
+    subsubtopic: item.name,
+  }));
+}
+
+/* -------------------- Page -------------------- */
 export default async function SubsubPage({ params }: PageProps) {
   const { topic, subtopic, subsubtopic } = await params;
   await connectDB();
 
-  try {
-    const item = await GK.findOne({ topic, subtopic, name: subsubtopic }).lean<GKType>();
+  const item = await GK.findOne({ topic, subtopic, name: subsubtopic }).lean<GKType>();
 
-    if (!item) throw new Error('No content');
-
-    const displayTitle = item.displayName || decodeURIComponent(subsubtopic).replace(/-/g, ' ');
-    const baseUrl =
-      process.env.NODE_ENV === 'production'
-        ? process.env.NEXT_PUBLIC_BASE_URL
-        : 'http://localhost:3000';
-
-    const breadcrumbSchema = {
-      '@context': 'https://schema.org',
-      '@type': 'BreadcrumbList',
-      itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Home', item: `${baseUrl}/` },
-        { '@type': 'ListItem', position: 2, name: 'GK', item: `${baseUrl}/gk` },
-        {
-          '@type': 'ListItem',
-          position: 3,
-          name: decodeURIComponent(topic).replace(/-/g, ' '),
-          item: `${baseUrl}/gk/${topic}`,
-        },
-        {
-          '@type': 'ListItem',
-          position: 4,
-          name: decodeURIComponent(subtopic).replace(/-/g, ' '),
-          item: `${baseUrl}/gk/${topic}/${subtopic}`,
-        },
-        {
-          '@type': 'ListItem',
-          position: 5,
-          name: displayTitle,
-          item: `${baseUrl}/gk/${topic}/${subtopic}/${subsubtopic}`,
-        },
-      ],
-    };
-
-    return (
-      <main>
-        {/* Hero Section */}
-        <section className={styles.hero}>
-          <div className={styles.heroContent}>
-            <h1>{displayTitle}</h1>
-            <p>
-              {decodeURIComponent(subtopic).replace(/-/g, ' ')} - सामान्य ज्ञान (General Knowledge)
-            </p>
-          </div>
-        </section>
-
-        {/* Breadcrumbs */}
-        <section style={{ maxWidth: 900, margin: '0.5rem auto', padding: '0 1rem' }}>
-          <Breadcrumbs />
-        </section>
-
-        {/* ✅ Mid ad just before main content (optional but good) */}
-        <section style={{ maxWidth: 900, margin: '0.75rem auto', padding: '0 1rem' }}>
-          <AdsenseAd slot="3645773527" /> {/* yaha dusra slot ID */}
-        </section>
-
-        {/* Main Content */}
-        <section style={{ maxWidth: 900, margin: '0.5rem auto', padding: '0 1rem' }}>
-          <article
-            className="notes-content"
-            dangerouslySetInnerHTML={{
-              __html: item.htmlContent || '<p>No content</p>',
-            }}
-          />
-        </section>
-
-        {/* ✅ Bottom ad after content */}
-        <section style={{ maxWidth: 900, margin: '1rem auto 1.5rem', padding: '0 1rem' }}>
-          <AdsenseAd slot="2627371172" /> {/* yaha bottom / multiplex slot ID */}
-        </section>
-
-        {/* SEO Structured Data */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'Article',
-              headline: displayTitle,
-              author: { '@type': 'Organization', name: 'Pathshala Notes Hub' },
-              publisher: {
-                '@type': 'Organization',
-                name: 'Pathshala Notes Hub',
-                logo: {
-                  '@type': 'ImageObject',
-                  url: `${baseUrl}/android-chrome-512x512.png`,
-                },
-              },
-              datePublished: item.createdAt || new Date().toISOString(),
-              dateModified: item.updatedAt || new Date().toISOString(),
-              mainEntityOfPage: `${baseUrl}/gk/${topic}/${subtopic}/${subsubtopic}`,
-            }),
-          }}
-        />
-
-        <Attribution dateModified={item.updatedAt || new Date().toISOString()} />
-      </main>
-    );
-  } catch (error) {
-    console.error('GK Page Error:', error);
+  if (!item) {
     return (
       <main>
         <section className={styles.hero}>
@@ -192,4 +101,108 @@ export default async function SubsubPage({ params }: PageProps) {
       </main>
     );
   }
+
+  const decodedTopic = decodeURIComponent(topic).replace(/-/g, ' ');
+  const decodedSubtopic = decodeURIComponent(subtopic).replace(/-/g, ' ');
+  const displayTitle =
+    item.displayName || decodeURIComponent(subsubtopic).replace(/-/g, ' ');
+
+  const baseUrl =
+    process.env.NODE_ENV === 'production'
+      ? process.env.NEXT_PUBLIC_BASE_URL
+      : 'http://localhost:3000';
+
+  const pageUrl = `${baseUrl}/gk/${topic}/${subtopic}/${subsubtopic}`;
+
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${baseUrl}/` },
+      { '@type': 'ListItem', position: 2, name: 'GK', item: `${baseUrl}/gk` },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: decodedTopic,
+        item: `${baseUrl}/gk/${topic}`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 4,
+        name: decodedSubtopic,
+        item: `${baseUrl}/gk/${topic}/${subtopic}`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 5,
+        name: displayTitle,
+        item: pageUrl,
+      },
+    ],
+  };
+
+  return (
+    <main>
+      {/* Hero */}
+      <section className={styles.hero}>
+        <div className={styles.heroContent}>
+          <h1>{displayTitle}</h1>
+          <p>{decodedSubtopic} - सामान्य ज्ञान (General Knowledge)</p>
+        </div>
+      </section>
+
+      {/* Breadcrumbs */}
+      <section style={{ maxWidth: 900, margin: '0.5rem auto', padding: '0 1rem' }}>
+        <Breadcrumbs />
+      </section>
+
+      {/* Mid Ad */}
+      <section style={{ maxWidth: 900, margin: '0.75rem auto', padding: '0 1rem' }}>
+        <AdsenseAd slot="3645773527" />
+      </section>
+
+      {/* Content */}
+      <section style={{ maxWidth: 900, margin: '0.5rem auto', padding: '0 1rem' }}>
+        <article
+          className="notes-content"
+          dangerouslySetInnerHTML={{ __html: item.htmlContent || '' }}
+        />
+      </section>
+
+      {/* Bottom Ad */}
+      <section style={{ maxWidth: 900, margin: '1rem auto 1.5rem', padding: '0 1rem' }}>
+        <AdsenseAd slot="2627371172" />
+      </section>
+
+      {/* SEO Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Article',
+            headline: displayTitle,
+            author: { '@type': 'Organization', name: 'Pathshala Notes Hub' },
+            publisher: {
+              '@type': 'Organization',
+              name: 'Pathshala Notes Hub',
+              logo: {
+                '@type': 'ImageObject',
+                url: `${baseUrl}/android-chrome-512x512.png`,
+              },
+            },
+            datePublished: item.createdAt?.toISOString(),
+            dateModified: item.updatedAt?.toISOString(),
+            mainEntityOfPage: pageUrl,
+          }),
+        }}
+      />
+
+      <Attribution dateModified={item.updatedAt?.toISOString()} />
+    </main>
+  );
 }

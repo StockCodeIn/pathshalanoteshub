@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Host
-Host: https://pathshalanoteshub.in
+Host: https://www.pathshalanoteshub.in
 
 # Sitemaps
-Sitemap: https://pathshalanoteshub.in/sitemap.xml
+Sitemap: https://www.pathshalanoteshub.in/sitemap.xml

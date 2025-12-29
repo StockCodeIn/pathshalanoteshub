@@ -25,12 +25,6 @@ const gkData: GKTopic[] = [
       { title: 'पर्यावरण एवं पारिस्थितिकी', slug: 'environment-ecology' },
       { title: 'सामाजिक मुद्दे', slug: 'social-issues' },
       { title: 'कला, संस्कृति एवं खेलकूद', slug: 'arts-culture-sports' },
-      // { title: 'सरकारी योजनाएँ एवं कार्यक्रम', slug: 'government-schemes-programs' },
-      // { title: 'पुरस्कार एवं सम्मान', slug: 'awards-honours' },
-      // { title: 'रिपोर्ट, सूचकांक एवं सर्वेक्षण', slug: 'reports-indexes-surveys' },
-      // { title: 'नियुक्तियाँ', slug: 'appointments' },
-      // { title: 'रक्षा एवं सुरक्षा', slug: 'defense-security' },
-      
     ],
   },
   {
@@ -87,54 +81,7 @@ const gkData: GKTopic[] = [
 
     ],
   },
-  // {
-  //   title: 'Science & Technology',
-  //   slug: 'science-technology',
-  //   subtopics: [
-  //     { title: 'General Science', slug: 'general-science' },
-  //     { title: 'Space & IT', slug: 'space-it' },
-  //   ],
-  // },
-  // {
-  //   title: 'Important Days & Events',
-  //   slug: 'important-days-events',
-  //   subtopics: [
-  //     { title: 'National Days', slug: 'national-days' },
-  //     { title: 'International Days', slug: 'international-days' },
-  //   ],
-  // },
-  // {
-  //   title: 'Sports GK',
-  //   slug: 'sports-gk',
-  //   subtopics: [
-  //     { title: 'Major Tournaments', slug: 'major-tournaments' },
-  //     { title: 'Players & Records', slug: 'players-records' },
-  //   ],
-  // },
-  // {
-  //   title: 'Books & Authors',
-  //   slug: 'books-authors',
-  //   subtopics: [
-  //     { title: 'Famous Books', slug: 'famous-books' },
-  //     { title: 'Notable Authors', slug: 'notable-authors' },
-  //   ],
-  // },
-  // {
-  //   title: 'Awards & Honours',
-  //   slug: 'awards-honours',
-  //   subtopics: [
-  //     { title: 'National Awards', slug: 'national-awards' },
-  //     { title: 'International Awards', slug: 'international-awards' },
-  //   ],
-  // },
-  // {
-  //   title: 'Static GK',
-  //   slug: 'static-gk',
-  //   subtopics: [
-  //     { title: 'Quick Facts', slug: 'quick-facts' },
-  //     { title: 'Yearwise Events', slug: 'yearwise-events' },
-  //   ],
-  // },
+  
 ];
 
 export default gkData;
