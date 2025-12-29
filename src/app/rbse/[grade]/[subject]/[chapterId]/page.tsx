@@ -25,14 +25,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-// ✅ Static params generate karne ka function
+// ✅ Static params generate karne ka function with ISR
 export async function generateStaticParams() {
   await connectDB();
 
   const chapters = await Chapter.find(
     { board: 'RBSE' },
     { grade: 1, subject: 1, name: 1 }
-  ).lean();
+  ).lean().limit(30); // Maximum 30 pages build time par
 
   return chapters.map((ch) => ({
     grade: ch.grade,
@@ -40,6 +40,11 @@ export async function generateStaticParams() {
     chapterId: ch.name,
   }));
 }
+
+// ⏱️ Har 604800 seconds (7 days) baad revalidate hoga
+export const revalidate = 604800; // 7 days
+
+/* ------------------ MAIN PAGE COMPONENT ------------------ */
 
 // ✅ Main page component
 export default async function RBSEChapterPage({ params }: PageProps) {

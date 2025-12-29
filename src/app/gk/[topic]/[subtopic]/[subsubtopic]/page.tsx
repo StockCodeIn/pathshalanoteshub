@@ -66,14 +66,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-/* -------------------- Static Params -------------------- */
+/* -------------------- Static Params with ISR -------------------- */
 export async function generateStaticParams() {
   await connectDB();
 
   const items = await GK.find(
     {},
     { topic: 1, subtopic: 1, name: 1, _id: 0 }
-  ).lean();
+  ).lean().limit(30); // Maximum 30 pages build time par
 
   return items.map((item) => ({
     topic: item.topic,
@@ -81,6 +81,9 @@ export async function generateStaticParams() {
     subsubtopic: item.name,
   }));
 }
+
+// ⏱️ Har 604800 seconds (7 days) baad revalidate hoga
+export const revalidate = 604800; // 7 days
 
 /* -------------------- Page -------------------- */
 export default async function SubsubPage({ params }: PageProps) {
