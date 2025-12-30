@@ -92,14 +92,21 @@ export default async function SubtopicPDFPage({ params }: PageProps) {
     ],
   };
 
-  // compute lastModified from latest updated item in this subtopic
+  // compute lastModified from latest updated item in this subtopic (with timeout)
   let lastModified = new Date().toISOString();
+  const DB_TIMEOUT_MS = 2000;
   try {
-    await connectDB();
-    const latest = await GK.findOne({ topic, subtopic }).sort({ updatedAt: -1 });
+    await Promise.race([
+      connectDB(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error("DB timeout")), DB_TIMEOUT_MS)),
+    ]);
+    const latest = await Promise.race([
+      GK.findOne({ topic, subtopic }).sort({ updatedAt: -1 }).lean(),
+      new Promise<any>((_, reject) => setTimeout(() => reject(new Error("Query timeout")), DB_TIMEOUT_MS)),
+    ]);
     if (latest && latest.updatedAt) lastModified = new Date(latest.updatedAt).toISOString();
-  } catch (e) {
-    // ignore
+  } catch (err) {
+    // Silent fallback: use current time
   }
 
   return (

@@ -50,17 +50,27 @@ export default async function RBSEPastPapersPage({ params }: PageProps) {
   // Convert route param to DB format
   const dbGrade = grade.endsWith("th") ? grade : `${grade}th`;
 
-  await connectDB();
+  const DB_TIMEOUT_MS = 3000;
+  let uniqueYears: string[] = [];
 
-  // ✅ MongoDB query
-  const papers = await PastPaper.find({
-    board: "RBSE",
-    grade: dbGrade,
-    subject,
-  }).select("year");
+  try {
+    await Promise.race([
+      connectDB(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error("DB timeout")), DB_TIMEOUT_MS)),
+    ]);
 
-  // ✅ Unique years (descending)
-  const uniqueYears = Array.from(new Set(papers.map((p) => p.year))).sort((a, b) => b - a);
+    // ✅ MongoDB query with timeout
+    const papers = await Promise.race([
+      PastPaper.find({ board: "RBSE", grade: dbGrade, subject }).select("year").lean(),
+      new Promise<any[]>((_, reject) => setTimeout(() => reject(new Error("Query timeout")), DB_TIMEOUT_MS)),
+    ]);
+
+    // ✅ Unique years (descending)
+    uniqueYears = Array.from(new Set((papers as any[]).map((p) => p.year))).sort((a, b) => b - a);
+  } catch (err) {
+    // Silent fallback: render empty year list
+    uniqueYears = [];
+  }
 
   return (
     <main>
