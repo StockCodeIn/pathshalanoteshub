@@ -30,19 +30,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     ],
   };
 }
-
-export async function generateStaticParams() {
-  const params = [];
-  for (const grade of Object.keys(subjects)) {
-    for (const subject of subjects[grade]) {
-      params.push({
-        grade,
-        subject: subject.id,
-      });
-    }
-  }
-  return params;
-}
+// Parent listing now served on-demand; cache for SEO
+export const revalidate = 604800; // 7 days
 
 export default async function CBSESubjectPage({ params }: PageProps) {
   const gradeValue = (await params).grade;

@@ -52,12 +52,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-// ✅ Static params (parent) - limited prebuild
-export async function generateStaticParams() {
-  await connectDB();
-  const items = await GK.find({}, { topic: 1, subtopic: 1 }).lean().limit(50);
-  return items.map((item) => ({ topic: item.topic, subtopic: item.subtopic }));
-}
+// Parent listing now served on-demand; cache for SEO
+export const revalidate = 604800; // 7 days
 
 // ✅ Page Component
 export default async function SubtopicPDFPage({ params }: PageProps) {

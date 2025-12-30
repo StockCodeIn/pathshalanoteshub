@@ -27,20 +27,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     ],
   };
 }
-
-// ✅ Generate static params
-export async function generateStaticParams() {
-  const params: { grade: string; subject: string }[] = [];
-  for (const grade of Object.keys(subjects)) {
-    for (const subject of subjects[grade]) {
-      params.push({
-        grade,
-        subject: subject.id,
-      });
-    }
-  }
-  return params;
-}
+// Parent listing now served on-demand; cache for SEO
+export const revalidate = 604800; // 7 days
 
 // ✅ Page Component
 export default async function RBSESubjectPage({ params }: PageProps) {
