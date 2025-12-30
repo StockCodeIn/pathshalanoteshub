@@ -46,12 +46,7 @@ export default async function RBSEChapterPage({ params }: PageProps) {
   });
 
   if (!chapterData) {
-    return (
-      <main className="container">
-        <h1>📄 Work in Progress</h1>
-        <p>यह अध्याय अभी वेबसाइट पर उपलब्ध नहीं है।</p>
-      </main>
-    );
+    throw new Response('Gone', { status: 410 });
   }
 
   return (

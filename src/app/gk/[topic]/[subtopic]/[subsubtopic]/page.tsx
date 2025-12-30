@@ -79,16 +79,7 @@ export default async function SubsubPage({ params }: PageProps) {
   const item = await GK.findOne({ topic, subtopic, name: subsubtopic }).lean<GKType>();
 
   if (!item) {
-    return (
-      <main>
-        <section className={styles.hero}>
-          <div className={styles.heroContent}>
-            <h1>विषय नहीं मिला</h1>
-            <p>Requested content not found.</p>
-          </div>
-        </section>
-      </main>
-    );
+    throw new Response('Gone', { status: 410 });
   }
 
   const decodedTopic = decodeURIComponent(topic).replace(/-/g, ' ');
