@@ -1,5 +1,7 @@
 // src/app/gk/[topic]/[subtopic]/[subsubtopic]/page.tsx
 
+import { notFound } from 'next/navigation';
+import { cache } from 'react';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import type { Metadata } from 'next';
 import styles from '@/styles/Home.module.css';
@@ -8,6 +10,13 @@ import Attribution from '@/components/Attribution';
 import connectDB from '@/lib/mongodb';
 import GK from '@/models/gk';
 import AdsenseAd from '@/components/AdsenseAd';
+
+export const dynamic = "force-dynamic";
+
+const getGKItem = cache(async (query: any): Promise<any> => {
+  await connectDB();
+  return GK.findOne(query, { topic: 1, subtopic: 1, name: 1, displayName: 1, htmlContent: 1, createdAt: 1, updatedAt: 1 }).lean();
+});
 
 interface PageProps {
   params: Promise<{
@@ -66,20 +75,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-/* Child GK pages: generated on-demand; parent topic/subtopic pages pre-generate listings */
+/* Child GK pages: force-dynamic with caching */
 
 // ⏱️ Har 604800 seconds (7 days) baad revalidate hoga
-export const revalidate = 604800; // 7 days
 
 /* -------------------- Page -------------------- */
 export default async function SubsubPage({ params }: PageProps) {
   const { topic, subtopic, subsubtopic } = await params;
-  await connectDB();
 
-  const item = await GK.findOne({ topic, subtopic, name: subsubtopic }).lean<GKType>();
+  const item = await getGKItem({ topic, subtopic, name: subsubtopic });
 
   if (!item) {
-    throw new Response('Gone', { status: 410 });
+    notFound();
   }
 
   const decodedTopic = decodeURIComponent(topic).replace(/-/g, ' ');

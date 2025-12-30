@@ -1,10 +1,19 @@
 // src/app/cbse/[grade]/[subject]/[chapterId]/page.tsx
+import { notFound } from 'next/navigation';
+import { cache } from 'react';
 import connectDB from '@/lib/mongodb';
 import { Chapter } from '@/models/chapter';
 import styles from '@/styles/Home.module.css';
 import PDFViewerWrapper from '@/components/PDFViewerWrapper';
 import type { Metadata } from "next";
 import AdsenseAd from "@/components/AdsenseAd";
+
+export const dynamic = "force-dynamic";
+
+const getChapter = cache(async (query: any): Promise<any> => {
+  await connectDB();
+  return Chapter.findOne(query, { name: 1, board: 1, grade: 1, subject: 1, pdfUrl: 1, extractedHtml: 1 }).lean();
+});
 
 interface PageProps {
   params: Promise<{
@@ -24,10 +33,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-/* Child chapters: generated on-demand; parent subject pages pre-generate listings */
-
-// ⏱️ Har 604800 seconds (7 days) baad revalidate hoga
-export const revalidate = 604800; // 7 days
+/* Child chapters: force-dynamic with caching */
 
 /* ------------------ MAIN PAGE COMPONENT ------------------ */
 
@@ -35,9 +41,7 @@ export const revalidate = 604800; // 7 days
 export default async function CBSECHAPTERPage({ params }: PageProps) {
   const { grade, subject, chapterId } = await params;
 
-  await connectDB();
-
-  const chapterData = await Chapter.findOne({
+  const chapterData = await getChapter({
     board: 'CBSE',
     grade,
     subject,
@@ -45,7 +49,7 @@ export default async function CBSECHAPTERPage({ params }: PageProps) {
   });
 
   if (!chapterData) {
-    throw new Response('Gone', { status: 410 });
+    notFound();
   }
 
   return (

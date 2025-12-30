@@ -1,10 +1,19 @@
 // src/app/rbse-papers/[grade]/[subject]/[year]/page.tsx
+import { notFound } from 'next/navigation';
+import { cache } from 'react';
 import connectDB from "@/lib/mongodb";
 import PastPaper from "@/models/PastPaper";
 import Link from "next/link";
 import styles from "@/styles/Home.module.css";
 import type { Metadata } from "next";
 import OpenPaperButtonClient from "@/components/OpenPaperButtonClient";
+
+export const dynamic = "force-dynamic";
+
+const getPaper = cache(async (query: any): Promise<any> => {
+  await connectDB();
+  return PastPaper.findOne(query, { board: 1, grade: 1, subject: 1, year: 1, pdfUrl: 1 }).lean();
+});
 
 interface PageProps {
   params: Promise<{ grade: string; subject: string; year: string }>;
@@ -35,10 +44,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     },
   };
 }
-/* Child paper pages: generated on-demand; parent year-list pages pre-generate listings */
-
-// ⏱️ Har 86400 seconds (7 days) baad revalidate hoga
-export const revalidate = 604800; // 7 days
+/* Child paper pages: force-dynamic with caching */
 
 // ✅ RBSE Paper Viewer Page
 export default async function RBSEPaperViewerPage({ params }: PageProps) {
@@ -47,26 +53,15 @@ export default async function RBSEPaperViewerPage({ params }: PageProps) {
   // Convert grade to DB format
   const dbGrade = grade.endsWith("th") ? grade : `${grade}th`;
 
-  await connectDB();
-
-  // ✅ Fetch paper from DB (match grade as string)
-  const paper = await PastPaper.findOne({
+  const paper = await getPaper({
     board: "RBSE",
     grade: dbGrade,
     subject,
-    year: year, // keep string, since DB has string
+    year: year,
   });
 
   if (!paper) {
-    return (
-      <main className="container">
-        <h1 className={styles["h2class"]}>❌ Paper Not Found</h1>
-        <p>No question paper available for RBSE Class {grade} {subject} {year}.</p>
-        <Link href="/rbse-papers" className={styles.ctaDownloadButton}>
-          Back to Papers
-        </Link>
-      </main>
-    );
+    notFound();
   }
 
   return (
