@@ -1,7 +1,7 @@
 // src/app/gk/[topic]/[subtopic]/[subsubtopic]/page.tsx
 
 import { notFound } from 'next/navigation';
-import { cache } from 'react';
+// import { cache } from 'react';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import type { Metadata } from 'next';
 import styles from '@/styles/Home.module.css';
@@ -11,12 +11,6 @@ import connectDB from '@/lib/mongodb';
 import GK from '@/models/gk';
 import AdsenseAd from '@/components/AdsenseAd';
 
-export const dynamic = "force-dynamic";
-
-const getGKItem = cache(async (query: any): Promise<any> => {
-  await connectDB();
-  return GK.findOne(query, { topic: 1, subtopic: 1, name: 1, displayName: 1, htmlContent: 1, createdAt: 1, updatedAt: 1 }).lean();
-});
 
 interface PageProps {
   params: Promise<{
@@ -75,15 +69,30 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-/* Child GK pages: force-dynamic with caching */
+/* -------------------- Static Params with ISR -------------------- */
+export async function generateStaticParams() {
+  await connectDB();
 
-// ⏱️ Har 604800 seconds (7 days) baad revalidate hoga
+  const items = await GK.find(
+    {},
+    { topic: 1, subtopic: 1, name: 1, _id: 0 }
+  ).lean(); 
+
+  return items.map((item) => ({
+    topic: item.topic,
+    subtopic: item.subtopic,
+    subsubtopic: item.name,
+  }));
+}
+
+export const revalidate = 604800; // 7 days
+
 
 /* -------------------- Page -------------------- */
 export default async function SubsubPage({ params }: PageProps) {
   const { topic, subtopic, subsubtopic } = await params;
 
-  const item = await getGKItem({ topic, subtopic, name: subsubtopic });
+  const item = await GK.findOne({ topic, subtopic, name: subsubtopic }).lean<GKType>();
 
   if (!item) {
     notFound();
@@ -144,7 +153,7 @@ export default async function SubsubPage({ params }: PageProps) {
       </section>
 
       {/* Mid Ad */}
-      <section style={{ maxWidth: 900, margin: '0.75rem auto', padding: '0 1rem' }}>
+      <section className="ad-wrapper ad-articale">
         <AdsenseAd slot="3645773527" />
       </section>
 
@@ -157,7 +166,7 @@ export default async function SubsubPage({ params }: PageProps) {
       </section>
 
       {/* Bottom Ad */}
-      <section style={{ maxWidth: 900, margin: '1rem auto 1.5rem', padding: '0 1rem' }}>
+      <section className="ad-wrapper ad-articale">
         <AdsenseAd slot="2627371172" />
       </section>
 

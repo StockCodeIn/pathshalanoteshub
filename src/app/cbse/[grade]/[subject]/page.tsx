@@ -64,7 +64,7 @@ export default async function CBSESubjectPage({ params }: PageProps) {
       </section>
 
       {/* ===== Top in-article ad (just after hero) ===== */}
-      <div className="ad-block">
+      <div className="ad-wrapper ad-display">
         <AdsenseAd slot="4962547015" />
         {/* Replace SLOT_LISTING_TOP with your real ad slot id */}
       </div>
@@ -85,7 +85,7 @@ export default async function CBSESubjectPage({ params }: PageProps) {
 
             {/* ===== Mid-list ad: insert AFTER the 6th chapter (index === 5) ===== */}
             {index === 5 && (
-              <div className="ad-block">
+              <div className="ad-wrapper ad-display">
                 <AdsenseAd slot="9855958653" />
                 {/* Replace SLOT_LISTING_INSET with your real ad slot id */}
               </div>
@@ -105,7 +105,7 @@ export default async function CBSESubjectPage({ params }: PageProps) {
       </section>
 
       {/* ===== Footer multiplex ad (end of page) ===== */}
-      <div className="ad-block">
+      <div className="ad-wrapper ad-multiplex">
         <AdsenseAd slot="7421367001" />
         {/* Replace SLOT_FOOTER_MULTIPLEX with your real ad slot id */}
       </div>

@@ -1,19 +1,12 @@
 // src/app/rbse-papers/[grade]/[subject]/[year]/page.tsx
 import { notFound } from 'next/navigation';
-import { cache } from 'react';
 import connectDB from "@/lib/mongodb";
 import PastPaper from "@/models/PastPaper";
 import Link from "next/link";
 import styles from "@/styles/Home.module.css";
 import type { Metadata } from "next";
 import OpenPaperButtonClient from "@/components/OpenPaperButtonClient";
-
-export const dynamic = "force-dynamic";
-
-const getPaper = cache(async (query: any): Promise<any> => {
-  await connectDB();
-  return PastPaper.findOne(query, { board: 1, grade: 1, subject: 1, year: 1, pdfUrl: 1 }).lean();
-});
+import AdsenseAd from "@/components/AdsenseAd";
 
 interface PageProps {
   params: Promise<{ grade: string; subject: string; year: string }>;
@@ -44,7 +37,23 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     },
   };
 }
-/* Child paper pages: force-dynamic with caching */
+/* ------------------ STATIC PARAMS WITH ISR ------------------ */
+export async function generateStaticParams() {
+  await connectDB();
+
+  const papers = await PastPaper.find(
+    { board: "RBSE" },
+    { grade: 1, subject: 1, year: 1 }
+  ).lean();
+
+  return papers.map((p) => ({
+    grade: p.grade,      // example: "10th"
+    subject: p.subject,  // example: "Hindi"
+    year: p.year,        // example: "2024"
+  }));
+}
+
+export const revalidate = 604800; // 7 days
 
 // ✅ RBSE Paper Viewer Page
 export default async function RBSEPaperViewerPage({ params }: PageProps) {
@@ -52,8 +61,8 @@ export default async function RBSEPaperViewerPage({ params }: PageProps) {
 
   // Convert grade to DB format
   const dbGrade = grade.endsWith("th") ? grade : `${grade}th`;
-
-  const paper = await getPaper({
+  await connectDB();
+  const paper = await PastPaper.findOne({
     board: "RBSE",
     grade: dbGrade,
     subject,
@@ -78,8 +87,22 @@ export default async function RBSEPaperViewerPage({ params }: PageProps) {
         </div>
       </section>
 
-      <div className={styles.downloadSection}>
+      {/* Ad before download */}
+      <div className="ad-wrapper ad-display">
+        <AdsenseAd slot="3697566809" />
+      </div>
+
+      {/* <div className={styles.downloadSection}>
         <OpenPaperButtonClient url={paper.pdfUrl} label={`${subject} ${year} Paper`} />
+      </div> */}
+
+      <div className={styles.downloadSection}>
+        <OpenPaperButtonClient url={paper.pdfUrl} />
+      </div>
+
+      {/* Ad after download */}
+      <div className="ad-wrapper ad-display">
+        <AdsenseAd slot="2435799482" />
       </div>
 
 

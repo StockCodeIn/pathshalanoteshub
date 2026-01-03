@@ -1,19 +1,11 @@
 // src/app/cbse/[grade]/[subject]/[chapterId]/page.tsx
 import { notFound } from 'next/navigation';
-import { cache } from 'react';
 import connectDB from '@/lib/mongodb';
 import { Chapter } from '@/models/chapter';
 import styles from '@/styles/Home.module.css';
 import PDFViewerWrapper from '@/components/PDFViewerWrapper';
 import type { Metadata } from "next";
 import AdsenseAd from "@/components/AdsenseAd";
-
-export const dynamic = "force-dynamic";
-
-const getChapter = cache(async (query: any): Promise<any> => {
-  await connectDB();
-  return Chapter.findOne(query, { name: 1, board: 1, grade: 1, subject: 1, pdfUrl: 1, extractedHtml: 1 }).lean();
-});
 
 interface PageProps {
   params: Promise<{
@@ -33,15 +25,29 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-/* Child chapters: force-dynamic with caching */
+/* ------------------ STATIC PATHS WITH ISR ------------------ */
+export async function generateStaticParams() {
+  await connectDB();
+  const chapters = await Chapter.find(
+    { board: 'CBSE' },
+    { grade: 1, subject: 1, name: 1 }
+    ).lean();
+
+  return chapters.map((ch) => ({
+    grade: ch.grade,
+    subject: ch.subject,
+    chapterId: ch.name,
+  }));
+}
+
+export const revalidate = 604800; // 7 days
 
 /* ------------------ MAIN PAGE COMPONENT ------------------ */
 
-// ✅ Main page
 export default async function CBSECHAPTERPage({ params }: PageProps) {
   const { grade, subject, chapterId } = await params;
 
-  const chapterData = await getChapter({
+  const chapterData = await Chapter.findOne({
     board: 'CBSE',
     grade,
     subject,
@@ -68,18 +74,17 @@ export default async function CBSECHAPTERPage({ params }: PageProps) {
           </p>
         </div>
       </section>
-      {/* After hero */}
-      <div className="ad-block">
+      {/* ✅ TOP DISPLAY AD (CLS SAFE) */}
+      <div className="ad-wrapper ad-display">
         <AdsenseAd slot="3294419739" />
       </div>
-
 
       {/*  PDF Viewer / Extracted HTML */}
       <section className="container">
         {chapterData.extractedHtml ? (
           <>
             <article className="prose" dangerouslySetInnerHTML={{ __html: chapterData.extractedHtml }} />
-            <div className="ad-block">
+            <div className="ad-wrapper ad-display">
               <AdsenseAd slot="8355174726" />
             </div>
           </>
@@ -92,9 +97,6 @@ export default async function CBSECHAPTERPage({ params }: PageProps) {
               grade={chapterData.grade}
               subject={chapterData.subject}
             />
-            <div className="ad-block">
-              <AdsenseAd slot="7612938696" />
-            </div>
           </>
         )}
       </section>
@@ -108,7 +110,7 @@ export default async function CBSECHAPTERPage({ params }: PageProps) {
           <li>✔ Helps you score high in board exams</li>
         </ul>
       </section>
-      <div className="ad-block">
+      <div className="ad-wrapper ad-multiplex">
         <AdsenseAd slot="7421367001" />
       </div>
 

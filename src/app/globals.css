@@ -95,14 +95,25 @@ a {
 }
 
 
-.ad-block {
+/* ===== CLS SAFE AD SYSTEM ===== */
+
+.ad-wrapper {
+  width: 100%;
   margin: 0.75rem 0;
+  display: none;              /* 🔑 hidden by default */
 }
 
-ins.adsbygoogle[data-ad-status="unfilled"] {
-  display: none !important;
+/* Display Ads */
+.ad-wrapper.ad-display {
+  min-height: 250px;
 }
 
-/* Jab ad collapse ho jayega to parent div ki height almost 0 ho jayegi,
-   margin ke alawa kuch nahi rahega — agar gap zyada lag raha ho to
-   margins kam kar do: 0.75rem ya 0.5rem */
+/* Multiplex */
+.ad-wrapper.ad-multiplex {
+  min-height: 300px;
+}
+
+/* Optional: avoid margin collapse */
+.ad-wrapper ins {
+  display: block;
+}

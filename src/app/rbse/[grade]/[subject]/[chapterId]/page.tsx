@@ -1,6 +1,5 @@
 // src/app/rbse/[grade]/[subject]/[chapterId]/page.tsx
 import { notFound } from 'next/navigation';
-import { cache } from 'react';
 import connectDB from "@/lib/mongodb";
 import { Chapter } from "@/models/chapter";
 import styles from "@/styles/Home.module.css";
@@ -8,12 +7,6 @@ import PDFViewerWrapper from "@/components/PDFViewerWrapper";
 import type { Metadata } from "next";
 import AdsenseAd from "@/components/AdsenseAd";
 
-export const dynamic = "force-dynamic";
-
-const getChapter = cache(async (query: any): Promise<any> => {
-  await connectDB();
-  return Chapter.findOne(query, { name: 1, board: 1, grade: 1, subject: 1, pdfUrl: 1, extractedHtml: 1 }).lean();
-});
 
 interface PageProps {
   params: Promise<{
@@ -30,11 +23,26 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: `RBSE Class ${grade} ${subject} - Chapter ${chapterId} Notes | Pathshala Notes Hub`,
     description: `Access RBSE Class ${grade} ${subject} Chapter ${chapterId} notes in PDF format. Free study material for exam preparation.`,
-    
+
   };
 }
 
-/* Child chapters: force-dynamic with caching */
+/* ------------------ STATIC PATHS WITH ISR ------------------ */
+export async function generateStaticParams() {
+  await connectDB();
+  const chapters = await Chapter.find(
+    { board: 'RBSE' },
+    { grade: 1, subject: 1, name: 1 }
+    ).lean();
+
+  return chapters.map((ch) => ({
+    grade: ch.grade,
+    subject: ch.subject,
+    chapterId: ch.name,
+  }));
+}
+
+export const revalidate = 604800; // 7 days
 
 /* ------------------ MAIN PAGE COMPONENT ------------------ */
 
@@ -42,7 +50,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function RBSEChapterPage({ params }: PageProps) {
   const { grade, subject, chapterId } = await params;
 
-  const chapterData = await getChapter({
+  const chapterData = await Chapter.findOne({
     board: "RBSE",
     grade,
     subject,
@@ -68,8 +76,9 @@ export default async function RBSEChapterPage({ params }: PageProps) {
           </p>
         </div>
       </section>
-      {/* After hero */}
-      <div className="ad-block">
+
+      {/* ✅ TOP DISPLAY AD (CLS SAFE) */}
+      <div className="ad-wrapper ad-display">
         <AdsenseAd slot="3928666945" />
       </div>
 
@@ -79,7 +88,7 @@ export default async function RBSEChapterPage({ params }: PageProps) {
         {chapterData.extractedHtml ? (
           <>
             <article className="prose" dangerouslySetInnerHTML={{ __html: chapterData.extractedHtml }} />
-            <div className="ad-block">
+            <div className="ad-wrapper ad-display">
               <AdsenseAd slot="4412060289" />
             </div>
           </>
@@ -92,9 +101,6 @@ export default async function RBSEChapterPage({ params }: PageProps) {
               grade={chapterData.grade}
               subject={chapterData.subject}
             />
-            <div className="ad-block">
-              <AdsenseAd slot="9472815276" />
-            </div>
           </>
         )}
       </div>
@@ -111,7 +117,7 @@ export default async function RBSEChapterPage({ params }: PageProps) {
           📌 All notes are collected and organized chapter-wise for Class {grade} {subject}.
         </p>
       </section>
-      <div className="ad-block">
+      <div className="ad-wrapper ad-multiplex">
         <AdsenseAd slot="5729011389" />
       </div>
 

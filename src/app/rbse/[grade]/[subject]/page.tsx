@@ -62,7 +62,7 @@ export default async function RBSESubjectPage({ params }: PageProps) {
       </section>
 
       {/* ===== Top in-article ad (just after hero) ===== */}
-      <div className="ad-block">
+      <div className="ad-wrapper ad-display">
         <AdsenseAd slot="3928666945" />
         {/* Replace SLOT_LISTING_TOP with your real ad slot id */}
       </div>
@@ -85,7 +85,7 @@ export default async function RBSESubjectPage({ params }: PageProps) {
             </Link>
             {/* ===== Mid-list ad: insert AFTER the 6th chapter (index === 5) ===== */}
             {index === 5 && (
-              <div className="ad-block">
+              <div className="ad-wrapper ad-display">
                 <AdsenseAd slot="4412060289" />
                 {/* Replace SLOT_LISTING_INSET with your real ad slot id */}
               </div>
@@ -106,7 +106,7 @@ export default async function RBSESubjectPage({ params }: PageProps) {
       </section>
       
       {/* ===== Footer multiplex ad (end of page) ===== */}
-            <div className="ad-block">
+            <div className="ad-wrapper ad-multiplex">
               <AdsenseAd slot="7484768575" />
               {/* Replace SLOT_FOOTER_MULTIPLEX with your real ad slot id */}
             </div>

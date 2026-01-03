@@ -1,6 +1,7 @@
 // components/AdsenseAd.tsx
 "use client";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import Script from "next/script";
 
 declare global {
   interface Window {
@@ -9,30 +10,72 @@ declare global {
 }
 
 type Props = {
-  slot: string;        // AdSense slot id (string)
-  className?: string;  // optional styling wrapper class
+  slot: string;
+  className?: string;
   style?: React.CSSProperties;
+  size?: "default" | "small" | "inline";
+  variant?: "display" | "multiplex";
 };
 
-export default function AdsenseAd({ slot, className, style }: Props) {
+export default function AdsenseAd({
+  slot,
+  className = "",
+  style,
+  size = "default",
+  variant = "display",
+}: Props) {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const adRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
-    } catch (e) {
-      // ignore
+    } catch {}
+
+    const observer = new MutationObserver(() => {
+      const iframe = adRef.current?.querySelector("iframe");
+      if (iframe && iframe.offsetHeight > 0) {
+        wrapperRef.current!.style.display = "block";
+        observer.disconnect();
+      }
+    });
+
+    if (adRef.current) {
+      observer.observe(adRef.current, { childList: true, subtree: true });
     }
+
+    return () => observer.disconnect();
   }, []);
 
+  const sizeClass =
+    size === "small" ? "small" : size === "inline" ? "inline" : "";
+
   return (
-    <div className={className} style={style}>
-      <ins
-        className="adsbygoogle"
-        style={{ display: "block" }}
-        data-ad-client={process.env.NEXT_PUBLIC_ADSENSE_CLIENT} // e.g. ca-pub-XXXXX
-        data-ad-slot={slot}
-        data-ad-format="auto"
-        data-full-width-responsive="true"
+    <>
+      <Script
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
+        strategy="afterInteractive"
       />
-    </div>
+
+      <div
+        ref={wrapperRef}
+        className={`ad-wrapper ${variant === "multiplex" ? "ad-multiplex" : "ad-display"}`}
+      >
+        <div
+          ref={adRef}
+          className={`ad-slot ${sizeClass} ${className}`}
+          style={style}
+        >
+          <ins
+            className="adsbygoogle"
+            style={{ display: "block" }}
+            data-ad-client={process.env.NEXT_PUBLIC_ADSENSE_CLIENT}
+            data-ad-slot={slot}
+            data-ad-format="auto"
+            data-full-width-responsive="true"
+          />
+        </div>
+      </div>
+    </>
   );
 }
