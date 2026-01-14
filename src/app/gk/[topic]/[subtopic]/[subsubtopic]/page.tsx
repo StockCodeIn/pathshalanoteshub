@@ -76,7 +76,7 @@ export async function generateStaticParams() {
   const items = await GK.find(
     {},
     { topic: 1, subtopic: 1, name: 1, _id: 0 }
-  ).lean(); 
+  ).lean();
 
   return items.map((item) => ({
     topic: item.topic,
@@ -91,7 +91,7 @@ export const revalidate = 604800; // 7 days
 /* -------------------- Page -------------------- */
 export default async function SubsubPage({ params }: PageProps) {
   const { topic, subtopic, subsubtopic } = await params;
-
+  await connectDB();
   const item = await GK.findOne({ topic, subtopic, name: subsubtopic }).lean<GKType>();
 
   if (!item) {
@@ -140,7 +140,7 @@ export default async function SubsubPage({ params }: PageProps) {
   return (
     <main>
       {/* Hero */}
-      <section className={styles.hero}>
+      <section className={styles.hero}style={{ contain: 'layout paint' }}>
         <div className={styles.heroContent}>
           <h1>{displayTitle}</h1>
           <p>{decodedSubtopic} - सामान्य ज्ञान (General Knowledge)</p>
@@ -148,17 +148,33 @@ export default async function SubsubPage({ params }: PageProps) {
       </section>
 
       {/* Breadcrumbs */}
-      <section style={{ maxWidth: 900, margin: '0.5rem auto', padding: '0 1rem' }}>
+      <section
+        style={{
+          maxWidth: 900,
+          margin: '0.5rem auto',
+          padding: '0 1rem',
+          minHeight: 40, // ✅ CLS fix
+        }}
+      >
         <Breadcrumbs />
       </section>
 
+
       {/* Mid Ad */}
-      <section className="ad-wrapper ad-articale">
+      <section className="ad-wrapper display">
+        <div className="ad-slot">
         <AdsenseAd slot="3645773527" />
+        </div>
       </section>
 
       {/* Content */}
-      <section style={{ maxWidth: 900, margin: '0.5rem auto', padding: '0 1rem' }}>
+      <section style={{
+        maxWidth: 900,
+        margin: '0.5rem auto',
+        padding: '0 1rem',
+        minHeight: '60vh',   // ✅ CLS killer
+        contain: 'layout style paint',
+      }}>
         <article
           className="notes-content"
           dangerouslySetInnerHTML={{ __html: item.htmlContent || '' }}
@@ -166,8 +182,10 @@ export default async function SubsubPage({ params }: PageProps) {
       </section>
 
       {/* Bottom Ad */}
-      <section className="ad-wrapper ad-articale">
+      <section className="ad-wrapper multiplex">
+        <div className="ad-slot">
         <AdsenseAd slot="2627371172" />
+        </div>
       </section>
 
       {/* SEO Schema */}
@@ -191,8 +209,14 @@ export default async function SubsubPage({ params }: PageProps) {
                 url: `${baseUrl}/android-chrome-512x512.png`,
               },
             },
-            datePublished: item.createdAt?.toISOString(),
-            dateModified: item.updatedAt?.toISOString(),
+            datePublished: item.createdAt
+              ? item.createdAt.toISOString()
+              : "2025-10-01",
+
+            dateModified: item.updatedAt
+              ? item.updatedAt.toISOString()
+              : "2025-10-01",
+
             mainEntityOfPage: pageUrl,
           }),
         }}

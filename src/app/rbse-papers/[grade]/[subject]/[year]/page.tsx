@@ -24,6 +24,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       `RBSE ${subject} ${year} PDF`,
       "RBSE previous year papers",
     ],
+    robots: {
+      index: true,
+      follow: true,
+    },
+
     alternates: {
       canonical: `${baseUrl}/rbse-papers/${grade}/${subject}/${year}`,
     },
@@ -75,9 +80,9 @@ export default async function RBSEPaperViewerPage({ params }: PageProps) {
 
   return (
     <main>
-      <section className={styles.hero}>
+      <section className={styles.hero} aria-labelledby="paper-title">
         <div className={styles.heroContent}>
-          <h1>
+          <h1 id="paper-title">
             RBSE Class {grade} - {subject} - {year} Question Paper
           </h1>
           <p>
@@ -88,21 +93,26 @@ export default async function RBSEPaperViewerPage({ params }: PageProps) {
       </section>
 
       {/* Ad before download */}
-      <div className="ad-wrapper ad-display">
+      <div className="ad-wrapper display">
+        <div className="ad-slot">
         <AdsenseAd slot="3697566809" />
+        </div>
       </div>
 
       {/* <div className={styles.downloadSection}>
         <OpenPaperButtonClient url={paper.pdfUrl} label={`${subject} ${year} Paper`} />
       </div> */}
-
-      <div className={styles.downloadSection}>
-        <OpenPaperButtonClient url={paper.pdfUrl} />
-      </div>
+      <section aria-label="Download RBSE question paper">
+        <div className={styles.downloadSection}>
+          <OpenPaperButtonClient url={paper.pdfUrl} />
+        </div>
+      </section>
 
       {/* Ad after download */}
-      <div className="ad-wrapper ad-display">
+      <div className="ad-wrapper display">
+        <div className="ad-slot">
         <AdsenseAd slot="2435799482" />
+        </div>
       </div>
 
 

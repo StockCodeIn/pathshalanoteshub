@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import connectDB from '@/lib/mongodb';
 import { Chapter } from '@/models/chapter';
 import styles from '@/styles/Home.module.css';
-import PDFViewerWrapper from '@/components/PDFViewerWrapper';
+import CloudinaryPDFViewer from '@/components/CloudinaryPDFViewer';
 import type { Metadata } from "next";
 import AdsenseAd from "@/components/AdsenseAd";
 
@@ -20,8 +20,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { grade, subject, chapterId } = await params;
 
   return {
-    title: `CBSE Class ${grade} ${subject} - Chapter ${chapterId} Notes PDF | Pathshala`,
-    description: `Download free CBSE Class ${grade} ${subject} Chapter ${chapterId} notes in PDF format. Easy to understand, NCERT-based study material for exam preparation.`,
+    title: `CBSE Class ${grade} ${subject} Chapter ${chapterId} Notes (PDF) | Pathshala Notes Hub`,
+    description: `CBSE Class ${grade} ${subject} Chapter ${chapterId} notes with page-wise PDF images. Free, syllabus-based study material.`,
+    alternates: {
+      canonical: `/CBSE/${grade}/${subject}/${chapterId}`,
+    },
+    openGraph: {
+      title: `CBSE Class ${grade} ${subject} Chapter ${chapterId} Notes`,
+      description: `Free CBSE Class ${grade} ${subject} Chapter ${chapterId} notes in PDF image format.`,
+      type: "article",
+    },
   };
 }
 
@@ -31,9 +39,9 @@ export async function generateStaticParams() {
   const chapters = await Chapter.find(
     { board: 'CBSE' },
     { grade: 1, subject: 1, name: 1 }
-    ).lean();
+  ).lean();
 
-  return chapters.map((ch) => ({
+  return chapters.map((ch: any) => ({
     grade: ch.grade,
     subject: ch.subject,
     chapterId: ch.name,
@@ -42,17 +50,49 @@ export async function generateStaticParams() {
 
 export const revalidate = 604800; // 7 days
 
-/* ------------------ MAIN PAGE COMPONENT ------------------ */
+/* ✅ QUERY CACHING - Taaki database slow na ho */
+const chapterCache = new Map<string, any>();
+const CACHE_DURATION = 3600000; // 1 hour in milliseconds
+
+function getCacheKey(board: string, grade: string, subject: string, name: string): string {
+  return `${board}:${grade}:${subject}:${name}`;
+}
+
+function getCachedChapter(key: string): any | null {
+  const cached = chapterCache.get(key);
+  if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+    return cached.data;
+  }
+  chapterCache.delete(key);
+  return null;
+}
+
+function setCachedChapter(key: string, data: any): void {
+  chapterCache.set(key, { data, timestamp: Date.now() });
+}
 
 export default async function CBSECHAPTERPage({ params }: PageProps) {
   const { grade, subject, chapterId } = await params;
 
-  const chapterData = await Chapter.findOne({
-    board: 'CBSE',
-    grade,
-    subject,
-    name: chapterId,
-  });
+  // Check cache first (for runtime caching)
+  const cacheKey = getCacheKey('CBSE', grade, subject, chapterId);
+  let chapterData = getCachedChapter(cacheKey);
+
+  if (!chapterData) {
+    // Only connect if not in cache
+    await connectDB();
+
+    chapterData = await Chapter.findOne({
+      board: 'CBSE',
+      grade,
+      subject,
+      name: chapterId,
+    }).lean().maxTimeMS(8000) as any; // 8 second timeout
+
+    if (chapterData) {
+      setCachedChapter(cacheKey, chapterData);
+    }
+  }
 
   if (!chapterData) {
     notFound();
@@ -61,9 +101,9 @@ export default async function CBSECHAPTERPage({ params }: PageProps) {
   return (
     <main>
       {/* ✅ Hero Section */}
-      <section className={styles.hero}>
+      <section className={styles.hero} aria-labelledby="chapter-title">
         <div className={styles.heroContent}>
-          <h1>
+          <h1 id="chapter-title">
             CBSE Class {chapterData.grade} {chapterData.subject} - Chapter{" "}
             {chapterData.name}
           </h1>
@@ -75,29 +115,38 @@ export default async function CBSECHAPTERPage({ params }: PageProps) {
         </div>
       </section>
       {/* ✅ TOP DISPLAY AD (CLS SAFE) */}
-      <div className="ad-wrapper ad-display">
+      <div className="ad-wrapper display">
+        <div className="ad-slot">
         <AdsenseAd slot="3294419739" />
+        </div>
       </div>
 
-      {/*  PDF Viewer / Extracted HTML */}
-      <section className="container">
+      {/* ✅ PDF Viewer section with Cloudinary JPG Images */}
+      <section className="container pdf-section" style={{ position: 'relative' }}>
         {chapterData.extractedHtml ? (
           <>
             <article className="prose" dangerouslySetInnerHTML={{ __html: chapterData.extractedHtml }} />
-            <div className="ad-wrapper ad-display">
+            <div className="ad-wrapper display">
+              <div className="ad-slot">
               <AdsenseAd slot="8355174726" />
+              </div>
             </div>
           </>
         ) : (
-          <>
-            <PDFViewerWrapper
-              url={chapterData.pdfUrl}
-              title={chapterData.name}
-              board={chapterData.board}
-              grade={chapterData.grade}
-              subject={chapterData.subject}
-            />
-          </>
+          <div style={{
+            width: '100%',
+            maxWidth: '900px',
+            margin: '0 auto',
+            contain: 'layout style paint'
+          }}>
+            {/* ✅ Cloudinary PDF Viewer - Crystal Clear Images */}
+            <article itemScope itemType="https://schema.org/Article">
+              <CloudinaryPDFViewer
+                title={chapterData.name}
+                pageImages={chapterData.pageImages || []}
+              />
+            </article>
+          </div>
         )}
       </section>
 
@@ -110,8 +159,10 @@ export default async function CBSECHAPTERPage({ params }: PageProps) {
           <li>✔ Helps you score high in board exams</li>
         </ul>
       </section>
-      <div className="ad-wrapper ad-multiplex">
+      <div className="ad-wrapper multiplex">
+        <div className="ad-slot">
         <AdsenseAd slot="7421367001" />
+        </div>
       </div>
 
     </main>

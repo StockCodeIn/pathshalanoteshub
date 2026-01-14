@@ -20,6 +20,16 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  openGraph: {
+    title: "Pathshala Notes Hub – RBSE, CBSE Notes & Indian GK",
+    description:
+      "Free RBSE & CBSE Class 10–12 notes, previous year papers and Indian GK study material.",
+    url: siteUrl,
+    siteName: "Pathshala Notes Hub",
+    locale: "en_IN",
+    type: "website",
+  },
+
 };
 
 // Boards Data
@@ -161,12 +171,12 @@ export default function Home() {
   return (
     <main>
       {/* ✅ Hero Section */}
-      <section className={styles.hero}>
+      <section className={styles.hero} aria-labelledby="home-title">
         <div className={styles.heroContent}>
-          <h1>Pathshala Notes Hub - RBSE, CBSE & Indian GK</h1>
+          <h1 id="home-title">Pathshala Notes Hub - RBSE, CBSE & Indian GK</h1>
           <p>
             RBSE एवं CBSE बोर्ड परीक्षा की तैयारी के साथ-साथ{" "}
-            <strong>Indian GK, Current Affairs, History, Polity और Geography</strong> 
+            <strong>Indian GK, Current Affairs, History, Polity और Geography</strong>
             के लिए भरोसेमंद प्लेटफॉर्म। यहां पर आपको{" "}
             <strong>Class 10 &amp; 12 notes, previous year question papers</strong> और{" "}
             <strong>Indian GK topic-wise notes</strong> बिल्कुल free मिलते हैं।
@@ -187,7 +197,7 @@ export default function Home() {
         </div>
       </section>
 
-      
+
 
       {/* ✅ Boards Section */}
       <h2 className={styles.sectionTitle}>RBSE &amp; CBSE Notes / Question Papers</h2>
@@ -203,8 +213,10 @@ export default function Home() {
       </ul>
 
       {/* Top banner ad */}
-      <div className="ad-block">
-      <AdsenseAd slot="6017620145" />
+      <div className="ad-wrapper display">
+        <div className="ad-slot">
+          <AdsenseAd slot="6017620145" />
+        </div>
       </div>
 
       {/* ✅ Study Resources Section */}
@@ -242,8 +254,10 @@ export default function Home() {
       </div>
 
       {/* Mid page ad */}
-      <div className="ad-block">
-        <AdsenseAd slot="5035533356" />
+      <div className="ad-wrapper display">
+        <div className="ad-slot">
+          <AdsenseAd slot="5035533356" />
+        </div>
       </div>
 
       {/* ✅ Trust Section */}
@@ -289,6 +303,22 @@ export default function Home() {
           }),
         }}
       />
+
+      <Script
+        id="organization-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: "Pathshala Notes Hub",
+            url: siteUrl,
+            logo: `${siteUrl}/logo.png`,
+            sameAs: [],
+          }),
+        }}
+      />
+
 
       {/* ✅ Website & Breadcrumb JSON-LD for better SEO */}
       <Script
@@ -347,8 +377,10 @@ export default function Home() {
       />
 
       {/* Footer multiplex */}
-      <div className="ad-block">
-        <AdsenseAd slot="2409370012" />
+      <div className="ad-wrapper multiplex">
+        <div className="ad-slot">
+          <AdsenseAd slot="2409370012" />
+        </div>
       </div>
     </main>
   );

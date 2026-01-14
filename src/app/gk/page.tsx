@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import styles from "@/styles/Home.module.css";
 import gkData from "@/data/gkData";
+import Script from "next/script";
+
 
 export const metadata: Metadata = {
   title: "सामान्य ज्ञान (GK) Notes in Hindi – Current Affairs, History, Polity | Pathshala Notes Hub",
@@ -15,6 +17,16 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  openGraph: {
+    title: "सामान्य ज्ञान (GK) Notes in Hindi | Pathshala Notes Hub",
+    description:
+      "Current Affairs, Indian History, Polity, Geography और Science के GK Notes – सभी प्रतियोगी परीक्षाओं के लिए उपयोगी।",
+    url: "https://pathshalanoteshub.in/gk",
+    siteName: "Pathshala Notes Hub",
+    locale: "hi_IN",
+    type: "website",
+  },
+
 };
 
 export default function GKPage() {
@@ -53,7 +65,8 @@ export default function GKPage() {
             className={styles.card2}
           >
             <h3>{topic.title}</h3>
-            <p>Important GK notes for exams</p>
+            <p>{topic.title} के महत्वपूर्ण GK Notes (Exam Focused)</p>
+
           </Link>
         ))}
       </div>
@@ -67,6 +80,25 @@ export default function GKPage() {
           <li>✔ आसान भाषा और पूरी तरह मुफ्त</li>
         </ul>
       </section>
+
+      <Script
+        id="gk-itemlist-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            name: "GK Topics – Pathshala Notes Hub",
+            itemListElement: gkData.map((topic, index) => ({
+              "@type": "ListItem",
+              position: index + 1,
+              name: topic.title,
+              url: `https://pathshalanoteshub.in/gk/${topic.slug}`,
+            })),
+          }),
+        }}
+      />
+
     </main>
   );
 }

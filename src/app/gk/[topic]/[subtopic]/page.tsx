@@ -93,21 +93,8 @@ export default async function SubtopicPDFPage({ params }: PageProps) {
   };
 
   // compute lastModified from latest updated item in this subtopic (with timeout)
-  let lastModified = new Date().toISOString();
-  const DB_TIMEOUT_MS = 2000;
-  try {
-    await Promise.race([
-      connectDB(),
-      new Promise((_, reject) => setTimeout(() => reject(new Error("DB timeout")), DB_TIMEOUT_MS)),
-    ]);
-    const latest = await Promise.race([
-      GK.findOne({ topic, subtopic }).sort({ updatedAt: -1 }).lean(),
-      new Promise<any>((_, reject) => setTimeout(() => reject(new Error("Query timeout")), DB_TIMEOUT_MS)),
-    ]);
-    if (latest && latest.updatedAt) lastModified = new Date(latest.updatedAt).toISOString();
-  } catch (err) {
-    // Silent fallback: use current time
-  }
+  const lastModified = "2025-10-01T00:00:00.000Z";
+
 
   return (
     <main>
@@ -123,14 +110,27 @@ export default async function SubtopicPDFPage({ params }: PageProps) {
       </section>
 
       {/* Breadcrumbs Navigation */}
-      <section style={{ maxWidth: 900, margin: '1rem auto', padding: '0 1rem' }}>
+      <section
+        style={{
+          maxWidth: 900,
+          margin: '1rem auto',
+          padding: '0 1rem',
+          minHeight: 40   // CLS fix
+        }}
+      >
         <Breadcrumbs />
       </section>
 
       {/* GK Sub-Subtopics List */}
-      <section>
+      <section
+        style={{
+          minHeight: "60vh",   // CLS FIX
+          contain: "layout style paint"
+        }}
+      >
         <SubsubListPage topic={topic} subtopic={subtopic} />
       </section>
+
 
       {/* ✅ Breadcrumb structured data for SEO */}
       <script
@@ -152,7 +152,7 @@ export default async function SubtopicPDFPage({ params }: PageProps) {
               name: 'Pathshala Notes Hub',
               logo: { '@type': 'ImageObject', url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/android-chrome-512x512.png` },
             },
-            datePublished: lastModified,
+            datePublished: "2025-10-01",
             dateModified: lastModified,
 
             mainEntityOfPage: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/gk/${topic}/${subtopic}`,

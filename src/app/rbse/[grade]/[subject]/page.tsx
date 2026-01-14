@@ -18,14 +18,22 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   return {
     title: `RBSE Class ${grade} ${subjectData?.name || ""} Chapters | Pathshala Notes Hub`,
-    description: `Explore RBSE Class ${grade} ${subjectData?.name || ""} chapters. Get free notes and resources for exam preparation.`,
+    description: `Explore RBSE Class ${grade} ${subjectData?.name || ""} chapters. Free RBSE notes and study material.`,
     keywords: [
       `RBSE Class ${grade} ${subjectData?.name} notes`,
-      `RBSE ${subjectData?.name} syllabus`,
-      `RBSE Class ${grade} chapters`,
-      "RBSE study material",
+      `RBSE ${subjectData?.name} chapters`,
+      `RBSE Class ${grade} syllabus`,
     ],
+    alternates: {
+      canonical: `/rbse/${grade}/${subject}`,
+    },
+    openGraph: {
+      title: `RBSE Class ${grade} ${subjectData?.name} Chapters`,
+      description: `RBSE Class ${grade} ${subjectData?.name} chapter-wise notes and study resources.`,
+      type: "website",
+    },
   };
+
 }
 // Parent listing now served on-demand; cache for SEO
 export const revalidate = 604800; // 7 days
@@ -48,9 +56,9 @@ export default async function RBSESubjectPage({ params }: PageProps) {
   return (
     <main>
       {/* ✅ Hero Section */}
-      <section className={styles.hero}>
+      <section className={styles.hero} aria-labelledby="subject-title">
         <div className={styles.heroContent}>
-          <h1>
+          <h1 id="subject-title">
             RBSE Class {grade} - {subjectData.name}
           </h1>
           <p>
@@ -62,38 +70,44 @@ export default async function RBSESubjectPage({ params }: PageProps) {
       </section>
 
       {/* ===== Top in-article ad (just after hero) ===== */}
-      <div className="ad-wrapper ad-display">
+      <div className="ad-wrapper display">
+        <div className="ad-slot">
         <AdsenseAd slot="3928666945" />
+        </div>
         {/* Replace SLOT_LISTING_TOP with your real ad slot id */}
       </div>
 
       {/* ✅ Chapters Section */}
       <h2 className={styles.sectionTitle}>Available Chapters</h2>
-      <div className={styles.cardContainer2}>
-        {subjectData.chapters.map((chapter, index) => (
-          <div key={index} style={{ width: "100%" }}>
-            <Link
-              key={index}
-              href={`/rbse/${grade}/${subject}/${index + 1}`}
-              className={styles.card2}
-            >
-              {/* <span className={styles.cardIcon}>📖</span> */}
-              <h3>Chapter {index + 1}</h3>
-              <p>
-                {chapter}
-              </p>
-            </Link>
-            {/* ===== Mid-list ad: insert AFTER the 6th chapter (index === 5) ===== */}
-            {index === 5 && (
-              <div className="ad-wrapper ad-display">
-                <AdsenseAd slot="4412060289" />
-                {/* Replace SLOT_LISTING_INSET with your real ad slot id */}
-              </div>
-            )}
-          </div>
+      <nav aria-label="RBSE chapters list">
+        <div className={styles.cardContainer2}>
+          {subjectData.chapters.map((chapter, index) => (
+            <div key={index} style={{ width: "100%" }}>
+              <Link
+                key={index}
+                href={`/rbse/${grade}/${subject}/${index + 1}`}
+                className={styles.card2}
+              >
+                {/* <span className={styles.cardIcon}>📖</span> */}
+                <h3>Chapter {index + 1}</h3>
+                <p>
+                  {chapter}
+                </p>
+              </Link>
+              {/* ===== Mid-list ad: insert AFTER the 6th chapter (index === 5) ===== */}
+              {index === 5 && (
+                <div className="ad-wrapper display">
+                  <div className="ad-slot">
+                  <AdsenseAd slot="4412060289" />
+                  </div>
+                  {/* Replace SLOT_LISTING_INSET with your real ad slot id */}
+                </div>
+              )}
+            </div>
 
-        ))}
-      </div>
+          ))}
+        </div>
+      </nav>
 
       {/* ✅ Trust Section */}
       <section className={styles.trust}>
@@ -104,12 +118,15 @@ export default async function RBSESubjectPage({ params }: PageProps) {
           <li>✔ Helps in exam preparation with organized content</li>
         </ul>
       </section>
-      
+
       {/* ===== Footer multiplex ad (end of page) ===== */}
-            <div className="ad-wrapper ad-multiplex">
-              <AdsenseAd slot="7484768575" />
-              {/* Replace SLOT_FOOTER_MULTIPLEX with your real ad slot id */}
-            </div>
+      <div className="ad-wrapper multiplex">
+        <div className="ad-slot">
+        <AdsenseAd slot="7484768575" />
+        </div>
+        {/* Replace SLOT_FOOTER_MULTIPLEX with your real ad slot id */}
+      </div>
+      
     </main>
   );
 }

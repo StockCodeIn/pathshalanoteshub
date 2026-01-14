@@ -20,16 +20,24 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     subjects[grade]?.find((s) => s.id === subject)?.name || "Subject";
 
   return {
-    title: `CBSE Class ${grade} ${subjectName} - Chapters | Pathshala Notes Hub`,
-    description: `Explore CBSE Class ${grade} ${subjectName} chapter-wise study material. Access free notes in PDF format to prepare better for your exams.`,
+    title: `CBSE Class ${grade} ${subjectName} Chapters | Pathshala Notes Hub`,
+    description: `Explore CBSE Class ${grade} ${subjectName} chapter-wise study material. Free PDF notes for exam preparation.`,
     keywords: [
       `CBSE Class ${grade} ${subjectName} notes`,
-      `CBSE Class ${grade} ${subjectName} chapters`,
-      "CBSE study material",
-      "CBSE notes PDF",
+      `CBSE ${subjectName} chapters`,
+      `CBSE Class ${grade} syllabus`,
     ],
+    alternates: {
+      canonical: `/cbse/${grade}/${subject}`,
+    },
+    openGraph: {
+      title: `CBSE Class ${grade} ${subjectName} Chapters`,
+      description: `CBSE Class ${grade} ${subjectName} chapter-wise notes and study material.`,
+      type: "website",
+    },
   };
 }
+
 // Parent listing now served on-demand; cache for SEO
 export const revalidate = 604800; // 7 days
 
@@ -51,9 +59,9 @@ export default async function CBSESubjectPage({ params }: PageProps) {
   return (
     <main>
       {/* ✅ Hero Section */}
-      <section className={styles.hero}>
+      <section className={styles.hero} aria-labelledby="subject-title">
         <div className={styles.heroContent}>
-          <h1>
+          <h1 id="subject-title">
             CBSE Class {gradeValue} - {subject.name}
           </h1>
           <p>
@@ -64,35 +72,41 @@ export default async function CBSESubjectPage({ params }: PageProps) {
       </section>
 
       {/* ===== Top in-article ad (just after hero) ===== */}
-      <div className="ad-wrapper ad-display">
+      <div className="ad-wrapper display">
+        <div className="ad-slot">
         <AdsenseAd slot="4962547015" />
+        </div>
         {/* Replace SLOT_LISTING_TOP with your real ad slot id */}
       </div>
 
       {/* ✅ Chapter Cards */}
-      <div className={styles.cardContainer2}>
-        {subject.chapters.map((chapter, index) => (
-          <div key={index} style={{ width: "100%" }}>
-            <Link
-              href={`/cbse/${gradeValue}/${subjectId}/${index + 1}`}
-              className={styles.card2}
-            >
-              <h3>Chapter {index + 1}</h3>
-              <p>
-                {chapter}
-              </p>
-            </Link>
+      <nav aria-label="CBSE chapters list">
+        <div className={styles.cardContainer2}>
+          {subject.chapters.map((chapter, index) => (
+            <div key={index} style={{ width: "100%" }}>
+              <Link
+                href={`/cbse/${gradeValue}/${subjectId}/${index + 1}`}
+                className={styles.card2}
+              >
+                <h3>Chapter {index + 1}</h3>
+                <p>
+                  {chapter}
+                </p>
+              </Link>
 
-            {/* ===== Mid-list ad: insert AFTER the 6th chapter (index === 5) ===== */}
-            {index === 5 && (
-              <div className="ad-wrapper ad-display">
-                <AdsenseAd slot="9855958653" />
-                {/* Replace SLOT_LISTING_INSET with your real ad slot id */}
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
+              {/* ===== Mid-list ad: insert AFTER the 6th chapter (index === 5) ===== */}
+              {index === 5 && (
+                <div className="ad-wrapper display">
+                  <div className="ad-slot">
+                  <AdsenseAd slot="9855958653" />
+                  </div>
+                  {/* Replace SLOT_LISTING_INSET with your real ad slot id */}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </nav>
 
       {/* ✅ Trust Section */}
       <section className={styles.trust}>
@@ -105,8 +119,10 @@ export default async function CBSESubjectPage({ params }: PageProps) {
       </section>
 
       {/* ===== Footer multiplex ad (end of page) ===== */}
-      <div className="ad-wrapper ad-multiplex">
+      <div className="ad-wrapper multiplex">
+        <div className="ad-slot">
         <AdsenseAd slot="7421367001" />
+        </div>
         {/* Replace SLOT_FOOTER_MULTIPLEX with your real ad slot id */}
       </div>
     </main>

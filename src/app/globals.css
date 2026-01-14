@@ -13,9 +13,10 @@
 
 html,
 body {
-  max-width: 100vw;
+  width: 100%;
+  max-width: 100%;
   min-height: 100vh;
-   display: flex;
+  display: flex;
   flex-direction: column;
   overflow-x: hidden;
   background-color: #f5f5f5;
@@ -25,7 +26,17 @@ body {
 }
 
 .main {
-  flex: 1; /* main content बचे हुए space को ले लेता है */
+  flex: 1;
+  width: 100%;
+  max-width: 100%;
+}
+
+.container {
+  width: 100%;
+  max-width: 100%;
+  padding: 0 1rem;
+  margin: 0 auto;
+  box-sizing: border-box;
 }
 
 a {
@@ -95,25 +106,84 @@ a {
 }
 
 
-/* ===== CLS SAFE AD SYSTEM ===== */
+/* ===== ZERO-CLS ADS SYSTEM ===== */
+
+/* 🔒 OUTER WRAPPER – height NEVER changes */
 
 .ad-wrapper {
   width: 100%;
-  margin: 0.75rem 0;
-  display: none;              /* 🔑 hidden by default */
+  margin: 20px 0;
+
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+
+  background: #f0f0f0;
+
+  /* 🚨 CLS KILL SWITCH */
+  contain: layout paint size style;
 }
 
-/* Display Ads */
-.ad-wrapper.ad-display {
-  min-height: 250px;
+/* ===================== */
+/* DISPLAY ADS */
+/* ===================== */
+
+.ad-wrapper.display {
+  height: 280px;       /* DESKTOP LOCK */
+  height: 450px;
 }
 
-/* Multiplex */
-.ad-wrapper.ad-multiplex {
-  min-height: 300px;
+@media (max-width: 600px) {
+  .ad-wrapper.display {
+    height: 250px;     /* MOBILE LOCK */
+  }
 }
 
-/* Optional: avoid margin collapse */
-.ad-wrapper ins {
-  display: block;
+/* ===================== */
+/* MULTIPLEX ADS */
+/* ===================== */
+
+.ad-wrapper.multiplex {
+  height: 450px;
+}
+
+@media (max-width: 600px) {
+  .ad-wrapper.multiplex {
+    height: 400px;
+  }
+}
+
+/* ===================== */
+/* INNER SLOT (AdSense) */
+/* ===================== */
+
+.ad-slot {
+  
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ad-container::before {
+  content: "ADVERTISEMENT";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: #9ca3af;
+  z-index: 0;
+}
+
+
+/* AdSense iframe strict control */
+ins.adsbygoogle {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
 }

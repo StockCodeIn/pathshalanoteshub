@@ -6,6 +6,7 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import Attribution from '@/components/Attribution';
 import connectDB from '@/lib/mongodb';
 import GK from '@/models/gk';
+import Script from 'next/script';
 
 interface PageProps {
   params: Promise<{ topic: string }>;
@@ -64,16 +65,8 @@ export default async function GKTopicPage({ params }: PageProps) {
   };
 
   // ✅ lastModified from DB
-  let lastModified = new Date().toISOString();
-  try {
-    await connectDB();
-    const latest = await GK.findOne({ topic }).sort({ updatedAt: -1 });
-    if (latest?.updatedAt) {
-      lastModified = new Date(latest.updatedAt).toISOString();
-    }
-  } catch {
-    // silent fallback
-  }
+  const lastModified = "2025-01-01T00:00:00.000Z";
+
 
   return (
     <main>
@@ -98,7 +91,8 @@ export default async function GKTopicPage({ params }: PageProps) {
       <SubtopicListPage topicSlug={topic} />
 
       {/* Breadcrumb JSON-LD */}
-      <script
+      <Script
+        id="breadcrumb-schema"
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />

@@ -1,81 +1,89 @@
-// components/AdsenseAd.tsx
 "use client";
+
 import { useEffect, useRef } from "react";
-import Script from "next/script";
 
 declare global {
   interface Window {
-    adsbygoogle: any;
+    adsbygoogle: any[];
   }
 }
 
-type Props = {
+interface AdsenseAdProps {
   slot: string;
-  className?: string;
-  style?: React.CSSProperties;
-  size?: "default" | "small" | "inline";
   variant?: "display" | "multiplex";
-};
+}
 
 export default function AdsenseAd({
   slot,
-  className = "",
-  style,
-  size = "default",
   variant = "display",
-}: Props) {
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const adRef = useRef<HTMLDivElement>(null);
+}: AdsenseAdProps) {
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const insEl = useRef<HTMLModElement | null>(null); // ✅ EXACT TYPE
 
   useEffect(() => {
-    try {
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
-    } catch {}
+    // Admin check
+    const isAdmin = document.cookie
+      .split(";")
+      .some((c) => c.trim().startsWith("admin_token="));
 
-    const observer = new MutationObserver(() => {
-      const iframe = adRef.current?.querySelector("iframe");
-      if (iframe && iframe.offsetHeight > 0) {
-        wrapperRef.current!.style.display = "block";
+    // Bot check
+    const ua = navigator.userAgent.toLowerCase();
+    const isBot =
+      /bot|googlebot|crawler|spider|robot|slurp|bingbot|duckduckbot|baiduspider|yandexbot|facebookexternalhit|twitterbot/.test(
+        ua
+      );
+
+    if (isAdmin || isBot) return;
+    if (!wrapperRef.current || !insEl.current) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+
+        const width = wrapperRef.current!.offsetWidth;
+        if (width === 0) return;
+
+        try {
+          if (!insEl.current!.getAttribute("data-adsbygoogle-status")) {
+            (window.adsbygoogle = window.adsbygoogle || []).push({});
+          }
+        } catch (e) {
+          console.error("Adsense push failed", e);
+        }
+
         observer.disconnect();
+      },
+      {
+        rootMargin: "200px 0px",
+        threshold: 0.01,
       }
-    });
+    );
 
-    if (adRef.current) {
-      observer.observe(adRef.current, { childList: true, subtree: true });
-    }
+    observer.observe(wrapperRef.current);
 
     return () => observer.disconnect();
-  }, []);
+  }, [slot]);
 
-  const sizeClass =
-    size === "small" ? "small" : size === "inline" ? "inline" : "";
+  const containerClass =
+    variant === "multiplex"
+      ? "ad-container ad-multiplex-min"
+      : "ad-container ad-display-min";
 
   return (
-    <>
-      <Script
-        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
-        strategy="afterInteractive"
-      />
-
-      <div
-        ref={wrapperRef}
-        className={`ad-wrapper ${variant === "multiplex" ? "ad-multiplex" : "ad-display"}`}
-      >
-        <div
-          ref={adRef}
-          className={`ad-slot ${sizeClass} ${className}`}
-          style={style}
-        >
-          <ins
-            className="adsbygoogle"
-            style={{ display: "block" }}
-            data-ad-client={process.env.NEXT_PUBLIC_ADSENSE_CLIENT}
-            data-ad-slot={slot}
-            data-ad-format="auto"
-            data-full-width-responsive="true"
-          />
-        </div>
+    <div ref={wrapperRef} className={containerClass}>
+      <div className="ad-slot">
+        <ins
+          ref={(el) => {
+            insEl.current = el;
+          }}
+          className="adsbygoogle"
+          style={{ display: "block", width: "100%", height: "100%" }}
+          data-ad-client={process.env.NEXT_PUBLIC_ADSENSE_CLIENT}
+          data-ad-slot={slot}
+          data-ad-format={variant === "multiplex" ? "autorelaxed" : "auto"}
+          data-full-width-responsive="true"
+        />
       </div>
-    </>
+    </div>
   );
 }

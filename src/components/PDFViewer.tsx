@@ -1,168 +1,81 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { pdfjsLib } from '@/lib/pdfjs';
+import { useState } from 'react';
 
 export interface PDFViewerProps {
   url: string;
   title: string;
-  board?: string;
-  grade?: string;
-  subject?: string;
-  topic?: string;
-  subtopic?: string;
-  showDownloadButton?: boolean;
 }
 
-export default function PDFViewer({
-  url,
-  title,
-  board,
-  grade,
-  subject,
-  topic,
-  subtopic,
-  showDownloadButton = true,
-}: PDFViewerProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const observerRef = useRef<IntersectionObserver | null>(null);
-  const [pageCount, setPageCount] = useState(0);
-  const [pdf, setPdf] = useState<any>(null);
+export default function PDFViewer({ url, title }: PDFViewerProps) {
+  const [isLoaded, setIsLoaded] = useState(false);
 
-  // ✅ Load PDF only once
-  useEffect(() => {
-    let cancelled = false;
-    async function loadPDF() {
-      if (!url) return;
+  // Cloudinary Watermark URL Generator
+  const getWatermarkedUrl = (originalUrl: string) => {
+    if (!originalUrl || !originalUrl.includes('cloudinary.com')) return originalUrl;
+    // Aapka transformation pattern
+    const watermarkConfig = 'l_watermark_g1sgt6,a_45,o_30,w_0.4,fl_relative,fl_layer_apply/';
+    return originalUrl.replace('/upload/', `/upload/${watermarkConfig}`);
+  };
 
-      try {
-        const loadingTask = pdfjsLib.getDocument(url);
-        const pdfDoc = await loadingTask.promise;
-        if (cancelled) return;
-        setPdf(pdfDoc);
-        setPageCount(pdfDoc.numPages);
-      } catch (err) {
-        console.error('PDF loading error:', err);
-      }
-    }
-    loadPDF();
-    return () => {
-      cancelled = true;
-    };
-  }, [url]);
-
-  // ✅ Smart Lazy Rendering for each page
-  useEffect(() => {
-    if (!pdf || !containerRef.current) return;
-    const container = containerRef.current;
-    container.innerHTML = '';
-
-    observerRef.current?.disconnect();
-
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        entries.forEach(async (entry) => {
-          if (entry.isIntersecting) {
-            const pageNumber = parseInt(entry.target.getAttribute('data-page')!);
-            const alreadyRendered = entry.target.getAttribute('data-rendered');
-            if (alreadyRendered === 'true') return;
-
-            const page = await pdf.getPage(pageNumber);
-
-            const parentWidth =
-              (entry.target as HTMLElement).offsetWidth || window.innerWidth;
-            const viewport = page.getViewport({ scale: 1 });
-            const scale = parentWidth / viewport.width;
-
-            const scaledViewport = page.getViewport({ scale });
-
-            const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d')!;
-            const dpr = window.devicePixelRatio || 1;
-
-            canvas.width = scaledViewport.width * dpr;
-            canvas.height = scaledViewport.height * dpr;
-            canvas.style.width = '100%';
-            canvas.style.height = `${scaledViewport.height}px`;
-
-            const transform = dpr !== 1 ? [dpr, 0, 0, dpr, 0, 0] : undefined;
-            await page.render({
-              canvasContext: context,
-              viewport: scaledViewport,
-              transform,
-            }).promise;
-
-            // ✅ Optional watermark
-            context.save();
-            context.font = 'bold 36px Arial';
-            context.globalAlpha = 0.1;
-            context.fillStyle = 'gray';
-            context.rotate(-0.3);
-            context.fillText('© pathshalanoteshub.in', canvas.width / 6, canvas.height / 1.5);
-            context.restore();
-
-            entry.target.appendChild(canvas);
-            entry.target.setAttribute('data-rendered', 'true');
-          }
-        });
-      },
-      { rootMargin: '250px 0px' }
-    );
-
-    // Create lazy divs
-    for (let i = 1; i <= pageCount; i++) {
-      const pageDiv = document.createElement('div');
-      pageDiv.dataset.page = i.toString();
-      pageDiv.style.minHeight = window.innerWidth < 600 ? '600px' : '850px';
-      pageDiv.style.marginBottom = '12px';
-      container.appendChild(pageDiv);
-      observerRef.current.observe(pageDiv);
-    }
-
-    return () => observerRef.current?.disconnect();
-  }, [pdf, pageCount]);
-
-  // ✅ Dynamic download URL
-  let downloadUrl = '';
-  if (topic && subtopic) {
-    downloadUrl = `/api/download?topic=${encodeURIComponent(topic)}&subtopic=${encodeURIComponent(subtopic)}`;
-  } else if (board && grade && subject && title) {
-    downloadUrl = `/api/download?board=${encodeURIComponent(board)}&grade=${encodeURIComponent(
-      grade
-    )}&subject=${encodeURIComponent(subject)}&chapter=${encodeURIComponent(title)}`;
-  }
+  const finalUrl = getWatermarkedUrl(url);
+  const googleViewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(finalUrl)}&embedded=true`;
 
   return (
-    <div style={{ padding: '10px', overflowX: 'hidden' }}>
-      <div
-        ref={containerRef}
-        style={{
-          textAlign: 'center',
-          width: '100vw',
-          maxWidth: '100%',
-          margin: '0 auto',
-          boxSizing: 'border-box',
-        }}
-      ></div>
-
-      {showDownloadButton && downloadUrl && (
-        <div style={{ textAlign: 'center', marginTop: '20px' }}>
-          <a
-            href={downloadUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              padding: '10px 20px',
-              backgroundColor: '#0070f3',
-              color: '#fff',
-              borderRadius: '5px',
-              textDecoration: 'none',
-            }}
-          >
-            Download Watermarked PDF
-          </a>
+    <div className="pdf-wrapper">
+      {!isLoaded && (
+        <div className="pdf-skeleton">
+          <div className="spinner"></div>
+          <p>Loading Sharp PDF Notes...</p>
         </div>
       )}
+
+      <iframe
+        src={googleViewerUrl}
+        onLoad={() => setIsLoaded(true)}
+        className={`pdf-iframe ${isLoaded ? 'visible' : 'hidden'}`}
+        title={title}
+      />
+
+      <style jsx>{`
+        .pdf-wrapper {
+          position: relative;
+          width: 100%;
+          height: 85vh;
+          min-height: 550px;
+          background: #f3f4f6;
+          border-radius: 8px;
+          overflow: hidden;
+          margin: 20px 0;
+        }
+        .pdf-skeleton {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          z-index: 1;
+        }
+        .pdf-iframe {
+          width: 100%;
+          height: 100%;
+          border: none;
+        }
+        .hidden { visibility: hidden; opacity: 0; }
+        .visible { visibility: visible; opacity: 1; transition: opacity 0.5s ease; }
+        
+        .spinner {
+          width: 40px;
+          height: 40px;
+          border: 4px solid #ddd;
+          border-top: 4px solid #0070f3;
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+          margin-bottom: 10px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+      `}</style>
     </div>
   );
 }

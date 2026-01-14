@@ -62,8 +62,9 @@ export default function RootLayout({
 
         {/* Google AdSense – DELAYED & SAFE */}
         <Script
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9763514386679989"
-          strategy="lazyOnload"
+          async
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_ADSENSE_CLIENT}`}
+          strategy="afterInteractive"
           crossOrigin="anonymous"
         />
 

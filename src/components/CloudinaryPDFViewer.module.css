@@ -1,0 +1,97 @@
+/* css */
+/* .pdfViewer {
+  max-width: 1000px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.page {
+  position: relative;
+  background: #fff;
+  border-radius: 6px;
+  aspect-ratio: 8.5 / 11;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0,0,0,.08);
+}
+
+.page img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; 
+  display: block;
+}
+
+.page::after {
+  content: "";
+  display: block;
+  height: 4px;
+  background: #e5e7eb;
+}
+
+.pageNumber {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(0,0,0,0.65);
+  color: #fff;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+} */
+
+.pdfViewer {
+  max-width: 1000px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.page {
+  position: relative;
+  /* background: #fff; */
+  border-radius: 6px;
+   aspect-ratio: auto;   /* ❗ remove fixed ratio */
+  background: #e5e7eb;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0,0,0,.08);
+}
+
+/* 🔒 PDF SAFE RENDERING */
+.page img {
+  width: 100%;
+  height: auto;          /* ❌ NOT 100% */
+  object-fit: contain;   /* ❌ NOT cover */
+  display: block;
+}
+
+.page::after {
+  content: "";
+  display: block;
+  height: 4px;
+  background: #e5e7eb;
+}
+
+.pageNumber {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(0,0,0,0.65);
+  color: #fff;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+@media (max-width: 768px) {
+  .pdfViewer {
+    padding: 0;
+  }
+
+  .page img {
+    width: 100vw;        /* 🔥 fills screen */
+    max-width: 100%;
+  }
+}
+
