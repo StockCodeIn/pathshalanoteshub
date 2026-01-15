@@ -4,8 +4,7 @@ import styles from '@/styles/Home.module.css';
 import SubsubListPage from '@/components/SubsubListPage';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import Attribution from '@/components/Attribution';
-import connectDB from '@/lib/mongodb';
-import GK from '@/models/gk';
+import Script from 'next/script';
 
 interface PageProps {
   params: Promise<{
@@ -14,148 +13,117 @@ interface PageProps {
   }>;
 }
 
-// ✅ Dynamic SEO Metadata
+/* ================= SEO ================= */
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { topic, subtopic } = await params;
 
   const topicName = decodeURIComponent(topic).replace(/-/g, ' ');
   const subtopicName = decodeURIComponent(subtopic).replace(/-/g, ' ');
 
-
-  const title = `${subtopicName} - ${topicName} GK Notes | Pathshala Notes Hub`;
-  const description = `${topicName} विषय के अंतर्गत "${subtopicName}" के महत्वपूर्ण सामान्य ज्ञान (GK) नोट्स और अध्ययन सामग्री PDF। प्रतियोगी परीक्षाओं जैसे UPSC, SSC, RPSC, Railway, Bank के लिए उपयोगी सामग्री।`;
-
   return {
-    title,
-    description,
-    keywords: [
-      subtopicName,
-      topicName,
-      'GK Notes',
-      'सामान्य ज्ञान',
-      'Pathshala Notes Hub',
-      'UPSC GK Notes',
-      'SSC GK Notes',
-    ],
+    title: `${subtopicName} - ${topicName} GK Notes | Pathshala Notes Hub`,
+    description: `${topicName} विषय के अंतर्गत "${subtopicName}" के महत्वपूर्ण GK नोट्स।`,
     openGraph: {
-      title,
-      description,
+      title: `${subtopicName} - ${topicName} GK Notes`,
+      description: `${subtopicName} GK Notes for competitive exams`,
       type: 'article',
       locale: 'hi_IN',
     },
     alternates: {
-      canonical:
-        process.env.NODE_ENV === 'production'
-          ? `${process.env.NEXT_PUBLIC_BASE_URL}/gk/${topic}/${subtopic}`
-          : `http://localhost:3000/gk/${topic}/${subtopic}`,
+      canonical: `${process.env.NEXT_PUBLIC_BASE_URL}/gk/${topic}/${subtopic}`,
     },
   };
 }
 
-// Parent listing now served on-demand; cache for SEO
-export const revalidate = 604800; // 7 days
+export const revalidate = 604800;
 
-// ✅ Page Component
+/* ================= PAGE ================= */
 export default async function SubtopicPDFPage({ params }: PageProps) {
   const { topic, subtopic } = await params;
 
   const topicName = decodeURIComponent(topic).replace(/-/g, ' ');
   const subtopicName = decodeURIComponent(subtopic).replace(/-/g, ' ');
 
-  const pageTitle = `${subtopicName} - ${topicName} GK Notes | Pathshala Notes Hub`;
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL!;
+  const lastModified = "2025-10-01T00:00:00.000Z";
 
-
-  const baseUrl =
-    process.env.NODE_ENV === 'production'
-      ? process.env.NEXT_PUBLIC_BASE_URL
-      : 'http://localhost:3000';
-
-  // ✅ Structured data for breadcrumbs
+  /* Breadcrumb schema */
   const breadcrumbSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: `${baseUrl}/` },
-      { '@type': 'ListItem', position: 2, name: 'GK', item: `${baseUrl}/gk` },
-      {
-        '@type': 'ListItem',
-        position: 3,
-        name: topicName,
-        item: `${baseUrl}/gk/${topic}`,
-      },
-      {
-        '@type': 'ListItem',
-        position: 4,
-        name: subtopicName,
-        item: `${baseUrl}/gk/${topic}/${subtopic}`,
-      },
+      { "@type": "ListItem", position: 1, name: "Home", item: `${baseUrl}/` },
+      { "@type": "ListItem", position: 2, name: "GK", item: `${baseUrl}/gk` },
+      { "@type": "ListItem", position: 3, name: topicName, item: `${baseUrl}/gk/${topic}` },
+      { "@type": "ListItem", position: 4, name: subtopicName, item: `${baseUrl}/gk/${topic}/${subtopic}` },
     ],
   };
 
-  // compute lastModified from latest updated item in this subtopic (with timeout)
-  const lastModified = "2025-10-01T00:00:00.000Z";
-
-
   return (
     <main>
-      {/* Hero Section */}
-      <section className={styles.hero}>
+      {/* 🔥 HERO – LCP OPTIMIZED */}
+      <section
+        className={styles.hero}
+        style={{
+          contentVisibility: "auto",
+          containIntrinsicSize: "300px", // reserve space for LCP
+        }}
+      >
         <div className={styles.heroContent}>
           <h1>{subtopicName}</h1>
           <p>
-            {topicName} विषय के अंतर्गत <strong>{subtopicName}</strong> से संबंधित महत्वपूर्ण
-            सामान्य ज्ञान (GK) नोट्स की सूची।
+            {topicName} विषय के अंतर्गत <strong>{subtopicName}</strong> से संबंधित
+            महत्वपूर्ण सामान्य ज्ञान (GK) नोट्स।
           </p>
         </div>
       </section>
 
-      {/* Breadcrumbs Navigation */}
-      <section
-        style={{
-          maxWidth: 900,
-          margin: '1rem auto',
-          padding: '0 1rem',
-          minHeight: 40   // CLS fix
-        }}
-      >
+      {/* Breadcrumbs (CLS safe) */}
+      <section style={{ maxWidth: 900, margin: "1rem auto", padding: "0 1rem", minHeight: 40 }}>
         <Breadcrumbs />
       </section>
 
-      {/* GK Sub-Subtopics List */}
+      {/* 🔽 HEAVY CLIENT CONTENT – deferred visually */}
       <section
         style={{
-          minHeight: "60vh",   // CLS FIX
-          contain: "layout style paint"
+          minHeight: "60vh",
+          contentVisibility: "auto",
+          contain: "layout paint",
         }}
       >
         <SubsubListPage topic={topic} subtopic={subtopic} />
       </section>
 
-
-      {/* ✅ Breadcrumb structured data for SEO */}
-      <script
+      {/* ✅ Breadcrumb JSON-LD (NON-BLOCKING) */}
+      <Script
+        id="breadcrumb-schema"
+        strategy="afterInteractive"
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
 
-      {/* Article JSON-LD for ownership & SEO */}
-      <script
+      {/* ✅ Article JSON-LD (NON-BLOCKING) */}
+      <Script
+        id="article-schema"
+        strategy="afterInteractive"
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'Article',
-            headline: pageTitle,
-            author: { '@type': 'Organization', name: 'Pathshala Notes Hub' },
+            "@context": "https://schema.org",
+            "@type": "Article",
+            headline: `${subtopicName} - ${topicName} GK Notes`,
+            author: { "@type": "Organization", name: "Pathshala Notes Hub" },
             publisher: {
-              '@type': 'Organization',
-              name: 'Pathshala Notes Hub',
-              logo: { '@type': 'ImageObject', url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/android-chrome-512x512.png` },
+              "@type": "Organization",
+              name: "Pathshala Notes Hub",
+              logo: {
+                "@type": "ImageObject",
+                url: `${baseUrl}/android-chrome-512x512.png`,
+              },
             },
-            datePublished: "2025-10-01",
+            datePublished: lastModified,
             dateModified: lastModified,
-
-            mainEntityOfPage: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/gk/${topic}/${subtopic}`,
+            mainEntityOfPage: `${baseUrl}/gk/${topic}/${subtopic}`,
           }),
         }}
       />

@@ -1,12 +1,10 @@
-// src/app/rbse/[grade]/[subject]/[chapterId]/page.tsx
-import { notFound } from 'next/navigation';
+import { notFound } from "next/navigation";
 import connectDB from "@/lib/mongodb";
 import { Chapter } from "@/models/chapter";
 import styles from "@/styles/Home.module.css";
 import CloudinaryPDFViewer from "@/components/CloudinaryPDFViewer";
 import type { Metadata } from "next";
 import AdsenseAd from "@/components/AdsenseAd";
-
 
 interface PageProps {
   params: Promise<{
@@ -16,6 +14,7 @@ interface PageProps {
   }>;
 }
 
+/* ------------------ SEO METADATA ------------------ */
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { grade, subject, chapterId } = await params;
 
@@ -33,16 +32,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-
 /* ------------------ STATIC PATHS WITH ISR ------------------ */
 export async function generateStaticParams() {
   await connectDB();
   const chapters = await Chapter.find(
-    { board: 'RBSE' },
+    { board: "RBSE" },
     { grade: 1, subject: 1, name: 1 }
   ).lean();
 
-  return chapters.map((ch) => ({
+  return chapters.map((ch: any) => ({
     grade: ch.grade,
     subject: ch.subject,
     chapterId: ch.name,
@@ -51,15 +49,15 @@ export async function generateStaticParams() {
 
 export const revalidate = 604800; // 7 days
 
-/* ✅ QUERY CACHING - Taaki database slow na ho */
+/* ------------------ RUNTIME CACHE ------------------ */
 const chapterCache = new Map<string, any>();
-const CACHE_DURATION = 3600000; // 1 hour in milliseconds
+const CACHE_DURATION = 3600000;
 
-function getCacheKey(board: string, grade: string, subject: string, name: string): string {
+function getCacheKey(board: string, grade: string, subject: string, name: string) {
   return `${board}:${grade}:${subject}:${name}`;
 }
 
-function getCachedChapter(key: string): any | null {
+function getCachedChapter(key: string) {
   const cached = chapterCache.get(key);
   if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
     return cached.data;
@@ -68,30 +66,27 @@ function getCachedChapter(key: string): any | null {
   return null;
 }
 
-function setCachedChapter(key: string, data: any): void {
+function setCachedChapter(key: string, data: any) {
   chapterCache.set(key, { data, timestamp: Date.now() });
 }
 
-/* ------------------ MAIN PAGE COMPONENT ------------------ */
-
-// ✅ Main page component
+/* ------------------ PAGE ------------------ */
 export default async function RBSEChapterPage({ params }: PageProps) {
   const { grade, subject, chapterId } = await params;
 
-  // Check cache first (for runtime caching)
-  const cacheKey = getCacheKey('RBSE', grade, subject, chapterId);
+  const cacheKey = getCacheKey("RBSE", grade, subject, chapterId);
   let chapterData = getCachedChapter(cacheKey);
 
   if (!chapterData) {
-    // Only connect if not in cache
     await connectDB();
-
     chapterData = await Chapter.findOne({
       board: "RBSE",
       grade,
       subject,
       name: chapterId,
-    }).lean().maxTimeMS(8000) as any; // 8 second timeout
+    })
+      .lean()
+      .maxTimeMS(8000);
 
     if (chapterData) {
       setCachedChapter(cacheKey, chapterData);
@@ -102,63 +97,92 @@ export default async function RBSEChapterPage({ params }: PageProps) {
     notFound();
   }
 
+  /* ✅ FIRST PAGE SPLIT (KEY FIX) */
+  const firstPage: string | undefined = chapterData.pageImages?.[0];
+  const restPages: string[] = chapterData.pageImages?.slice(1) || [];
+
   return (
     <main>
-      {/* ✅ Hero Section */}
-      <section className={styles.hero} aria-labelledby="chapter-title">
+      {/* HERO */}
+      <section className={styles.hero} style={{
+          contentVisibility: "auto",
+          containIntrinsicSize: "500px",
+        }} aria-labelledby="chapter-title">
         <div className={styles.heroContent}>
           <h1 id="chapter-title">
             RBSE Class {grade} - {subject}
-            <br /> Chapter {chapterData.name}
+            <br />
+            Chapter {chapterData.name}
           </h1>
           <p>
-            Free RBSE Class {grade} {subject} notes for Chapter {chapterData.name}.
-            Download and study in PDF format to prepare better for your board exams.
+            Free RBSE Class {grade} {subject} notes for Chapter{" "}
+            {chapterData.name}. Download and study in PDF format to prepare
+            better for your board exams.
           </p>
         </div>
       </section>
 
-      {/* ✅ TOP DISPLAY AD (CLS SAFE) */}
+      {/* TOP AD */}
       <div className="ad-wrapper display">
         <div className="ad-slot">
-        <AdsenseAd slot="3928666945" />
+          <AdsenseAd slot="3928666945" />
         </div>
       </div>
 
-
-      {/*  PDF Viewer / Extracted HTML */}
-      <div className="container" style={{ marginTop: "2rem", contain: 'layout style paint' }}>
+      {/* CONTENT */}
+      <div className="container pdf-section" style={{ position: 'relative', contain: "layout style paint"  }}>
         {chapterData.extractedHtml ? (
           <>
-            <article className="prose" dangerouslySetInnerHTML={{ __html: chapterData.extractedHtml }} />
-            <div className="ad-wrapper display">
-              <div className="ad-slot">
-              <AdsenseAd slot="4412060289" />
-              </div>
-            </div>
+            <article
+              className="prose"
+              dangerouslySetInnerHTML={{ __html: chapterData.extractedHtml }}
+            />
           </>
         ) : (
-          <div style={{
-            width: '100%',
-            maxWidth: '900px',
-            margin: '0 auto',
-            contain: 'layout style paint'
-          }}>
-            {/* ✅ Ab hum sirf wahi props bhej rahe hain jo zaruri hain */}
+          <div
+            style={{
+              width: "100%",
+              maxWidth: "900px",
+              margin: "0 auto",
+              contain: "layout style paint",
+            }}
+          >
             <article itemScope itemType="https://schema.org/Article">
+              {/* 🔥 LCP IMAGE – ONLY ONCE */}
+              {firstPage && (
+                <img
+                  src={firstPage}
+                  alt={`RBSE Class ${grade} ${subject} Chapter ${chapterData.name} Page 1`}
+                  width={900}
+                  height={1200}
+                  style={{
+                    width: "100%",
+                    height: "auto",
+                    display: "block",
+                    marginBottom: "1rem",
+                  }}
+                  loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
+                />
+              )}
+
+              {/* ⬇️ VIEWER FROM PAGE 2 */}
               <CloudinaryPDFViewer
                 title={chapterData.name}
-                pageImages={chapterData.pageImages || []}
+                pageImages={restPages}
               />
             </article>
-
-
-
           </div>
         )}
       </div>
-
-      {/* ✅ Trust / Extra Info Section */}
+      {/* BOTTOM AD */}
+      <div className="ad-wrapper multiplex">
+        <div className="ad-slot">
+          <AdsenseAd slot="5729011389" />
+        </div>
+      </div>
+      {/* TRUST */}
       <section className={styles.trust}>
         <h2>Why Use These Notes?</h2>
         <ul>
@@ -167,15 +191,10 @@ export default async function RBSEChapterPage({ params }: PageProps) {
           <li>✔ Helps with exam preparation and revision</li>
         </ul>
         <p>
-          📌 All notes are collected and organized chapter-wise for Class {grade} {subject}.
+          📌 All notes are collected and organized chapter-wise for Class {grade}{" "}
+          {subject}.
         </p>
       </section>
-      <div className="ad-wrapper multiplex">
-        <div className="ad-slot">
-        <AdsenseAd slot="5729011389" />
-        </div>
-      </div>
-
-    </main >
+    </main>
   );
 }

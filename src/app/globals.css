@@ -167,7 +167,7 @@ a {
   align-items: center;
   justify-content: center;
 }
-.ad-container::before {
+.ad-wrapper::before {
   content: "ADVERTISEMENT";
   position: absolute;
   inset: 0;

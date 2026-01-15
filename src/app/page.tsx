@@ -31,6 +31,7 @@ export const metadata: Metadata = {
   },
 
 };
+export const revalidate = 86400; // 24 hours
 
 // Boards Data
 const boardsData = [
@@ -171,7 +172,15 @@ export default function Home() {
   return (
     <main>
       {/* ✅ Hero Section */}
-      <section className={styles.hero} aria-labelledby="home-title">
+      <section
+        className={styles.hero}
+        aria-labelledby="home-title"
+        style={{
+          contentVisibility: "auto",
+          containIntrinsicSize: "600px",
+        }}
+      >
+
         <div className={styles.heroContent}>
           <h1 id="home-title">Pathshala Notes Hub - RBSE, CBSE & Indian GK</h1>
           <p>
@@ -182,15 +191,15 @@ export default function Home() {
             <strong>Indian GK topic-wise notes</strong> बिल्कुल free मिलते हैं।
           </p>
           <div className={styles.heroButtons}>
-            <Link href="/rbse" className={styles.ctaButton}>
+            <Link href="/rbse" prefetch={false} className={styles.ctaButton}>
               Explore RBSE Notes
             </Link>
-            <Link href="/cbse" className={styles.ctaButtonSecondary}>
+            <Link href="/cbse" prefetch={false} className={styles.ctaButtonSecondary}>
               Explore CBSE Notes
             </Link>
           </div>
           <div className={styles.heroButtons} style={{ marginTop: "0.75rem" }}>
-            <Link href="/gk" className={styles.ctaButtonTertiary}>
+            <Link href="/gk" prefetch={false} className={styles.ctaButtonTertiary}>
               Explore Indian GK &amp; Current Affairs
             </Link>
           </div>
@@ -212,13 +221,6 @@ export default function Home() {
         ))}
       </ul>
 
-      {/* Top banner ad */}
-      <div className="ad-wrapper display">
-        <div className="ad-slot">
-          <AdsenseAd slot="6017620145" />
-        </div>
-      </div>
-
       {/* ✅ Study Resources Section */}
       <h2 className={styles.sectionTitle}>Study Resources &amp; Exam Guidance</h2>
       <ul className={styles.listContainer}>
@@ -230,7 +232,12 @@ export default function Home() {
           </li>
         ))}
       </ul>
-
+      {/* Top banner ad */}
+      <div className="ad-wrapper display">
+        <div className="ad-slot">
+          <AdsenseAd slot="6017620145" />
+        </div>
+      </div>
       {/* ✅ Indian GK & Current Affairs Section */}
       <h2 className={styles.sectionTitle}>Indian GK, Current Affairs &amp; Static GK</h2>
       <div className={styles.cardContainer2}>
@@ -287,6 +294,7 @@ export default function Home() {
       {/* ✅ FAQ JSON-LD */}
       <Script
         id="faq-schema"
+        strategy="afterInteractive"
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
@@ -306,6 +314,7 @@ export default function Home() {
 
       <Script
         id="organization-schema"
+        strategy="afterInteractive"
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
@@ -323,6 +332,7 @@ export default function Home() {
       {/* ✅ Website & Breadcrumb JSON-LD for better SEO */}
       <Script
         id="website-schema"
+        strategy="afterInteractive"
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
@@ -341,6 +351,7 @@ export default function Home() {
 
       <Script
         id="breadcrumb-schema"
+        strategy="afterInteractive"
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
@@ -375,13 +386,6 @@ export default function Home() {
           }),
         }}
       />
-
-      {/* Footer multiplex */}
-      <div className="ad-wrapper multiplex">
-        <div className="ad-slot">
-          <AdsenseAd slot="2409370012" />
-        </div>
-      </div>
     </main>
   );
 }

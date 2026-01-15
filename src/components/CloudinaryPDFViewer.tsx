@@ -46,9 +46,9 @@ export default function CloudinaryPDFViewer({
             fetchPriority={index === 0 ? "high" : "low"}
             decoding="async"
           />
-          <span className={styles.pageNumber}>
+          {/* <span className={styles.pageNumber}>
             Page {index + 1}
-          </span>
+          </span> */}
         </figure>
       ))}
     </div>

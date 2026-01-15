@@ -18,7 +18,7 @@ export default function AdsenseAd({
   variant = "display",
 }: AdsenseAdProps) {
   const wrapperRef = useRef<HTMLDivElement | null>(null);
-  const insEl = useRef<HTMLModElement | null>(null); // ✅ EXACT TYPE
+  const insEl = useRef<HTMLElement | null>(null); // ✅ EXACT TYPE
 
   useEffect(() => {
     // Admin check
@@ -70,7 +70,7 @@ export default function AdsenseAd({
       : "ad-container ad-display-min";
 
   return (
-    <div ref={wrapperRef} className={containerClass}>
+    <div ref={wrapperRef} className="ad-wrapper display">
       <div className="ad-slot">
         <ins
           ref={(el) => {
@@ -86,4 +86,5 @@ export default function AdsenseAd({
       </div>
     </div>
   );
+
 }

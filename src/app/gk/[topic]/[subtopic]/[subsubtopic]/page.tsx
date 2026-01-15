@@ -1,7 +1,4 @@
-// src/app/gk/[topic]/[subtopic]/[subsubtopic]/page.tsx
-
 import { notFound } from 'next/navigation';
-// import { cache } from 'react';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import type { Metadata } from 'next';
 import styles from '@/styles/Home.module.css';
@@ -10,7 +7,7 @@ import Attribution from '@/components/Attribution';
 import connectDB from '@/lib/mongodb';
 import GK from '@/models/gk';
 import AdsenseAd from '@/components/AdsenseAd';
-
+import Script from 'next/script';
 
 interface PageProps {
   params: Promise<{
@@ -30,7 +27,7 @@ interface GKType {
   updatedAt?: Date;
 }
 
-/* -------------------- Metadata -------------------- */
+/* ================= METADATA ================= */
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { topic, subtopic, subsubtopic } = await params;
 
@@ -38,143 +35,101 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const decodedSubtopic = decodeURIComponent(subtopic).replace(/-/g, ' ');
   const decodedTitle = decodeURIComponent(subsubtopic).replace(/-/g, ' ');
 
-  const title = `${decodedTitle} - ${decodedSubtopic} | GK Notes`;
-  const description = `${decodedTitle} GK notes under ${decodedSubtopic} - Pathshala Notes Hub`;
-
-  const baseUrl =
-    process.env.NODE_ENV === 'production'
-      ? process.env.NEXT_PUBLIC_BASE_URL
-      : 'http://localhost:3000';
-
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL!;
   const url = `${baseUrl}/gk/${topic}/${subtopic}/${subsubtopic}`;
 
   return {
-    title,
-    description,
-    keywords: [decodedTitle, decodedSubtopic, decodedTopic, 'GK Notes'],
+    title: `${decodedTitle} - ${decodedSubtopic} | GK Notes`,
+    description: `${decodedTitle} GK notes under ${decodedSubtopic}`,
     alternates: { canonical: url },
     openGraph: {
-      title,
-      description,
+      title: `${decodedTitle} - ${decodedSubtopic}`,
+      description: `${decodedTitle} GK notes`,
       type: 'article',
       locale: 'hi_IN',
       url,
-      images: [
-        {
-          url: `${baseUrl}/android-chrome-512x512.png`,
-          alt: 'Pathshala Notes Hub',
-        },
-      ],
+      images: [{ url: `${baseUrl}/android-chrome-512x512.png` }],
     },
   };
 }
 
-/* -------------------- Static Params with ISR -------------------- */
-export async function generateStaticParams() {
-  await connectDB();
+/* ================= ISR ================= */
+export const revalidate = 604800;
 
-  const items = await GK.find(
-    {},
-    { topic: 1, subtopic: 1, name: 1, _id: 0 }
-  ).lean();
-
-  return items.map((item) => ({
-    topic: item.topic,
-    subtopic: item.subtopic,
-    subsubtopic: item.name,
-  }));
-}
-
-export const revalidate = 604800; // 7 days
-
-
-/* -------------------- Page -------------------- */
+/* ================= PAGE ================= */
 export default async function SubsubPage({ params }: PageProps) {
   const { topic, subtopic, subsubtopic } = await params;
-  await connectDB();
-  const item = await GK.findOne({ topic, subtopic, name: subsubtopic }).lean<GKType>();
 
-  if (!item) {
-    notFound();
-  }
+  await connectDB();
+  const item = await GK.findOne({ topic, subtopic, name: subsubtopic })
+    .lean<GKType>()
+    .maxTimeMS(5000);
+
+  if (!item) notFound();
 
   const decodedTopic = decodeURIComponent(topic).replace(/-/g, ' ');
   const decodedSubtopic = decodeURIComponent(subtopic).replace(/-/g, ' ');
   const displayTitle =
     item.displayName || decodeURIComponent(subsubtopic).replace(/-/g, ' ');
 
-  const baseUrl =
-    process.env.NODE_ENV === 'production'
-      ? process.env.NEXT_PUBLIC_BASE_URL
-      : 'http://localhost:3000';
-
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL!;
   const pageUrl = `${baseUrl}/gk/${topic}/${subtopic}/${subsubtopic}`;
 
+  /* Breadcrumb schema */
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home', item: `${baseUrl}/` },
       { '@type': 'ListItem', position: 2, name: 'GK', item: `${baseUrl}/gk` },
-      {
-        '@type': 'ListItem',
-        position: 3,
-        name: decodedTopic,
-        item: `${baseUrl}/gk/${topic}`,
-      },
-      {
-        '@type': 'ListItem',
-        position: 4,
-        name: decodedSubtopic,
-        item: `${baseUrl}/gk/${topic}/${subtopic}`,
-      },
-      {
-        '@type': 'ListItem',
-        position: 5,
-        name: displayTitle,
-        item: pageUrl,
-      },
+      { '@type': 'ListItem', position: 3, name: decodedTopic, item: `${baseUrl}/gk/${topic}` },
+      { '@type': 'ListItem', position: 4, name: decodedSubtopic, item: `${baseUrl}/gk/${topic}/${subtopic}` },
+      { '@type': 'ListItem', position: 5, name: displayTitle, item: pageUrl },
     ],
   };
 
+  const lastModified =
+    item.updatedAt?.toISOString() || '2025-10-01T00:00:00.000Z';
+
   return (
     <main>
-      {/* Hero */}
-      <section className={styles.hero}style={{ contain: 'layout paint' }}>
+      {/* 🔥 HERO – LCP OPTIMIZED */}
+      <section
+        className={styles.hero}
+        style={{
+          contentVisibility: 'auto',
+          containIntrinsicSize: '260px',
+        }}
+      >
         <div className={styles.heroContent}>
           <h1>{displayTitle}</h1>
-          <p>{decodedSubtopic} - सामान्य ज्ञान (General Knowledge)</p>
+          <p>{decodedSubtopic} - सामान्य ज्ञान (GK)</p>
         </div>
       </section>
 
       {/* Breadcrumbs */}
+      <section style={{ maxWidth: 900, margin: '0.5rem auto', padding: '0 1rem', minHeight: 40 }}>
+        <Breadcrumbs />
+      </section>
+
+      {/* Mid Ad */}
+      <section className="ad-wrapper display">
+        <div className="ad-slot">
+          <AdsenseAd slot="3645773527" />
+        </div>
+      </section>
+
+      {/* 📄 CONTENT – deferred visually */}
       <section
         style={{
           maxWidth: 900,
           margin: '0.5rem auto',
           padding: '0 1rem',
-          minHeight: 40, // ✅ CLS fix
+          minHeight: '60vh',
+          contentVisibility: 'auto',
+          contain: 'layout paint',
         }}
       >
-        <Breadcrumbs />
-      </section>
-
-
-      {/* Mid Ad */}
-      <section className="ad-wrapper display">
-        <div className="ad-slot">
-        <AdsenseAd slot="3645773527" />
-        </div>
-      </section>
-
-      {/* Content */}
-      <section style={{
-        maxWidth: 900,
-        margin: '0.5rem auto',
-        padding: '0 1rem',
-        minHeight: '60vh',   // ✅ CLS killer
-        contain: 'layout style paint',
-      }}>
         <article
           className="notes-content"
           dangerouslySetInnerHTML={{ __html: item.htmlContent || '' }}
@@ -182,18 +137,23 @@ export default async function SubsubPage({ params }: PageProps) {
       </section>
 
       {/* Bottom Ad */}
-      <section className="ad-wrapper multiplex">
+      {/* <section className="ad-wrapper multiplex">
         <div className="ad-slot">
-        <AdsenseAd slot="2627371172" />
+          <AdsenseAd slot="2627371172" />
         </div>
-      </section>
+      </section> */}
 
-      {/* SEO Schema */}
-      <script
+      {/* ✅ SEO – NON BLOCKING */}
+      <Script
+        id="breadcrumb-schema"
+        strategy="afterInteractive"
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-      <script
+
+      <Script
+        id="article-schema"
+        strategy="afterInteractive"
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
@@ -209,20 +169,14 @@ export default async function SubsubPage({ params }: PageProps) {
                 url: `${baseUrl}/android-chrome-512x512.png`,
               },
             },
-            datePublished: item.createdAt
-              ? item.createdAt.toISOString()
-              : "2025-10-01",
-
-            dateModified: item.updatedAt
-              ? item.updatedAt.toISOString()
-              : "2025-10-01",
-
+            datePublished: lastModified,
+            dateModified: lastModified,
             mainEntityOfPage: pageUrl,
           }),
         }}
       />
 
-      <Attribution dateModified={item.updatedAt?.toISOString()} />
+      <Attribution dateModified={lastModified} />
     </main>
   );
 }

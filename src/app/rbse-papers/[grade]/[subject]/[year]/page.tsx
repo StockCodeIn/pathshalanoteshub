@@ -2,7 +2,6 @@
 import { notFound } from 'next/navigation';
 import connectDB from "@/lib/mongodb";
 import PastPaper from "@/models/PastPaper";
-import Link from "next/link";
 import styles from "@/styles/Home.module.css";
 import type { Metadata } from "next";
 import OpenPaperButtonClient from "@/components/OpenPaperButtonClient";
@@ -42,21 +41,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     },
   };
 }
-/* ------------------ STATIC PARAMS WITH ISR ------------------ */
-export async function generateStaticParams() {
-  await connectDB();
-
-  const papers = await PastPaper.find(
-    { board: "RBSE" },
-    { grade: 1, subject: 1, year: 1 }
-  ).lean();
-
-  return papers.map((p) => ({
-    grade: p.grade,      // example: "10th"
-    subject: p.subject,  // example: "Hindi"
-    year: p.year,        // example: "2024"
-  }));
-}
 
 export const revalidate = 604800; // 7 days
 
@@ -72,7 +56,7 @@ export default async function RBSEPaperViewerPage({ params }: PageProps) {
     grade: dbGrade,
     subject,
     year: year,
-  });
+  }) 
 
   if (!paper) {
     notFound();
@@ -80,7 +64,13 @@ export default async function RBSEPaperViewerPage({ params }: PageProps) {
 
   return (
     <main>
-      <section className={styles.hero} aria-labelledby="paper-title">
+      <section
+        className={styles.hero}
+        aria-labelledby="paper-title"
+        style={{
+          contentVisibility: "auto",
+          containIntrinsicSize: "260px",
+        }}>
         <div className={styles.heroContent}>
           <h1 id="paper-title">
             RBSE Class {grade} - {subject} - {year} Question Paper
@@ -102,7 +92,13 @@ export default async function RBSEPaperViewerPage({ params }: PageProps) {
       {/* <div className={styles.downloadSection}>
         <OpenPaperButtonClient url={paper.pdfUrl} label={`${subject} ${year} Paper`} />
       </div> */}
-      <section aria-label="Download RBSE question paper">
+      <section
+        aria-label="Download RBSE question paper"
+        style={{
+          minHeight: 120,
+          contentVisibility: "auto",
+        }}
+      >
         <div className={styles.downloadSection}>
           <OpenPaperButtonClient url={paper.pdfUrl} />
         </div>

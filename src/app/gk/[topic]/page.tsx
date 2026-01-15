@@ -44,6 +44,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     },
   };
 }
+export const revalidate = 86400; // 24 hours
 
 // ✅ Page Component
 export default async function GKTopicPage({ params }: PageProps) {
@@ -71,7 +72,14 @@ export default async function GKTopicPage({ params }: PageProps) {
   return (
     <main>
       {/* Hero */}
-      <section className={styles.hero}>
+      <section
+        className={styles.hero}
+        style={{
+          contentVisibility: "auto",
+          containIntrinsicSize: "500px",
+        }}
+      >
+
         <div className={styles.heroContent}>
           <h1>{topicName} - सामान्य ज्ञान (GK)</h1>
           <p>
@@ -88,29 +96,43 @@ export default async function GKTopicPage({ params }: PageProps) {
       </section>
 
       {/* Subtopics */}
-      <SubtopicListPage topicSlug={topic} />
+      <section
+        style={{
+          contentVisibility: "auto",
+          containIntrinsicSize: "800px",
+        }}
+      >
+        <SubtopicListPage topicSlug={topic} />
+      </section>
+
 
       {/* Breadcrumb JSON-LD */}
       <Script
         id="breadcrumb-schema"
+        strategy="afterInteractive"
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
 
       {/* Article Schema */}
-      <script
+      <Script
+        id="article-schema"
+        strategy="afterInteractive"
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'Article',
+            "@context": "https://schema.org",
+            "@type": "Article",
             headline: `${topicName} GK Notes | Pathshala Notes Hub`,
-            author: { '@type': 'Organization', name: 'Pathshala Notes Hub' },
+            author: {
+              "@type": "Organization",
+              name: "Pathshala Notes Hub",
+            },
             publisher: {
-              '@type': 'Organization',
-              name: 'Pathshala Notes Hub',
+              "@type": "Organization",
+              name: "Pathshala Notes Hub",
               logo: {
-                '@type': 'ImageObject',
+                "@type": "ImageObject",
                 url: `${baseUrl}/android-chrome-512x512.png`,
               },
             },
@@ -120,7 +142,6 @@ export default async function GKTopicPage({ params }: PageProps) {
           }),
         }}
       />
-
       <Attribution dateModified={lastModified} />
     </main>
   );

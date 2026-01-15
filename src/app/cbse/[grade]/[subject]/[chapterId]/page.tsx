@@ -87,7 +87,7 @@ export default async function CBSECHAPTERPage({ params }: PageProps) {
       grade,
       subject,
       name: chapterId,
-    }).lean().maxTimeMS(8000) as any; // 8 second timeout
+    }).lean().maxTimeMS(8000); // 8 second timeout
 
     if (chapterData) {
       setCachedChapter(cacheKey, chapterData);
@@ -97,11 +97,16 @@ export default async function CBSECHAPTERPage({ params }: PageProps) {
   if (!chapterData) {
     notFound();
   }
-
+  /* ✅ FIRST PAGE SPLIT (KEY FIX) */
+  const firstPage: string | undefined = chapterData.pageImages?.[0];
+  const restPages: string[] = chapterData.pageImages?.slice(1) || [];
   return (
     <main>
       {/* ✅ Hero Section */}
-      <section className={styles.hero} aria-labelledby="chapter-title">
+      <section className={styles.hero} style={{
+          contentVisibility: "auto",
+          containIntrinsicSize: "500px",
+        }} aria-labelledby="chapter-title">
         <div className={styles.heroContent}>
           <h1 id="chapter-title">
             CBSE Class {chapterData.grade} {chapterData.subject} - Chapter{" "}
@@ -117,20 +122,15 @@ export default async function CBSECHAPTERPage({ params }: PageProps) {
       {/* ✅ TOP DISPLAY AD (CLS SAFE) */}
       <div className="ad-wrapper display">
         <div className="ad-slot">
-        <AdsenseAd slot="3294419739" />
+          <AdsenseAd slot="3294419739" />
         </div>
       </div>
 
       {/* ✅ PDF Viewer section with Cloudinary JPG Images */}
-      <section className="container pdf-section" style={{ position: 'relative' }}>
+      <div className="container pdf-section" style={{ position: 'relative', contain: "layout style paint" }}>
         {chapterData.extractedHtml ? (
           <>
             <article className="prose" dangerouslySetInnerHTML={{ __html: chapterData.extractedHtml }} />
-            <div className="ad-wrapper display">
-              <div className="ad-slot">
-              <AdsenseAd slot="8355174726" />
-              </div>
-            </div>
           </>
         ) : (
           <div style={{
@@ -141,14 +141,40 @@ export default async function CBSECHAPTERPage({ params }: PageProps) {
           }}>
             {/* ✅ Cloudinary PDF Viewer - Crystal Clear Images */}
             <article itemScope itemType="https://schema.org/Article">
+              {/* 🔥 LCP IMAGE – ONLY ONCE */}
+              {firstPage && (
+                <img
+                  src={firstPage}
+                  alt={`CBSE Class ${grade} ${subject} Chapter ${chapterData.name} Page 1`}
+                  width={900}
+                  height={1200}
+                  style={{
+                    width: "100%",
+                    height: "auto",
+                    display: "block",
+                    marginBottom: "1rem",
+                  }}
+                  loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
+                />
+              )}
+
+              {/* ⬇️ VIEWER FROM PAGE 2 */}
               <CloudinaryPDFViewer
                 title={chapterData.name}
-                pageImages={chapterData.pageImages || []}
+                pageImages={restPages}
               />
             </article>
           </div>
         )}
-      </section>
+      </div>
+
+      <div className="ad-wrapper multiplex">
+        <div className="ad-slot">
+          <AdsenseAd slot="7421367001" />
+        </div>
+      </div>
 
       {/* ✅ Trust Section */}
       <section className={styles.trust}>
@@ -159,11 +185,7 @@ export default async function CBSECHAPTERPage({ params }: PageProps) {
           <li>✔ Helps you score high in board exams</li>
         </ul>
       </section>
-      <div className="ad-wrapper multiplex">
-        <div className="ad-slot">
-        <AdsenseAd slot="7421367001" />
-        </div>
-      </div>
+
 
     </main>
   );
