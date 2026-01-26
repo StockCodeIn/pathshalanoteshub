@@ -1,15 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { useState, memo } from "react";
+import { useState, memo, useTransition } from "react";
 import Image from "next/image";
 import styles from "@/styles/Navbar.module.css";
 import { assets } from "@/assets/assets";
 
 const Navbar = memo(function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
-  const toggleMenu = () => setMenuOpen(!menuOpen);
+  const toggleMenu = () => {
+    startTransition(() => {
+      setMenuOpen(!menuOpen);
+    });
+  };
 
   return (
     <nav className={styles.navbar}>

@@ -60,6 +60,11 @@
   font-size: 1.6rem;
   color: #fff;
   cursor: pointer;
+  padding: 0.5rem;
+  transition: none;
+  -webkit-tap-highlight-color: transparent;
+  /* Optimize for mobile responsiveness */
+  touch-action: manipulation;
 }
 
 /* ✅ Mobile Responsive */

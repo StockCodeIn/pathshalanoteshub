@@ -106,51 +106,122 @@ a {
 }
 
 
-/* ===== ZERO-CLS ADS SYSTEM ===== */
+/* ===== AD SYSTEM - RESPONSIVE & CLS-SAFE ===== */
 
 /* 🔒 OUTER WRAPPER – height NEVER changes */
-
 .ad-wrapper {
   width: 100%;
-  margin: 20px 0;
-
+  margin: 1.5rem 0;
+  padding: 0;
   position: relative;
   overflow: hidden;
   border-radius: 8px;
-
   background: #f0f0f0;
-
-  /* 🚨 CLS KILL SWITCH */
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  
+  /* 🚨 CLS KILL SWITCH - CRITICAL */
   contain: layout paint size style;
 }
 
 /* ===================== */
-/* DISPLAY ADS */
+/* DISPLAY ADS (728x90, 300x250 responsive) */
 /* ===================== */
-
 .ad-wrapper.display {
-  height: 280px;       /* DESKTOP LOCK */
-  height: 450px;
+  aspect-ratio: 728 / 90;
+  height: auto;
+  min-height: 90px;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .ad-wrapper.display {
-    height: 250px;     /* MOBILE LOCK */
+    aspect-ratio: 320 / 50;
+    min-height: 50px;
   }
 }
 
 /* ===================== */
-/* MULTIPLEX ADS */
+/* IN-ARTICLE ADS (Fluid - between content) */
 /* ===================== */
+.ad-wrapper.in-article {
+  max-width: 800px;
+  margin: 2rem auto;
+  min-height: 200px;
+  aspect-ratio: auto;
+  height: auto;
+}
 
+@media (max-width: 768px) {
+  .ad-wrapper.in-article {
+    max-width: 100%;
+    min-height: 150px;
+  }
+}
+
+/* ===================== */
+/* MULTIPLEX ADS (Grid - autorelaxed) */
+/* ===================== */
 .ad-wrapper.multiplex {
-  height: 450px;
+  aspect-ratio: auto;
+  min-height: 400px;
+  height: auto;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .ad-wrapper.multiplex {
-    height: 400px;
+    min-height: 350px;
   }
+}
+
+/* ===================== */
+/* IN-FEED ADS (List format) */
+/* ===================== */
+.ad-wrapper.in-feed {
+  aspect-ratio: auto;
+  min-height: 150px;
+  height: auto;
+}
+
+@media (max-width: 768px) {
+  .ad-wrapper.in-feed {
+    min-height: 120px;
+  }
+}
+
+/* ===================== */
+/* INNER SLOT (AdSense) */
+/* ===================== */
+.ad-slot {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ad-wrapper::before {
+  content: "ADVERTISEMENT";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: #9ca3af;
+  z-index: 0;
+}
+
+/* AdSense iframe strict control */
+ins.adsbygoogle {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
 }
 
 /* ===================== */

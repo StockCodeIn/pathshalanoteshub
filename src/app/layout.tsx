@@ -20,13 +20,35 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.pathshalanoteshub.in'),
   title: {
-    default: 'Pathshala Notes Hub – Free RBSE & CBSE Notes (10th & 12th)',
+    default: 'Pathshala Notes Hub – Free RBSE & CBSE Notes (10th & 12th) + Indian GK',
     template: '%s | Pathshala Notes Hub',
   },
   description:
-    'Free RBSE & CBSE notes and previous year question papers for Class 10 & 12. Maths, Science & Indian GK in Hindi & English.',
+    'Free RBSE & CBSE notes (PDF), previous year question papers for Class 10 & 12. Maths, Science, Hindi & English notes. Indian GK + Current Affairs 2025.',
+  keywords: [
+    'RBSE notes',
+    'CBSE notes',
+    'class 10 notes',
+    'class 12 notes',
+    'previous year papers',
+    'Indian GK',
+    'free study material',
+    'board exam preparation',
+  ],
   authors: [{ name: 'Ashok Kumar Meena' }],
-  robots: 'index, follow',
+  creator: 'Pathshala Notes Hub',
+  publisher: 'Pathshala Notes Hub',
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
   openGraph: {
     type: 'website',
     siteName: 'Pathshala Notes Hub',
@@ -37,6 +59,9 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     images: ['/og-image.png'],
   },
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION,
+  },
 };
 
 export default function RootLayout({
@@ -46,13 +71,22 @@ export default function RootLayout({
 }) {
   return (
     <html lang="hi">
+      <head>
+        {/* Preconnect to external domains */}
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        <link rel="preconnect" href="https://www.google-analytics.com" />
+        <link rel="preconnect" href="https://pagead2.googlesyndication.com" />
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
+      </head>
       <body className={inter.className}>
-        {/* Google Analytics – SAFE */}
+        {/* Google Analytics – DELAYED */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-L8Q8MHGLFE"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
+          async
         />
-        <Script id="ga" strategy="afterInteractive">
+        <Script id="ga" strategy="lazyOnload">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
@@ -63,9 +97,8 @@ export default function RootLayout({
 
         {/* Google AdSense – DELAYED & SAFE */}
         <Script
-          async
           src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_ADSENSE_CLIENT}`}
-          strategy="afterInteractive"
+          strategy="lazyOnload"
           crossOrigin="anonymous"
         />
 

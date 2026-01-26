@@ -10,26 +10,58 @@ const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL || "https://www.pathshalanoteshub.in";
 
 export const metadata: Metadata = {
-  title: "Pathshala Notes Hub – RBSE, CBSE Notes & Indian GK",
+  title: "Pathshala Notes Hub – Free RBSE & CBSE Notes (Class 10 & 12) + Indian GK",
   description:
-    "Pathshala Notes Hub provides free RBSE and CBSE Class 10 & 12 notes, previous year question papers, and Indian GK study material for board and competitive exam preparation.",
+    "Download FREE RBSE & CBSE Class 10, 12 Notes (PDF), Previous Year Papers & Indian GK. Best study material for board exams 2025-26. Hindi & English notes available.",
+  keywords: [
+    "RBSE notes class 10",
+    "RBSE notes class 12",
+    "CBSE notes class 10",
+    "CBSE notes class 12",
+    "RBSE previous year papers",
+    "Indian GK",
+    "current affairs 2025",
+    "board exam notes",
+    "free study material",
+    "pathshala notes hub"
+  ],
   alternates: {
     canonical: "https://www.pathshalanoteshub.in",
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
   },
   openGraph: {
-    title: "Pathshala Notes Hub – RBSE, CBSE Notes & Indian GK",
+    title: "Pathshala Notes Hub – Free RBSE & CBSE Notes + Indian GK",
     description:
       "Free RBSE & CBSE Class 10–12 notes, previous year papers and Indian GK study material.",
     url: siteUrl,
     siteName: "Pathshala Notes Hub",
     locale: "en_IN",
     type: "website",
+    images: [
+      {
+        url: `${siteUrl}/og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: "Pathshala Notes Hub - Free Education",
+      },
+    ],
   },
-
+  twitter: {
+    card: "summary_large_image",
+    title: "Pathshala Notes Hub – Free RBSE & CBSE Notes",
+    description: "Free study material for Class 10 & 12 students",
+    images: [`${siteUrl}/og-image.png`],
+  },
 };
 export const revalidate = 86400; // 24 hours
 
@@ -170,37 +202,34 @@ const faqData = [
 
 export default function Home() {
   return (
-    <main>
+    <main style={{ overflow: "hidden" }}>
       {/* ✅ Hero Section */}
       <section
         className={styles.hero}
         aria-labelledby="home-title"
-        style={{
-          contentVisibility: "auto",
-          containIntrinsicSize: "600px",
-        }}
       >
 
         <div className={styles.heroContent}>
-          <h1 id="home-title">Pathshala Notes Hub - RBSE, CBSE & Indian GK</h1>
+          <h1 id="home-title">Pathshala Notes Hub - Free RBSE, CBSE Notes &amp; Indian GK</h1>
           <p>
+            <strong>Class 10 &amp; 12 के लिए बेस्ट FREE Study Material</strong> – 
             RBSE एवं CBSE बोर्ड परीक्षा की तैयारी के साथ-साथ{" "}
             <strong>Indian GK, Current Affairs, History, Polity और Geography</strong>
             के लिए भरोसेमंद प्लेटफॉर्म। यहां पर आपको{" "}
-            <strong>Class 10 &amp; 12 notes, previous year question papers</strong> और{" "}
+            <strong>Chapter-wise PDF notes, previous year question papers</strong> और{" "}
             <strong>Indian GK topic-wise notes</strong> बिल्कुल free मिलते हैं।
           </p>
           <div className={styles.heroButtons}>
-            <Link href="/rbse" prefetch={false} className={styles.ctaButton}>
-              Explore RBSE Notes
+            <Link href="/rbse" className={styles.ctaButton}>
+              📚 RBSE Notes
             </Link>
-            <Link href="/cbse" prefetch={false} className={styles.ctaButtonSecondary}>
-              Explore CBSE Notes
+            <Link href="/cbse" className={styles.ctaButtonSecondary}>
+              📖 CBSE Notes
             </Link>
           </div>
           <div className={styles.heroButtons} style={{ marginTop: "0.75rem" }}>
-            <Link href="/gk" prefetch={false} className={styles.ctaButtonTertiary}>
-              Explore Indian GK &amp; Current Affairs
+            <Link href="/gk" className={styles.ctaButtonTertiary}>
+              🇮🇳 Indian GK &amp; Current Affairs
             </Link>
           </div>
         </div>
@@ -221,6 +250,21 @@ export default function Home() {
         ))}
       </ul>
 
+      {/* 
+        ============================================
+        DISPLAY AD (Homepage Top)
+        ============================================
+        Type: display (auto responsive)
+        Purpose: Standard ad after boards section
+        Slot: 8403374554 (Google display slot)
+        Format: data-ad-format="auto" + data-full-width-responsive="true"
+        CLS: ✅ No CLS (fixed height with aspect-ratio)
+        Dimensions: Desktop 728x90, Mobile responsive
+        Best for: Top banner/leaderboard
+        ============================================
+      */}
+      <AdsenseAd slot="8403374554" variant="display" />
+
       {/* ✅ Study Resources Section */}
       <h2 className={styles.sectionTitle}>Study Resources &amp; Exam Guidance</h2>
       <ul className={styles.listContainer}>
@@ -232,12 +276,7 @@ export default function Home() {
           </li>
         ))}
       </ul>
-      {/* Top banner ad */}
-      <div className="ad-wrapper display">
-        <div className="ad-slot">
-          <AdsenseAd slot="6017620145" />
-        </div>
-      </div>
+
       {/* ✅ Indian GK & Current Affairs Section */}
       <h2 className={styles.sectionTitle}>Indian GK, Current Affairs &amp; Static GK</h2>
       <div className={styles.cardContainer2}>
@@ -260,12 +299,21 @@ export default function Home() {
         ))}
       </div>
 
-      {/* Mid page ad */}
-      <div className="ad-wrapper display">
-        <div className="ad-slot">
-          <AdsenseAd slot="5035533356" />
-        </div>
-      </div>
+      {/* 
+        ============================================
+        DISPLAY AD (Homepage Middle)
+        ============================================
+        Type: display (auto responsive)
+        Purpose: Standard ad after subjects section
+        Slot: 8403374554 (Can use same or different display slot)
+        Format: data-ad-format="auto" + data-full-width-responsive="true"
+        CLS: ✅ No CLS (fixed aspect ratio)
+        Dimensions: Desktop 728x90 or 300x250, Mobile responsive
+        Best for: Mid-page banner
+        Note: You can use different display slot here if you want different ad
+        ============================================
+      */}
+      <AdsenseAd slot="8403374554" variant="display" />
 
       {/* ✅ Trust Section */}
       <section className={styles.trust}>
@@ -294,7 +342,7 @@ export default function Home() {
       {/* ✅ FAQ JSON-LD */}
       <Script
         id="faq-schema"
-        strategy="afterInteractive"
+        strategy="lazyOnload"
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
@@ -314,7 +362,7 @@ export default function Home() {
 
       <Script
         id="organization-schema"
-        strategy="afterInteractive"
+        strategy="lazyOnload"
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
@@ -332,7 +380,7 @@ export default function Home() {
       {/* ✅ Website & Breadcrumb JSON-LD for better SEO */}
       <Script
         id="website-schema"
-        strategy="afterInteractive"
+        strategy="lazyOnload"
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
@@ -351,7 +399,7 @@ export default function Home() {
 
       <Script
         id="breadcrumb-schema"
-        strategy="afterInteractive"
+        strategy="lazyOnload"
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({

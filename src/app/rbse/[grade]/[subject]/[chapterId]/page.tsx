@@ -125,7 +125,7 @@ export default async function RBSEChapterPage({ params }: PageProps) {
       {/* TOP AD */}
       <div className="ad-wrapper display">
         <div className="ad-slot">
-          <AdsenseAd slot="3928666945" />
+          <AdsenseAd slot="8403374554" />
         </div>
       </div>
 
@@ -176,12 +176,22 @@ export default async function RBSEChapterPage({ params }: PageProps) {
           </div>
         )}
       </div>
-      {/* BOTTOM AD */}
-      <div className="ad-wrapper multiplex">
-        <div className="ad-slot">
-          <AdsenseAd slot="5729011389" />
-        </div>
-      </div>
+
+      {/* 
+        ============================================
+        MULTIPLEX AD (Bottom - Grid Recommendations)
+        ============================================
+        Type: multiplex (autorelaxed)
+        Purpose: Grid of related ads at bottom
+        Slot: 5729011389 (Google multiplex slot)
+        Format: data-ad-format="autorelaxed"
+        CLS: ✅ No CLS (min-height pre-allocated)
+        Dimensions: 300x250+ multiple items
+        Best for: Bottom of page, recommendations
+        ============================================
+      */}
+      <AdsenseAd slot="5729011389" variant="multiplex" />
+
       {/* TRUST */}
       <section className={styles.trust}>
         <h2>Why Use These Notes?</h2>

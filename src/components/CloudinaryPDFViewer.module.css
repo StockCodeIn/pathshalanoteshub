@@ -4,50 +4,47 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
+  padding: 0 1rem;
 }
 
 .page {
   position: relative;
-  /* background: #fff; */
-  border-radius: 6px;
-   aspect-ratio: auto;   /* ❗ remove fixed ratio */
+  aspect-ratio: 0.65;
   background: #e5e7eb;
   overflow: hidden;
   box-shadow: 0 4px 10px rgba(0,0,0,.08);
+  border-radius: 6px;
+  contain: layout paint;
 }
 
 /* 🔒 PDF SAFE RENDERING */
 .page img {
   width: 100%;
-  height: auto;          /* ❌ NOT 100% */
-  object-fit: contain;   /* ❌ NOT cover */
+  height: 100%;
+  object-fit: contain;
   display: block;
+  background-color: #fff;
 }
 
-.page::after {
+/* Prevent CLS from image loading */
+.page::before {
   content: "";
   display: block;
-  height: 4px;
-  background: #e5e7eb;
+  background: #f0f0f0;
 }
 
-/* .pageNumber {
-  position: absolute;
-  bottom: 8px;
-  right: 8px;
-  background: rgba(0,0,0,0.65);
-  color: #fff;
-  font-size: 12px;
-  padding: 4px 8px;
-  border-radius: 4px;
-} */
 @media (max-width: 768px) {
   .pdfViewer {
-    padding: 0;
+    padding: 0.5rem;
+    gap: 10px;
+  }
+
+  .page {
+    aspect-ratio: 0.65;
   }
 
   .page img {
-    width: 100vw;        /* 🔥 fills screen */
+    width: 100%;
     max-width: 100%;
   }
 }
