@@ -71,15 +71,10 @@ export default async function CBSESubjectPage({ params }: PageProps) {
         </div>
       </section>
 
-      {/* ===== Top display ad (just after hero) ===== */}
-      {/* Ad Type: DISPLAY (responsive leaderboard) - Standard banner ad */}
-      {/* Purpose: Primary monetization spot, high visibility after hero */}
-      {/* CLS Safe: Yes (min-height 90px desktop, 50px mobile pre-allocated) */}
-      <div className="ad-wrapper display">
-        <div className="ad-slot">
-        <AdsenseAd slot="4962547015" variant="display" />
-        </div>
-      </div>
+     
+
+      <AdsenseAd slot="4962547015" variant="display" />
+
 
       {/* ✅ Chapter Cards */}
       <nav aria-label="CBSE chapters list">
@@ -96,17 +91,6 @@ export default async function CBSESubjectPage({ params }: PageProps) {
                 </p>
               </Link>
 
-              {/* ===== Mid-list in-feed ad: insert AFTER the 6th chapter (index === 5) ===== */}
-              {/* Ad Type: IN-FEED (fluid) - Blends with content list like native ad */}
-              {/* Purpose: Non-disruptive monetization within chapter list flow */}
-              {/* CLS Safe: Yes (min-height 150px desktop, 120px mobile pre-allocated) */}
-              {index === 5 && (
-                <div className="ad-wrapper in-feed">
-                  <div className="ad-slot">
-                  <AdsenseAd slot="5055156483" variant="in-feed" />
-                  </div>
-                </div>
-              )}
             </div>
           ))}
         </div>
@@ -122,15 +106,8 @@ export default async function CBSESubjectPage({ params }: PageProps) {
         </ul>
       </section>
 
-      {/* ===== Footer multiplex ad (end of page) ===== */}
-      {/* Ad Type: MULTIPLEX (autorelaxed) - Grid of recommended content links */}
-      {/* Purpose: Provide related content recommendations, increase engagement */}
-      {/* CLS Safe: Yes (min-height 400px desktop, 350px mobile pre-allocated) */}
-      <div className="ad-wrapper multiplex">
-        <div className="ad-slot">
-        <AdsenseAd slot="7421367001" variant="multiplex" />
-        </div>
-      </div>
+     
+
     </main>
   );
 }

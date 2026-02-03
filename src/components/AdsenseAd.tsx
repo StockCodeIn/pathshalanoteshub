@@ -1,3 +1,4 @@
+// src/components/AdsenseAd.tsx
 "use client";
 
 import { useEffect, useRef } from "react";
@@ -42,14 +43,18 @@ export default function AdsenseAd({
         if (!entry.isIntersecting) return;
 
         // Wait for element to have proper width (CLS prevention)
+        // useEffect के अंदर checkAndLoad फंक्शन को ऐसे बदलें:
         const checkAndLoad = () => {
-          const width = wrapperRef.current?.offsetWidth || 0;
-          if (width < 100) {
-            // Retry if width is too small
-            setTimeout(checkAndLoad, 100);
-            return;
+          if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+            window.requestIdleCallback(() => {
+              loadAd();
+            });
+          } else {
+            setTimeout(loadAd, 200);
           }
+        };
 
+        const loadAd = () => {
           try {
             if (!insEl.current?.getAttribute("data-adsbygoogle-status")) {
               (window.adsbygoogle = window.adsbygoogle || []).push({});
@@ -78,19 +83,17 @@ export default function AdsenseAd({
   const getAdStyles = () => {
     switch (variant) {
       case "display":
-        // Leaderboard/Rectangle - Fixed height
-        return { display: "block", width: "100%", minHeight: "90px" };
+        return {
+          display: "block",
+          width: "100%",
+          height: "100%",
+        };
       case "in-article":
-        // Fluid in-article - Flexible height for content between
-        return { display: "block", textAlign: "center" as const, width: "100%" };
+        return { display: "block", textAlign: "center" as const, width: "100%", height: "100%" };
       case "multiplex":
-        // Grid layout - Large height
-        return { display: "block", width: "100%", minHeight: "400px" };
-      case "in-feed":
-        // Feed layout - Flexible
-        return { display: "block", width: "100%" };
+        return { display: "block", width: "100%", height: "100%" };
       default:
-        return { display: "block", width: "100%" };
+        return { display: "block", width: "100%", height: "100%" };
     }
   };
 
@@ -140,9 +143,7 @@ export default function AdsenseAd({
     <div ref={wrapperRef} className={`ad-wrapper ${variant}`}>
       <div className="ad-slot">
         <ins
-          ref={(el) => {
-            insEl.current = el;
-          }}
+          ref={(el) => { insEl.current = el; }}
           className="adsbygoogle"
           style={getAdStyles()}
           {...adAttrs}

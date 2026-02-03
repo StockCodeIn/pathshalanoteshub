@@ -120,11 +120,9 @@ export default async function CBSECHAPTERPage({ params }: PageProps) {
         </div>
       </section>
       {/* ✅ TOP DISPLAY AD (CLS SAFE) */}
-      <div className="ad-wrapper display">
-        <div className="ad-slot">
+      
           <AdsenseAd slot="3294419739" />
-        </div>
-      </div>
+        
 
       {/* ✅ PDF Viewer section with Cloudinary JPG Images */}
       <div className="container pdf-section" style={{ position: 'relative', contain: "layout style paint" }}>
@@ -170,20 +168,7 @@ export default async function CBSECHAPTERPage({ params }: PageProps) {
         )}
       </div>
 
-      {/* 
-        ============================================
-        MULTIPLEX AD (Bottom - Grid Recommendations)
-        ============================================
-        Type: multiplex (autorelaxed)
-        Purpose: Grid of related ads at bottom
-        Slot: 7421367001 (Google multiplex slot)
-        Format: data-ad-format="autorelaxed"
-        CLS: ✅ No CLS (min-height pre-allocated)
-        Dimensions: 300x250+ multiple items
-        Best for: Bottom of page, recommendations
-        ============================================
-      */}
-      <AdsenseAd slot="9333312843" variant="multiplex" />
+     
 
       {/* ✅ Trust Section */}
       <section className={styles.trust}>

@@ -51,18 +51,7 @@ export default function CloudinaryPDFViewer({
             />
           </figure>
           
-          {/* 
-            ============================================
-            IN-ARTICLE AD (Content between PDF pages)
-            ============================================
-            Type: in-article (fluid format)
-            Purpose: Native ad between content
-            Slot: 3645773527 (Google in-article slot)
-            Format: data-ad-format="fluid" + data-ad-layout="in-article"
-            CLS: ✅ No CLS (flexible height)
-            Best for: Between long content/pages
-            ============================================
-          */}
+          
           {(index + 1) % AD_AFTER_PAGES === 0 && index < visibleCount - 1 && (
             <div style={{ margin: '2rem 0', maxWidth: '800px', marginLeft: 'auto', marginRight: 'auto' }}>
               <AdsenseAd slot="1396603768" variant="in-article" />

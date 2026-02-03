@@ -109,6 +109,7 @@ a {
 /* ===== AD SYSTEM - RESPONSIVE & CLS-SAFE ===== */
 
 /* 🔒 OUTER WRAPPER – height NEVER changes */
+
 .ad-wrapper {
   width: 100%;
   margin: 1.5rem 0;
@@ -116,30 +117,58 @@ a {
   position: relative;
   overflow: hidden;
   border-radius: 8px;
-  background: #f0f0f0;
+  background: #f9fafb;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  
-  /* 🚨 CLS KILL SWITCH - CRITICAL */
   contain: layout paint size style;
 }
 
-/* ===================== */
-/* DISPLAY ADS (728x90, 300x250 responsive) */
-/* ===================== */
+.ad-wrapper::before {
+  content: "ADVERTISEMENT";
+  font-size: 9px;
+  position: relative;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  color: #d1d5db;
+  z-index: 1;
+}
+
+.ad-slot {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+
+
+ins.adsbygoogle {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+
 .ad-wrapper.display {
   aspect-ratio: 728 / 90;
-  height: auto;
   min-height: 90px;
 }
 
 @media (max-width: 768px) {
   .ad-wrapper.display {
-    aspect-ratio: 320 / 90;
-    min-height: 90px;
+    aspect-ratio: 300 / 250;
+    min-height: 250px;
   }
 }
 
@@ -149,9 +178,8 @@ a {
 .ad-wrapper.in-article {
   max-width: 800px;
   margin: 2rem auto;
-  min-height: 200px;
+  min-height: 280px;
   aspect-ratio: auto;
-  height: auto;
 }
 
 @media (max-width: 768px) {
@@ -167,7 +195,6 @@ a {
 .ad-wrapper.multiplex {
   aspect-ratio: auto;
   min-height: 400px;
-  height: auto;
 }
 
 @media (max-width: 768px) {
@@ -182,7 +209,6 @@ a {
 .ad-wrapper.in-feed {
   aspect-ratio: auto;
   min-height: 150px;
-  height: auto;
 }
 
 @media (max-width: 768px) {
@@ -191,70 +217,4 @@ a {
   }
 }
 
-/* ===================== */
-/* INNER SLOT (AdSense) */
-/* ===================== */
-.ad-slot {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 
-.ad-wrapper::before {
-  content: "ADVERTISEMENT";
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  letter-spacing: 1px;
-  color: #9ca3af;
-  z-index: 0;
-}
-
-/* AdSense iframe strict control */
-ins.adsbygoogle {
-  display: block !important;
-  width: 100% !important;
-  height: auto !important;
-}
-
-/* ===================== */
-/* INNER SLOT (AdSense) */
-/* ===================== */
-
-.ad-slot {
-  
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.ad-wrapper::before {
-  content: "ADVERTISEMENT";
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  letter-spacing: 1px;
-  color: #9ca3af;
-  z-index: 0;
-}
-
-
-/* AdSense iframe strict control */
-ins.adsbygoogle {
-  display: block !important;
-  width: 100% !important;
-  height: 100% !important;
-}

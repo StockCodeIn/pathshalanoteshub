@@ -116,21 +116,16 @@ export default async function SubsubPage({ params }: PageProps) {
       {/* Ad Type: DISPLAY (responsive leaderboard) - Standard banner ad */}
       {/* Purpose: Primary monetization spot after hero section */}
       {/* CLS Safe: Yes (min-height 90px desktop, 50px mobile pre-allocated) */}
-      <section className="ad-wrapper display" style={{ maxWidth: 900, margin: '1rem auto' }}>
-        <div className="ad-slot">
-          <AdsenseAd slot="7492288576" variant="display" />
-        </div>
-      </section>
+      <AdsenseAd slot="7492288576" variant="display" />
+
 
       {/* Mid in-article ad - Before content starts */}
       {/* Ad Type: IN-ARTICLE (fluid) - Blends naturally with article content */}
       {/* Purpose: Non-disruptive monetization before content reading */}
       {/* CLS Safe: Yes (min-height 200px desktop, 150px mobile pre-allocated) */}
-      <section className="ad-wrapper in-article" style={{ maxWidth: 900, margin: '1rem auto' }}>
-        <div className="ad-slot">
-          <AdsenseAd slot="3645773527" variant="in-article" />
-        </div>
-      </section>
+      
+          {/* <AdsenseAd slot="3645773527" variant="in-article" /> */}
+       
 
       {/* 📄 CONTENT – deferred visually */}
       <section
@@ -153,11 +148,9 @@ export default async function SubsubPage({ params }: PageProps) {
       {/* Ad Type: MULTIPLEX (autorelaxed) - Grid of recommended content links */}
       {/* Purpose: Increase engagement after reading, provide related content */}
       {/* CLS Safe: Yes (min-height 400px desktop, 350px mobile pre-allocated) */}
-      <section className="ad-wrapper multiplex" style={{ maxWidth: 900, margin: '2rem auto' }}>
-        <div className="ad-slot">
-          <AdsenseAd slot="9880107752" variant="multiplex" />
-        </div>
-      </section>
+
+          {/* <AdsenseAd slot="9880107752" variant="multiplex" /> */}
+        
 
       {/* ✅ SEO – NON BLOCKING */}
       <Script

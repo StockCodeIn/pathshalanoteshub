@@ -56,7 +56,7 @@ export default async function RBSEPaperViewerPage({ params }: PageProps) {
     grade: dbGrade,
     subject,
     year: year,
-  }) 
+  })
 
   if (!paper) {
     notFound();
@@ -86,11 +86,9 @@ export default async function RBSEPaperViewerPage({ params }: PageProps) {
       {/* Ad Type: DISPLAY (responsive leaderboard) - Standard banner ad */}
       {/* Purpose: High visibility before download action */}
       {/* CLS Safe: Yes (min-height 90px desktop, 50px mobile pre-allocated) */}
-      <div className="ad-wrapper display">
-        <div className="ad-slot">
-        <AdsenseAd slot="3697566809" variant="display" />
-        </div>
-      </div>
+
+      <AdsenseAd slot="3697566809" variant="display" />
+
 
       {/* <div className={styles.downloadSection}>
         <OpenPaperButtonClient url={paper.pdfUrl} label={`${subject} ${year} Paper`} />
@@ -111,11 +109,9 @@ export default async function RBSEPaperViewerPage({ params }: PageProps) {
       {/* Ad Type: IN-FEED (fluid) - Blends naturally before trust section */}
       {/* Purpose: Engagement after download action, builds reader interest */}
       {/* CLS Safe: Yes (min-height 150px desktop, 120px mobile pre-allocated) */}
-      <div className="ad-wrapper in-feed">
-        <div className="ad-slot">
-        <AdsenseAd slot="2715438767" variant="in-feed" />
-        </div>
-      </div>
+
+      <AdsenseAd slot="2715438767" variant="in-feed" />
+
 
 
       <section className={styles.trust}>

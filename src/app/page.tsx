@@ -250,20 +250,8 @@ export default function Home() {
         ))}
       </ul>
 
-      {/* 
-        ============================================
-        DISPLAY AD (Homepage Top)
-        ============================================
-        Type: display (auto responsive)
-        Purpose: Standard ad after boards section
-        Slot: 8403374554 (Google display slot)
-        Format: data-ad-format="auto" + data-full-width-responsive="true"
-        CLS: ✅ No CLS (fixed height with aspect-ratio)
-        Dimensions: Desktop 728x90, Mobile responsive
-        Best for: Top banner/leaderboard
-        ============================================
-      */}
-      <AdsenseAd slot="8403374554" variant="display" />
+      
+      <AdsenseAd slot="6017620145" variant="display" />
 
       {/* ✅ Study Resources Section */}
       <h2 className={styles.sectionTitle}>Study Resources &amp; Exam Guidance</h2>
@@ -299,21 +287,8 @@ export default function Home() {
         ))}
       </div>
 
-      {/* 
-        ============================================
-        DISPLAY AD (Homepage Middle)
-        ============================================
-        Type: display (auto responsive)
-        Purpose: Standard ad after subjects section
-        Slot: 8403374554 (Can use same or different display slot)
-        Format: data-ad-format="auto" + data-full-width-responsive="true"
-        CLS: ✅ No CLS (fixed aspect ratio)
-        Dimensions: Desktop 728x90 or 300x250, Mobile responsive
-        Best for: Mid-page banner
-        Note: You can use different display slot here if you want different ad
-        ============================================
-      */}
-      <AdsenseAd slot="8403374554" variant="display" />
+      
+      {/* <AdsenseAd slot="5035533356" variant="display" /> */}
 
       {/* ✅ Trust Section */}
       <section className={styles.trust}>
