@@ -82,17 +82,9 @@ export default async function RBSEPaperViewerPage({ params }: PageProps) {
         </div>
       </section>
 
-      {/* ===== Pre-download display ad ===== */}
-      {/* Ad Type: DISPLAY (responsive leaderboard) - Standard banner ad */}
-      {/* Purpose: High visibility before download action */}
-      {/* CLS Safe: Yes (min-height 90px desktop, 50px mobile pre-allocated) */}
-
+     
       <AdsenseAd slot="3697566809" variant="display" />
 
-
-      {/* <div className={styles.downloadSection}>
-        <OpenPaperButtonClient url={paper.pdfUrl} label={`${subject} ${year} Paper`} />
-      </div> */}
       <section
         aria-label="Download RBSE question paper"
         style={{
@@ -105,26 +97,28 @@ export default async function RBSEPaperViewerPage({ params }: PageProps) {
         </div>
       </section>
 
-      {/* ===== Post-download in-feed ad ===== */}
-      {/* Ad Type: IN-FEED (fluid) - Blends naturally before trust section */}
-      {/* Purpose: Engagement after download action, builds reader interest */}
-      {/* CLS Safe: Yes (min-height 150px desktop, 120px mobile pre-allocated) */}
-
-      <AdsenseAd slot="2715438767" variant="in-feed" />
-
+  
 
 
       <section className={styles.trust}>
         <h2>Why Practice RBSE Past Papers?</h2>
+        <p>
+          These papers help you understand the latest exam pattern, marking scheme, and question trend.
+          Regular practice improves speed, accuracy, and confidence for the final board exam.
+        </p>
         <ul>
-          <li>✔ Understand exam pattern</li>
-          <li>✔ Improve time management</li>
-          <li>✔ Identify important questions</li>
+          <li>✔ Updated exam pattern and question style</li>
+          <li>✔ Better time management with real paper practice</li>
+          <li>✔ Focus on important and repeated questions</li>
+          <li>✔ Build confidence before the final exam</li>
         </ul>
         <p>
-          📌 Papers sourced from official RBSE website.
+          📌 All papers are collected from official or trusted RBSE sources.
         </p>
       </section>
+
+      
+      <AdsenseAd slot="5595662634" variant="multiplex" />
     </main>
   );
 }
