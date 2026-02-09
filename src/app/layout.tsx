@@ -71,9 +71,18 @@ export default function RootLayout({
 }) {
   return (
     <html lang="hi">
-      <head> 
+      <head>
+        <script data-cfasync="false" src="https://cmp.gatekeeperconsent.com/min.js"></script>
+        <script data-cfasync="false" src="https://the.gatekeeperconsent.com/cmp.min.js"></script>
+
+        <script async src="//www.ezojs.com/ezoic/sa.min.js"></script>
+        <script>
+          window.ezstandalone = window.ezstandalone || { };
+          ezstandalone.cmd = ezstandalone.cmd || [];
+        </script>
+
         {/* 1. Privacy Scripts (Sabse pehle load honi chahiye) */}
-        <Script
+        {/* <Script
           src="https://cmp.gatekeeperconsent.com/min.js"
           strategy="beforeInteractive"
           data-cfasync="false"
@@ -82,22 +91,22 @@ export default function RootLayout({
           src="https://the.gatekeeperconsent.com/cmp.min.js"
           strategy="beforeInteractive"
           data-cfasync="false"
-        />
+        /> */}
 
         {/* 2. Main Header Script */}
-        <Script
+        {/* <Script
           src="//www.ezojs.com/ezoic/sa.min.js"
           strategy="afterInteractive"
           async
-        />
+        /> */}
 
         {/* 3. Inline Initialization Script */}
-        <Script id="ezoic-init" strategy="afterInteractive">
+        {/* <Script id="ezoic-init" strategy="afterInteractive">
           {`
             window.ezstandalone = window.ezstandalone || {};
             ezstandalone.cmd = ezstandalone.cmd || [];
           `}
-        </Script>
+        </Script> */}
 
         {/* Preconnect to external domains */}
         <link rel="preconnect" href="https://www.googletagmanager.com" />
