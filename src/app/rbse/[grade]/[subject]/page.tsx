@@ -16,21 +16,32 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { grade, subject } = await params;
   const subjectData = subjects[grade]?.find((s) => s.id === subject);
 
+  const title = `RBSE Class ${grade} ${subjectData?.name || ""} - Chapter-Wise Notes, Study Material & Solutions | Pathshala Notes Hub`;
+  const description = `Complete RBSE Class ${grade} ${subjectData?.name || ""} chapter-wise notes with explanations, solutions and past papers. Free PDF study material for board exam preparation.`;
+
   return {
-    title: `RBSE Class ${grade} ${subjectData?.name || ""} Chapters | Pathshala Notes Hub`,
-    description: `Explore RBSE Class ${grade} ${subjectData?.name || ""} chapters. Free RBSE notes and study material.`,
+    title,
+    description,
     keywords: [
       `RBSE Class ${grade} ${subjectData?.name} notes`,
       `RBSE ${subjectData?.name} chapters`,
       `RBSE Class ${grade} syllabus`,
+      `RBSE ${subjectData?.name} study material`,
+      `${subjectData?.name} exam preparation`,
     ],
     alternates: {
-      canonical: `/rbse/${grade}/${subject}`,
+      canonical: `https://www.pathshalanoteshub.in/rbse/${grade}/${subject}`,
     },
     openGraph: {
       title: `RBSE Class ${grade} ${subjectData?.name} Chapters`,
-      description: `RBSE Class ${grade} ${subjectData?.name} chapter-wise notes and study resources.`,
+      description,
       type: "website",
+      url: `https://www.pathshalanoteshub.in/rbse/${grade}/${subject}`,
+    },
+    twitter: {
+      card: 'summary',
+      title: `RBSE Class ${grade} ${subjectData?.name}`,
+      description,
     },
   };
 

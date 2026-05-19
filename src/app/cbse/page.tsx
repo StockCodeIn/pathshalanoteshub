@@ -6,20 +6,27 @@ import styles from "@/styles/Home.module.css";
 
 // ✅ SEO Metadata
 export const metadata: Metadata = {
-  title: "CBSE Notes - Class 10 & 12 | Pathshala Notes Hub",
+  title: "CBSE Notes - Free NCERT Study Material for Class 10 & 12 | Pathshala Notes Hub",
   description:
-    "Download free CBSE Class 10 & 12 notes and study resources. Perfect for CBSE board exam preparation.",
+    "Complete CBSE Class 10 & 12 chapter-wise NCERT notes, previous year papers, and study resources. Free PDF download for Central Board exam preparation.",
   keywords: [
     "CBSE notes",
+    "NCERT notes",
     "CBSE Class 10 notes",
     "CBSE Class 12 notes",
-    "CBSE study material",
+    "NCERT study material",
+    "CBSE exam preparation",
+    "Central Board notes",
+    "free study material",
   ],
+  alternates: {
+    canonical: "https://www.pathshalanoteshub.in/cbse",
+  },
   openGraph: {
-    title: "CBSE Notes - Class 10 & 12 | Pathshala Notes Hub",
+    title: "CBSE Notes - Free NCERT Study Material for Class 10 & 12",
     description:
-      "Free CBSE study materials for Class 10 & 12 including notes and guides.",
-    url: process.env.NEXT_PUBLIC_SITE_URL + "/cbse",
+      "Complete CBSE Class 10 & 12 chapter-wise NCERT notes and study resources for Central Board exam preparation.",
+    url: "https://www.pathshalanoteshub.in/cbse",
     siteName: "Pathshala Notes Hub",
     images: [
       {
@@ -31,6 +38,12 @@ export const metadata: Metadata = {
     ],
     locale: "en_IN",
     type: "website",
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "CBSE Notes - Class 10 & 12",
+    description: "Free CBSE NCERT study materials for Class 10 & 12 exam preparation",
+    images: ["/og-image.png"],
   },
 };
 

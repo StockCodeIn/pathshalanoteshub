@@ -12,20 +12,27 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const resolvedParams = await params;
   const gradeValue = resolvedParams.grade;
 
+  const title = `CBSE Class ${gradeValue} All Subjects - Free NCERT Chapter-Wise Notes & Study Material | Pathshala Notes Hub`;
+  const description = `Complete CBSE Class ${gradeValue} subject-wise chapter notes based on NCERT. Access free PDF study material for Central Board exam preparation.`;
+
   return {
-    title: `CBSE Class ${gradeValue} Subjects | Pathshala Notes Hub`,
-    description: `Explore all subjects for CBSE Class ${gradeValue}. Access free notes, chapters, and study resources for exam preparation.`,
+    title,
+    description,
     keywords: [
       `CBSE Class ${gradeValue} subjects`,
-      `CBSE ${gradeValue} study material`,
-      `CBSE ${gradeValue} syllabus`,
-      "CBSE notes",
+      `NCERT Class ${gradeValue} subjects`,
+      `CBSE Class ${gradeValue} syllabus`,
+      `CBSE ${gradeValue} notes`,
+      "Central Board subjects",
       "CBSE exam preparation",
     ],
+    alternates: {
+      canonical: `https://www.pathshalanoteshub.in/cbse/${gradeValue}`,
+    },
     openGraph: {
-      title: `CBSE Class ${gradeValue} Subjects | Pathshala Notes Hub`,
-      description: `Get CBSE Class ${gradeValue} subject-wise resources including chapters and notes.`,
-      url: process.env.NEXT_PUBLIC_SITE_URL + `/cbse/${gradeValue}`,
+      title: `CBSE Class ${gradeValue} Subjects`,
+      description,
+      url: `https://www.pathshalanoteshub.in/cbse/${gradeValue}`,
       siteName: "Pathshala Notes Hub",
       images: [
         {
@@ -37,6 +44,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       ],
       locale: "en_IN",
       type: "website",
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `CBSE Class ${gradeValue} Subjects`,
+      description,
+      images: ["/og-image.png"],
     },
   };
 }

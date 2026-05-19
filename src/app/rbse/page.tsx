@@ -6,20 +6,26 @@ import styles from "@/styles/Home.module.css";
 
 // ✅ SEO Metadata
 export const metadata: Metadata = {
-  title: "RBSE Notes - Class 10 & 12 | Pathshala Notes Hub",
+  title: "RBSE Notes - Free Study Material for Class 10 & 12 | Pathshala Notes Hub",
   description:
-    "Download free RBSE Class 10 & 12 notes, and study resources. Perfect for Rajasthan Board exam preparation.",
+    "Complete RBSE Class 10 & 12 chapter-wise notes, previous year papers, and study resources. Free PDF download for Rajasthan Board exam preparation.",
   keywords: [
     "RBSE notes",
     "RBSE Class 10 notes",
     "RBSE Class 12 notes",
     "RBSE study material",
+    "RBSE exam preparation",
+    "Rajasthan Board notes",
+    "free study material",
   ],
+  alternates: {
+    canonical: "https://www.pathshalanoteshub.in/rbse",
+  },
   openGraph: {
-    title: "RBSE Notes - Class 10 & 12 | Pathshala Notes Hub",
+    title: "RBSE Notes - Free Study Material for Class 10 & 12",
     description:
-      "Free RBSE study materials for Class 10 & 12 including notes.",
-    url: process.env.NEXT_PUBLIC_SITE_URL + "/rbse",
+      "Complete RBSE Class 10 & 12 chapter-wise notes and study resources for Rajasthan Board exam preparation.",
+    url: "https://www.pathshalanoteshub.in/rbse",
     siteName: "Pathshala Notes Hub",
     images: [
       {
@@ -31,6 +37,12 @@ export const metadata: Metadata = {
     ],
     locale: "en_IN",
     type: "website",
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "RBSE Notes - Class 10 & 12",
+    description: "Free RBSE study materials for Class 10 & 12 exam preparation",
+    images: ["/og-image.png"],
   },
 };
 

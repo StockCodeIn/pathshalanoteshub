@@ -1,10 +1,16 @@
 // src/app/cbse/[grade]/[subject]/[chapterId]/page.tsx
-import { notFound } from 'next/navigation';
-import connectDB from '@/lib/mongodb';
-import { Chapter } from '@/models/chapter';
-import styles from '@/styles/Home.module.css';
-import CloudinaryPDFViewer from '@/components/CloudinaryPDFViewer';
+
+import React from "react";
+import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import Script from "next/script";
+
+import connectDB from "@/lib/mongodb";
+import { Chapter } from "@/models/chapter";
+
+import styles from "@/styles/Home.module.css";
+
+import CloudinaryPDFViewer from "@/components/CloudinaryPDFViewer";
 import AdsenseAd from "@/components/AdsenseAd";
 
 interface PageProps {
@@ -15,29 +21,67 @@ interface PageProps {
   }>;
 }
 
-// ✅ Metadata for SEO
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+/* =========================
+   ✅ SEO Metadata
+========================= */
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { grade, subject, chapterId } = await params;
 
   return {
-    title: `CBSE Class ${grade} ${subject} Chapter ${chapterId} Notes (PDF) | Pathshala Notes Hub`,
-    description: `CBSE Class ${grade} ${subject} Chapter ${chapterId} notes with page-wise PDF images. Free, syllabus-based study material.`,
+    title: `CBSE Class ${grade} ${subject} Chapter ${chapterId} Notes | Pathshala Notes Hub`,
+
+    description: `Free CBSE Class ${grade} ${subject} Chapter ${chapterId} notes, study material, and PDF resources for exam preparation.`,
+
+    keywords: [
+      `CBSE Class ${grade} ${subject} Notes`,
+      `CBSE ${subject} Chapter ${chapterId}`,
+      `Class ${grade} CBSE Notes`,
+      "CBSE study material",
+      "NCERT Notes",
+    ],
+
     alternates: {
-      canonical: `/CBSE/${grade}/${subject}/${chapterId}`,
+      canonical: `https://www.pathshalanoteshub.in/cbse/${grade}/${subject}/${chapterId}`,
     },
+
     openGraph: {
       title: `CBSE Class ${grade} ${subject} Chapter ${chapterId} Notes`,
-      description: `Free CBSE Class ${grade} ${subject} Chapter ${chapterId} notes in PDF image format.`,
+      description: `Free CBSE Class ${grade} ${subject} study material and notes.`,
+      url: `https://www.pathshalanoteshub.in/cbse/${grade}/${subject}/${chapterId}`,
+      siteName: "Pathshala Notes Hub",
       type: "article",
+
+      images: [
+        {
+          url: "/og-image.png",
+          width: 1200,
+          height: 630,
+          alt: "CBSE Notes",
+        },
+      ],
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title: `CBSE Class ${grade} ${subject} Notes`,
+      description: `Free CBSE Class ${grade} ${subject} notes and study material.`,
+      images: ["/og-image.png"],
     },
   };
 }
 
-/* ------------------ STATIC PATHS WITH ISR ------------------ */
+/* =========================
+   ✅ Static Params
+========================= */
+
 export async function generateStaticParams() {
   await connectDB();
+
   const chapters = await Chapter.find(
-    { board: 'CBSE' },
+    { board: "CBSE" },
     { grade: 1, subject: 1, name: 1 }
   ).lean();
 
@@ -50,44 +94,71 @@ export async function generateStaticParams() {
 
 export const revalidate = 604800; // 7 days
 
-/* ✅ QUERY CACHING - Taaki database slow na ho */
-const chapterCache = new Map<string, any>();
-const CACHE_DURATION = 3600000; // 1 hour in milliseconds
+/* =========================
+   ✅ Runtime Cache
+========================= */
 
-function getCacheKey(board: string, grade: string, subject: string, name: string): string {
+const chapterCache = new Map<string, any>();
+
+const CACHE_DURATION = 1000 * 60 * 60; // 1 hour
+
+function getCacheKey(
+  board: string,
+  grade: string,
+  subject: string,
+  name: string
+) {
   return `${board}:${grade}:${subject}:${name}`;
 }
 
-function getCachedChapter(key: string): any | null {
+function getCachedChapter(key: string) {
   const cached = chapterCache.get(key);
+
   if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
     return cached.data;
   }
+
   chapterCache.delete(key);
+
   return null;
 }
 
-function setCachedChapter(key: string, data: any): void {
-  chapterCache.set(key, { data, timestamp: Date.now() });
+function setCachedChapter(key: string, data: any) {
+  chapterCache.set(key, {
+    data,
+    timestamp: Date.now(),
+  });
 }
 
-export default async function CBSECHAPTERPage({ params }: PageProps) {
+/* =========================
+   ✅ Main Page
+========================= */
+
+export default async function CBSECHAPTERPage({
+  params,
+}: PageProps) {
   const { grade, subject, chapterId } = await params;
 
-  // Check cache first (for runtime caching)
-  const cacheKey = getCacheKey('CBSE', grade, subject, chapterId);
+  const cacheKey = getCacheKey(
+    "CBSE",
+    grade,
+    subject,
+    chapterId
+  );
+
   let chapterData = getCachedChapter(cacheKey);
 
   if (!chapterData) {
-    // Only connect if not in cache
     await connectDB();
 
     chapterData = await Chapter.findOne({
-      board: 'CBSE',
+      board: "CBSE",
       grade,
       subject,
       name: chapterId,
-    }).lean().maxTimeMS(8000); // 8 second timeout
+    })
+      .lean()
+      .maxTimeMS(8000);
 
     if (chapterData) {
       setCachedChapter(cacheKey, chapterData);
@@ -97,49 +168,85 @@ export default async function CBSECHAPTERPage({ params }: PageProps) {
   if (!chapterData) {
     notFound();
   }
-  /* ✅ FIRST PAGE SPLIT (KEY FIX) */
-  const firstPage: string | undefined = chapterData.pageImages?.[0];
-  const restPages: string[] = chapterData.pageImages?.slice(1) || [];
+
+  const firstPage: string | undefined =
+    chapterData.pageImages?.[0];
+
+  const restPages: string[] =
+    chapterData.pageImages?.slice(1) || [];
+
   return (
     <main>
-      {/* ✅ Hero Section */}
-      <section className={styles.hero} style={{
+      {/* =========================
+          ✅ HERO SECTION
+      ========================= */}
+
+      <section
+        className={styles.hero}
+        style={{
           contentVisibility: "auto",
           containIntrinsicSize: "500px",
-        }} aria-labelledby="chapter-title">
+        }}
+        aria-labelledby="chapter-title"
+      >
         <div className={styles.heroContent}>
           <h1 id="chapter-title">
-            CBSE Class {chapterData.grade} {chapterData.subject} - Chapter{" "}
-            {chapterData.name}
+            CBSE Class {chapterData.grade}{" "}
+            {chapterData.subject} Chapter{" "}
+            {chapterData.name} Notes
           </h1>
+
           <p>
-            Free CBSE Class {chapterData.grade} {chapterData.subject} notes for
-            Chapter {chapterData.name}. Download PDF study material to prepare
-            effectively for your exams.
+            Free CBSE Class {chapterData.grade}{" "}
+            {chapterData.subject} notes and PDF
+            study material for Chapter{" "}
+            {chapterData.name}.
           </p>
         </div>
       </section>
-      {/* ✅ TOP DISPLAY AD (CLS SAFE) */}
-      
-          <AdsenseAd slot="3294419739" />
-        
 
-      {/* ✅ PDF Viewer section with Cloudinary JPG Images */}
-      <div className="container pdf-section" style={{ position: 'relative', contain: "layout style paint" }}>
+      {/* =========================
+          ✅ TOP AD
+      ========================= */}
+
+      <AdsenseAd slot="3294419739" />
+
+      {/* =========================
+          ✅ CONTENT SECTION
+      ========================= */}
+
+      <div
+        className="container pdf-section"
+        style={{
+          position: "relative",
+          contain: "layout style paint",
+        }}
+      >
+        {/* ✅ HTML CONTENT */}
+
         {chapterData.extractedHtml ? (
-          <>
-            <article className="prose" dangerouslySetInnerHTML={{ __html: chapterData.extractedHtml }} />
-          </>
+          <article
+            className="prose"
+            dangerouslySetInnerHTML={{
+              __html: chapterData.extractedHtml,
+            }}
+          />
         ) : (
-          <div style={{
-            width: '100%',
-            maxWidth: '900px',
-            margin: '0 auto',
-            contain: 'layout style paint'
-          }}>
-            {/* ✅ Cloudinary PDF Viewer - Crystal Clear Images */}
-            <article itemScope itemType="https://schema.org/Article">
-              {/* 🔥 LCP IMAGE – ONLY ONCE */}
+          /* ✅ PDF VIEWER */
+          <div
+            style={{
+              width: "100%",
+              maxWidth: "900px",
+              margin: "0 auto",
+              contain: "layout style paint",
+            }}
+          >
+            <article
+              itemScope
+              itemType="https://schema.org/Article"
+            >
+              {/* ✅ FIRST IMAGE */}
+
               {firstPage && (
                 <img
                   src={firstPage}
@@ -158,7 +265,8 @@ export default async function CBSECHAPTERPage({ params }: PageProps) {
                 />
               )}
 
-              {/* ⬇️ VIEWER FROM PAGE 2 */}
+              {/* ✅ REMAINING PAGES */}
+
               <CloudinaryPDFViewer
                 title={chapterData.name}
                 pageImages={restPages}
@@ -168,19 +276,114 @@ export default async function CBSECHAPTERPage({ params }: PageProps) {
         )}
       </div>
 
-     
+      {/* =========================
+          ✅ TRUST SECTION
+      ========================= */}
 
-      {/* ✅ Trust Section */}
       <section className={styles.trust}>
         <h2>Why Choose Our Notes?</h2>
+
         <ul>
-          <li>✔ Based on NCERT & CBSE latest syllabus</li>
-          <li>✔ Free PDF download for offline study</li>
-          <li>✔ Helps you score high in board exams</li>
+          <li>
+            ✔ Based on latest NCERT & CBSE syllabus
+          </li>
+
+          <li>
+            ✔ Free study material for board exams
+          </li>
+
+          <li>
+            ✔ Chapter-wise easy explanations
+          </li>
         </ul>
       </section>
 
+      {/* =========================
+          ✅ ARTICLE SCHEMA
+      ========================= */}
 
+      <Script
+        id="article-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+
+            "@type": "Article",
+
+            headline: `CBSE Class ${grade} ${subject} Chapter ${chapterId} Notes`,
+
+            description: `Free CBSE Class ${grade} ${subject} Chapter ${chapterId} notes and study material.`,
+
+            image:
+              firstPage ||
+              "https://www.pathshalanoteshub.in/og-image.png",
+
+            author: {
+              "@type": "Organization",
+              name: "Pathshala Notes Hub",
+            },
+
+            publisher: {
+              "@type": "Organization",
+              name: "Pathshala Notes Hub",
+            },
+          }),
+        }}
+      />
+
+      {/* =========================
+          ✅ BREADCRUMB SCHEMA
+      ========================= */}
+
+      <Script
+        id="breadcrumb-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+
+            "@type": "BreadcrumbList",
+
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "Home",
+                item: "https://www.pathshalanoteshub.in",
+              },
+
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "CBSE",
+                item: "https://www.pathshalanoteshub.in/cbse",
+              },
+
+              {
+                "@type": "ListItem",
+                position: 3,
+                name: `Class ${grade}`,
+                item: `https://www.pathshalanoteshub.in/cbse/${grade}`,
+              },
+
+              {
+                "@type": "ListItem",
+                position: 4,
+                name: subject,
+                item: `https://www.pathshalanoteshub.in/cbse/${grade}/${subject}`,
+              },
+
+              {
+                "@type": "ListItem",
+                position: 5,
+                name: `Chapter ${chapterId}`,
+                item: `https://www.pathshalanoteshub.in/cbse/${grade}/${subject}/${chapterId}`,
+              },
+            ],
+          }),
+        }}
+      />
     </main>
   );
 }

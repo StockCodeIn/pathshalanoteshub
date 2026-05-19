@@ -10,20 +10,27 @@ interface PageProps {
 // ✅ SEO Metadata (Dynamic per grade)
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const gradeValue = (await params).grade;
+  const title = `RBSE Class ${gradeValue} All Subjects - Free Chapter-Wise Notes & Study Material | Pathshala Notes Hub`;
+  const description = `Complete RBSE Class ${gradeValue} subject-wise chapter notes with explanations. Access free PDF study material for Rajasthan Board exam preparation.`;
+  
   return {
-    title: `RBSE Class ${gradeValue} Subjects | Pathshala Notes Hub`,
-    description: `Explore all subjects for RBSE Class ${gradeValue}. Access free notes, chapters, and study resources for Rajasthan Board exam preparation.`,
+    title,
+    description,
     keywords: [
       `RBSE Class ${gradeValue} subjects`,
-      `RBSE ${gradeValue} study material`,
-      `RBSE ${gradeValue} syllabus`,
+      `RBSE Class ${gradeValue} study material`,
+      `RBSE Class ${gradeValue} syllabus`,
+      `RBSE ${gradeValue} notes`,
       "Rajasthan Board subjects",
-      "RBSE notes",
+      "RBSE exam preparation",
     ],
+    alternates: {
+      canonical: `https://www.pathshalanoteshub.in/rbse/${gradeValue}`,
+    },
     openGraph: {
-      title: `RBSE Class ${gradeValue} Subjects | Pathshala Notes Hub`,
-      description: `Get RBSE Class ${gradeValue} subject-wise resources including chapters and notes.`,
-      url: process.env.NEXT_PUBLIC_SITE_URL + `/rbse/${gradeValue}`,
+      title: `RBSE Class ${gradeValue} Subjects`,
+      description,
+      url: `https://www.pathshalanoteshub.in/rbse/${gradeValue}`,
       siteName: "Pathshala Notes Hub",
       images: [
         {
@@ -35,6 +42,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       ],
       locale: "en_IN",
       type: "website",
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `RBSE Class ${gradeValue} Subjects`,
+      description,
+      images: ["/og-image.png"],
     },
   };
 }

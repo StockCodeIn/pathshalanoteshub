@@ -19,21 +19,32 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const subjectName =
     subjects[grade]?.find((s) => s.id === subject)?.name || "Subject";
 
+  const title = `CBSE Class ${grade} ${subjectName} - Chapter-Wise NCERT Notes, Solutions & Study Material | Pathshala Notes Hub`;
+  const description = `Complete CBSE Class ${grade} ${subjectName} chapter-wise notes based on NCERT syllabus. Free PDF study material, solved examples and exam preparation resources.`;
+
   return {
-    title: `CBSE Class ${grade} ${subjectName} Chapters | Pathshala Notes Hub`,
-    description: `Explore CBSE Class ${grade} ${subjectName} chapter-wise study material. Free PDF notes for exam preparation.`,
+    title,
+    description,
     keywords: [
       `CBSE Class ${grade} ${subjectName} notes`,
-      `CBSE ${subjectName} chapters`,
+      `NCERT Class ${grade} ${subjectName}`,
       `CBSE Class ${grade} syllabus`,
+      `NCERT ${subjectName} study material`,
+      `${subjectName} exam preparation`,
     ],
     alternates: {
-      canonical: `/cbse/${grade}/${subject}`,
+      canonical: `https://www.pathshalanoteshub.in/cbse/${grade}/${subject}`,
     },
     openGraph: {
       title: `CBSE Class ${grade} ${subjectName} Chapters`,
-      description: `CBSE Class ${grade} ${subjectName} chapter-wise notes and study material.`,
+      description,
       type: "website",
+      url: `https://www.pathshalanoteshub.in/cbse/${grade}/${subject}`,
+    },
+    twitter: {
+      card: 'summary',
+      title: `CBSE Class ${grade} ${subjectName}`,
+      description,
     },
   };
 }
