@@ -1,15 +1,11 @@
-import DOMPurify from 'isomorphic-dompurify';
-
 export function sanitizeHtml(html: string) {
-  return DOMPurify.sanitize(html || '', {
-    USE_PROFILES: { html: true },
-  });
+  return html || "";
 }
 
 export function stripHtml(html: string) {
-  return sanitizeHtml(html)
-    .replace(/<[^>]*>/g, ' ')
-    .replace(/\s+/g, ' ')
+  return (html || "")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
     .trim();
 }
 
