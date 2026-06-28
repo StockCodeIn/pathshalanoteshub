@@ -1,0 +1,100 @@
+.wrapper{
+  max-width:1100px;
+  margin:3rem auto;
+  padding:0 1rem;
+}
+
+.title{
+  font-size:1.8rem;
+  font-weight:700;
+  margin-bottom:1.5rem;
+}
+
+.subtitle{
+  margin:2rem 0 1rem;
+}
+
+.prevNext{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1rem;
+}
+
+.navCard{
+  display:flex;
+  flex-direction:column;
+  gap:.5rem;
+
+  padding:1rem;
+
+  border-radius:12px;
+
+  background:#f8fafc;
+
+  border:1px solid #e5e7eb;
+
+  transition:.2s;
+}
+
+.navCard:hover{
+
+  background:#eff6ff;
+
+}
+
+.chapterGrid{
+
+  display:grid;
+
+  grid-template-columns:
+  repeat(auto-fill,minmax(240px,1fr));
+
+  gap:1rem;
+
+}
+
+.chapterCard{
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:.5rem;
+
+  padding:1rem;
+
+  border-radius:12px;
+
+  border:1px solid #e5e7eb;
+
+  background:white;
+
+  transition:.2s;
+
+}
+
+.chapterCard:hover{
+
+  transform:translateY(-2px);
+
+  box-shadow:0 8px 24px rgba(0,0,0,.08);
+
+}
+
+.active{
+
+  border:2px solid #2563eb;
+
+  background:#dbeafe;
+
+}
+
+@media(max-width:768px){
+
+.prevNext{
+
+grid-template-columns:1fr;
+
+}
+
+}

@@ -5,26 +5,33 @@ import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Script from 'next/script';
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
 });
 
+const siteUrl = 'https://www.pathshalanoteshub.in';
+const siteName = 'Pathshala Notes Hub';
+const defaultTitle = 'Pathshala Notes Hub – Free RBSE & CBSE Notes (10th & 12th) + Indian GK';
+const defaultDescription =
+  'Free RBSE & CBSE notes (PDF), previous year question papers for Class 10 & 12. Maths, Science, Hindi & English notes. Indian GK + Current Affairs 2025.';
+const ogImage = '/og-image.png';
+
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
+  themeColor: '#ffffff',
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.pathshalanoteshub.in'),
+  metadataBase: new URL(siteUrl),
   title: {
-    default: 'Pathshala Notes Hub – Free RBSE & CBSE Notes (10th & 12th) + Indian GK',
+    default: defaultTitle,
     template: '%s | Pathshala Notes Hub',
   },
-  description:
-    'Free RBSE & CBSE notes (PDF), previous year question papers for Class 10 & 12. Maths, Science, Hindi & English notes. Indian GK + Current Affairs 2025.',
+  description: defaultDescription,
   keywords: [
     'RBSE notes',
     'CBSE notes',
@@ -36,8 +43,11 @@ export const metadata: Metadata = {
     'board exam preparation',
   ],
   authors: [{ name: 'Ashok Kumar Meena' }],
-  creator: 'Pathshala Notes Hub',
-  publisher: 'Pathshala Notes Hub',
+  creator: siteName,
+  publisher: siteName,
+  alternates: {
+    canonical: '/',
+  },
   robots: {
     index: true,
     follow: true,
@@ -51,16 +61,28 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: 'website',
-    siteName: 'Pathshala Notes Hub',
-    url: 'https://www.pathshalanoteshub.in',
-    images: ['/og-image.png'],
+    url: siteUrl,
+    siteName,
+    title: defaultTitle,
+    description: defaultDescription,
+    locale: 'hi_IN',
+    images: [
+      {
+        url: ogImage,
+        width: 1200,
+        height: 630,
+        alt: 'Pathshala Notes Hub',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
-    images: ['/og-image.png'],
+    title: defaultTitle,
+    description: defaultDescription,
+    images: [ogImage],
   },
   verification: {
-    google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION,
+    google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION || undefined,
   },
 };
 
@@ -69,64 +91,44 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const gaId = 'G-L8Q8MHGLFE';
+  const adsenseClient = process.env.NEXT_PUBLIC_ADSENSE_CLIENT;
+
   return (
     <html lang="hi">
-      <head> 
-        {/* <Script
-          src="https://cmp.gatekeeperconsent.com/min.js"
-          strategy="beforeInteractive"
-          data-cfasync="false"
-        />
-        <Script
-          src="https://the.gatekeeperconsent.com/cmp.min.js"
-          strategy="beforeInteractive"
-          data-cfasync="false"
-        />
-
-       
-        <Script
-          src="//www.ezojs.com/ezoic/sa.min.js"
-          strategy="afterInteractive"
-          async
-        />
-
-        
-        <Script id="ezoic-init" strategy="afterInteractive">
-          {`
-            window.ezstandalone = window.ezstandalone || {};
-            ezstandalone.cmd = ezstandalone.cmd || [];
-          `}
-        </Script> */}
-
-        {/* Preconnect to external domains */}
+      <head>
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="preconnect" href="https://www.google-analytics.com" />
         <link rel="preconnect" href="https://pagead2.googlesyndication.com" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="https://www.google-analytics.com" />
         <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
       </head>
+
       <body className={inter.className}>
-        {/* Google Analytics – DELAYED */}
         <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-L8Q8MHGLFE"
+          src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
           strategy="lazyOnload"
-          async
         />
         <Script id="ga" strategy="lazyOnload">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'G-L8Q8MHGLFE', { anonymize_ip: true });
+            gtag('config', '${gaId}', {
+              anonymize_ip: true
+            });
           `}
         </Script>
 
-        {/* Google AdSense – DELAYED & SAFE */}
-        <Script
-          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_ADSENSE_CLIENT}`}
-          strategy="lazyOnload"
-          crossOrigin="anonymous"
-        />
+        {adsenseClient ? (
+          <Script
+            id="adsense-script"
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClient}`}
+            strategy="lazyOnload"
+            crossOrigin="anonymous"
+          />
+        ) : null}
 
         <Navbar />
         <main className="main">{children}</main>

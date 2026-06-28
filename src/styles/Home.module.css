@@ -21,9 +21,20 @@
 }
 .heroButtons {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  gap: 1rem;
+  gap: 0.75rem;
   margin-top: 1.5rem;
+}
+.heroButtons > a {
+  min-width: 0;
+  flex:0 1 220px;
+  min-width: 150px;
+  max-width: 220px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .ctaButton {
   background: #facc15;
@@ -67,6 +78,20 @@
   color: white;
 }
 
+.ctaButtonBlogs {
+  background: #f97316;
+  color: #ffffff;
+  padding: 0.6rem 1.2rem;
+  border-radius: 20px;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.ctaButtonBlogs:hover {
+  background: #ea580c;
+  color: white;
+}
+
 /* Sections */
 .sectionTitle {
   font-size: 1.2rem;
@@ -86,15 +111,16 @@
   border: 1px solid #eee;
   padding: 1rem;
   border-radius: 20px;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 3px 8px rgba(36, 35, 35, 0.1);
   text-decoration: none;
   display: block;
   color: #111827;
   transition: transform 0.2s, box-shadow 0.2s;
 }
 .listCard:hover {
-  transform: scale(1.03);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  will-change: transform;
+  transform: translate3d(0,-4px,0);
+  box-shadow: 0 4px 12px rgba(43, 42, 42, 0.15);
 }
 
 .listCard h3 {
@@ -121,19 +147,28 @@
   border: 1px solid #eee;
   padding: 1rem;
   border-radius: 20px;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 3px 8px rgba(39, 39, 39, 0.08);
   text-decoration: none;
   color: #333;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
+  align-items: stretch;
+  text-align: left;
+}
+
+.card2 img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 18px;
+  margin-bottom: 1rem;
 }
 
 .card2:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+  will-change: transform;
+  transform: translate3d(0,-4px,0);
+  box-shadow: 0 6px 14px rgba(48, 47, 47, 0.15);
 }
 
 .card2 h3 {
@@ -183,7 +218,7 @@
   border-radius: 6px;
   margin-bottom: 0.8rem;
   padding: 0.8rem 1rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 4px rgba(51, 51, 51, 0.05);
 }
 .faqItem summary {
   cursor: pointer;
@@ -232,7 +267,7 @@
   max-width: 900px;
   background: linear-gradient(135deg, #f8f9ff, #eef2ff);
   border-radius: 14px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 6px 18px rgba(36, 36, 36, 0.06);
   text-align: center;
 }
 
@@ -254,6 +289,70 @@
   font-weight: 600;
 }
 
+
+
+
+
+.paperGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.paperCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+
+  padding: 1rem;
+
+  border-radius: 14px;
+
+  background: #ffffff;
+
+  border: 1px solid #e5e7eb;
+
+  box-shadow: 0 3px 8px rgba(0,0,0,.06);
+
+  transition: .25s;
+
+  text-decoration: none;
+}
+
+.paperCard:hover {
+  transform: translateY(-4px);
+
+  box-shadow: 0 10px 24px rgba(0,0,0,.12);
+
+  border-color: #2563eb;
+}
+
+.paperYear {
+  font-size: 1.25rem;
+
+  font-weight: 700;
+
+  color: #2563eb;
+}
+
+.paperTitle {
+  font-weight: 600;
+
+  color: #111827;
+
+  line-height: 1.4;
+}
+
+.paperSubtitle {
+  margin-top: auto;
+
+  color: #6b7280;
+
+  font-size: .9rem;
+}
+
+
 /* ✅ Mobile responsive */
 @media (max-width: 600px) {
   .aboutSection {
@@ -268,7 +367,10 @@
     font-size: 0.95rem;
   }
 
-  .ctaButtonTertiary {
+  /* .ctaButtonTertiary {
+    padding: 1.4rem 1.2rem;
+  } */
+  .ctaButtonBlogs {
     padding: 1.4rem 1.2rem;
   }
 }
@@ -287,4 +389,36 @@
   }
 }
 
+@media (max-width: 768px) {
+  .hero {
+    padding: 2rem 1rem;
+  }
+
+  .heroContent h1 {
+    font-size: 2rem;
+  }
+
+  .heroContent p {
+    font-size: 0.98rem;
+    line-height: 1.6;
+  }
+
+  .cardContainer2 {
+    grid-template-columns: 1fr;
+    margin: 0.5rem;
+  }
+
+  .card2 {
+    padding: 1rem;
+  }
+
+  .card2 h3 {
+    font-size: 1.14rem;
+  }
+
+  .card2 p {
+    font-size: 0.95rem;
+  }
+}
+ 
 

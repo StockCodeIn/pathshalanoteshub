@@ -2,7 +2,9 @@ import Link from "next/link";
 import { subjects } from "@/config/subjects";
 import styles from "@/styles/Home.module.css";
 import type { Metadata } from "next";
-import AdsenseAd from "@/components/AdsenseAd"; // <-- import the ad component
+import Script from "next/script";
+import AdsenseAd from "@/components/AdsenseAd"; 
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 interface PageProps {
   params: Promise<{
@@ -80,6 +82,17 @@ export default async function RBSESubjectPage({ params }: PageProps) {
         </div>
       </section>
 
+            <div className="container" style={{ paddingTop: "1rem" }} >
+              <Breadcrumbs 
+                items={[
+                  { href: "/", label: "Home", },
+                  { href: "/rbse", label: "RBSE Notes", },
+                  { href: `/rbse/${grade}`, label: `Class ${grade}`, },
+                  { href: `/rbse/${grade}/${subject}`, label: subjectData.name, },
+                ]}
+              />
+            </div>
+
       
       <AdsenseAd slot="3928666945" variant="display" />
 
@@ -117,6 +130,46 @@ export default async function RBSESubjectPage({ params }: PageProps) {
           <li>✔ Helps in exam preparation with organized content</li>
         </ul>
       </section>
+
+
+
+      <Script
+       id="breadcrumb-schema"
+       type="application/ld+json"
+       dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "Home",
+                item: "https://www.pathshalanoteshub.in",
+              },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "RBSE",
+                item: "https://www.pathshalanoteshub.in/rbse",
+              },
+              {
+                "@type": "ListItem",
+                position: 3,
+                name: `Class ${grade}`,
+                item: `https://www.pathshalanoteshub.in/rbse/${grade}`,
+             },
+             {
+               "@type": "ListItem",
+               position: 4,
+               name: subjectData.name,
+               item: `https://www.pathshalanoteshub.in/rbse/${grade}/${subject}`,
+             },
+           ],
+          }),
+        }}
+      />
+
     </main>
   );
 }

@@ -2,6 +2,8 @@ import Link from "next/link";
 import { subjects } from "@/config/subjects";
 import type { Metadata } from "next";
 import styles from "@/styles/Home.module.css";
+import Breadcrumbs from "@/components/Breadcrumbs";
+import Script from "next/script";
 
 interface PageProps {
   params: Promise<{ grade: string }>;
@@ -78,6 +80,15 @@ export default async function CBSEGradeSubjectsPage({ params }: PageProps) {
           </p>
         </div>
       </section>
+      <div className="container" style={{ paddingTop: "1rem" }} >
+        <Breadcrumbs 
+          items={[
+            { href: "/", label: "Home", },
+            { href: "/cbse", label: "CBSE Notes", },
+            { href: `/cbse/${gradeValue}`, label: `Class ${gradeValue}`, },
+          ]}
+        />
+      </div>
 
       {/* ✅ Subjects Section */}
       <h2 className={styles.sectionTitle}>Available Subjects</h2>
@@ -104,6 +115,40 @@ export default async function CBSEGradeSubjectsPage({ params }: PageProps) {
           <li>✔ Helps in exam preparation with structured resources</li>
         </ul>
       </section>
+
+
+     <Script
+       id="breadcrumb-schema"
+       type="application/ld+json"
+       dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "Home",
+                item: "https://www.pathshalanoteshub.in",
+              },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "CBSE",
+                item: "https://www.pathshalanoteshub.in/cbse",
+              },
+              {
+                "@type": "ListItem",
+                position: 3,
+                name: `Class ${gradeValue}`,
+                item: `https://www.pathshalanoteshub.in/cbse/${gradeValue}`,
+             },
+             
+           ],
+          }),
+        }}
+      />
+
     </main>
   );
 }

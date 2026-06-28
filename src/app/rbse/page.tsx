@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import Script from "next/script";
 import styles from "@/styles/Home.module.css";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 // ✅ SEO Metadata
 export const metadata: Metadata = {
@@ -88,6 +89,15 @@ export default function RBSEPage() {
         </div>
       </section>
 
+      <div className="container" style={{ paddingTop: "1rem" }} >
+         <Breadcrumbs 
+           items={[
+             { href: "/", label: "Home", },
+             { href: "/rbse", label: "RBSE Notes", }
+           ]}
+         />
+       </div>
+
       {/* ✅ Classes Section */}
       <h2 className={styles.sectionTitle}>Choose Your Class</h2>
       <div className={styles.cardContainer2}>
@@ -136,6 +146,32 @@ export default function RBSEPage() {
               name: faq.q,
               acceptedAnswer: { "@type": "Answer", text: faq.a },
             })),
+          }),
+        }}
+      />
+       <Script
+       id="breadcrumb-schema"
+       type="application/ld+json"
+       dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "Home",
+                item: "https://www.pathshalanoteshub.in",
+              },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "RBSE",
+                item: "https://www.pathshalanoteshub.in/rbse",
+              },
+              
+             
+           ],
           }),
         }}
       />

@@ -1,9 +1,14 @@
 # *
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /api/*
+Disallow: /_next/
 
 # Host
 Host: https://www.pathshalanoteshub.in
 
 # Sitemaps
 Sitemap: https://www.pathshalanoteshub.in/sitemap.xml
+Sitemap: https://www.pathshalanoteshub.in/sitemap-images.xml

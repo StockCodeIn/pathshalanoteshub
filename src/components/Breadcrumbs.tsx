@@ -3,48 +3,125 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-export default function Breadcrumbs() {
+export type BreadcrumbItem = {
+  href: string;
+  label: string;
+};
+
+type Props = {
+  items?: BreadcrumbItem[];
+};
+
+const LABELS: Record<string, string> = {
+  blogs: 'Blogs',
+
+  rbse: 'RBSE Notes',
+
+  cbse: 'CBSE Notes',
+
+  gk: 'General Knowledge',
+
+  'rbse-papers': 'RBSE Previous Papers',
+
+  'study-plan': 'Study Plan',
+
+  'time-management': 'Time Management',
+
+  about: 'About',
+
+  contact: 'Contact',
+
+  'privacy-policy': 'Privacy Policy',
+
+  disclaimer: 'Disclaimer',
+
+  'terms-of-service': 'Terms of Service',
+};
+
+function titleCase(text: string) {
+  return text
+    .replace(/-/g, ' ')
+    .replace(/\b\w/g, (m) => m.toUpperCase());
+}
+
+export default function Breadcrumbs({ items }: Props) {
   const pathname = usePathname();
+
   if (!pathname) return null;
 
-  const parts = pathname.split('/').filter(Boolean); // remove empty
-  const crumbs = parts.map((part, index) => {
-    const href = '/' + parts.slice(0, index + 1).join('/');
-    const label = decodeURIComponent(part).replace(/-/g, ' ');
-
-    return { href, label };
-  });
+  const breadcrumbs: BreadcrumbItem[] =
+  items ??
+  [
+    {
+      href: '/',
+      label: 'Home',
+    },
+    ...pathname
+      .split('/')
+      .filter(Boolean)
+      .map((part, index, arr) => ({
+        href: '/' + arr.slice(0, index + 1).join('/'),
+        label:
+          LABELS[part] ??
+          titleCase(decodeURIComponent(part)),
+      })),
+  ];
 
   return (
-    <nav aria-label="breadcrumbs" style={{ fontSize: '0.9rem', color: '#555' }}>
+    <nav
+      aria-label="Breadcrumb"
+      style={{
+        marginBottom: '2rem',
+        fontSize: '.95rem',
+      }}
+    >
       <ol
         style={{
-          listStyle: 'none',
           display: 'flex',
           flexWrap: 'wrap',
-          gap: '0.5rem',
+          listStyle: 'none',
           padding: 0,
           margin: 0,
+          gap: '.5rem',
+          alignItems: 'center',
         }}
       >
-        {/* 🏠 Home link */}
-        <li>
-          <Link href="/" style={{ color: '#0070f3', textDecoration: 'none' }}>
-            Home
-          </Link>
-        </li>
 
-        {crumbs.map((crumb, index) => (
-          <li key={crumb.href} style={{ display: 'flex', alignItems: 'center' }}>
-            <span style={{ margin: '0 4px', color: '#aaa' }}>›</span>
-            {index === crumbs.length - 1 ? (
-              <span style={{ color: '#222', textTransform: 'capitalize' }}>
+        {breadcrumbs.map((crumb, index) => (
+          <li
+            key={crumb.href}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            {index > 0 && (
+             <span
+                style={{
+                  color: "#9ca3af",
+                  margin: "0 .35rem",
+               }}
+              >
+                /
+              </span>
+            )}
+
+            {index === breadcrumbs.length - 1 ? (
+              <span
+                style={{
+                  color: '#111827',
+                  fontWeight: 600,
+                }}
+              >
                 {crumb.label}
               </span>
             ) : (
               <Link
                 href={crumb.href}
-                style={{ color: '#0070f3', textDecoration: 'none', textTransform: 'capitalize' }}
+                style={{
+                  color: '#2563eb',
+                  textDecoration: 'none',
+                }}
               >
                 {crumb.label}
               </Link>

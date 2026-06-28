@@ -3,6 +3,8 @@ import PastPaper from "@/models/PastPaper";
 import Link from "next/link";
 import type { Metadata } from "next";
 import styles from "@/styles/Home.module.css";
+import Breadcrumbs from "@/components/Breadcrumbs";
+import Script from "next/script";
 
 // ✅ Params interface
 interface PageProps {
@@ -52,6 +54,26 @@ export default async function RBSESubjectsPage({ params }: PageProps) {
         </div>
       </section>
 
+      <div className="container" style={{ paddingTop: "1rem" }}>
+        <Breadcrumbs
+          items={[
+            {
+              href: "/",
+              label: "Home",
+            },
+            {
+              href: "/rbse-papers",
+              label: "RBSE Previous Papers",
+            },
+            {
+              href: `/rbse-papers/${grade}`,
+              label: `Class ${grade}`,
+            }
+          ]}
+        />
+      </div>
+
+
       {/* ✅ Subjects Section */}
       <h2 className={styles.sectionTitle}>Available Subjects</h2>
       <div className={styles.cardContainer2}>
@@ -80,6 +102,40 @@ export default async function RBSESubjectsPage({ params }: PageProps) {
           <li>✔ Free access for all students</li>
         </ul>
       </section>
+
+      <Script
+        id="breadcrumb-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+
+            "@type": "BreadcrumbList",
+
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "Home",
+                item: "https://www.pathshalanoteshub.in",
+              },
+
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "RBSE Previous Papers",
+                item: "https://www.pathshalanoteshub.in/rbse-papers",
+              },
+              {
+                "@type": "ListItem",
+                position: 3,
+                name: `Class ${grade}`,
+                item: `https://www.pathshalanoteshub.in/rbse-papers/${grade}`,
+              }
+            ],
+          }),
+        }}
+      />
     </main>
   );
 }

@@ -4,14 +4,15 @@ import React from "react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Script from "next/script";
-
+import Image from "next/image";
+import { getChapterInfo } from "@/lib/chapterMetadata";
+import ChapterNavigation from "@/components/ChapterNavigation";
 import connectDB from "@/lib/mongodb";
 import { Chapter } from "@/models/chapter";
-
 import styles from "@/styles/Home.module.css";
-
 import CloudinaryPDFViewer from "@/components/CloudinaryPDFViewer";
 import AdsenseAd from "@/components/AdsenseAd";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 interface PageProps {
   params: Promise<{
@@ -30,17 +31,30 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const { grade, subject, chapterId } = await params;
 
-  return {
-    title: `CBSE Class ${grade} ${subject} Chapter ${chapterId} Notes | Pathshala Notes Hub`,
+  const chapterInfo = getChapterInfo(
+  grade,
+  subject,
+  chapterId
+);
 
-    description: `Free CBSE Class ${grade} ${subject} Chapter ${chapterId} notes, study material, and PDF resources for exam preparation.`,
+const chapterTitle =
+  chapterInfo?.chapterTitle ?? `Chapter ${chapterId}`;
+
+const subjectName =
+  chapterInfo?.subjectName ?? subject;
+
+  return {
+    title: `${chapterTitle} Notes PDF | CBSE Class ${grade} ${subjectName} | Pathshala Notes Hub`,
+
+    description: `Download free CBSE Class ${grade} ${subjectName} "${chapterTitle}" notes PDF, chapter-wise study material, important concepts and exam preparation resources.`,
 
     keywords: [
-      `CBSE Class ${grade} ${subject} Notes`,
-      `CBSE ${subject} Chapter ${chapterId}`,
-      `Class ${grade} CBSE Notes`,
-      "CBSE study material",
-      "NCERT Notes",
+       `${chapterTitle} Notes`,
+       `${chapterTitle} PDF`,
+       `CBSE Class ${grade} ${subjectName}`,
+       `${subjectName} Chapter ${chapterId}`,
+       "CBSE Notes",
+       "NCERT Notes",
     ],
 
     alternates: {
@@ -48,8 +62,8 @@ export async function generateMetadata({
     },
 
     openGraph: {
-      title: `CBSE Class ${grade} ${subject} Chapter ${chapterId} Notes`,
-      description: `Free CBSE Class ${grade} ${subject} study material and notes.`,
+      title: `${chapterTitle} Notes PDF`,
+      description: `Free notes for ${chapterTitle}.`,
       url: `https://www.pathshalanoteshub.in/cbse/${grade}/${subject}/${chapterId}`,
       siteName: "Pathshala Notes Hub",
       type: "article",
@@ -66,8 +80,8 @@ export async function generateMetadata({
 
     twitter: {
       card: "summary_large_image",
-      title: `CBSE Class ${grade} ${subject} Notes`,
-      description: `Free CBSE Class ${grade} ${subject} notes and study material.`,
+      title: `${chapterTitle} Notes PDF`,
+      description: `Download ${chapterTitle} Notes PDF.`,
       images: ["/og-image.png"],
     },
   };
@@ -138,6 +152,18 @@ export default async function CBSECHAPTERPage({
   params,
 }: PageProps) {
   const { grade, subject, chapterId } = await params;
+  const chapterInfo = getChapterInfo(
+  grade,
+  subject,
+  chapterId
+);
+
+if (!chapterInfo) {
+  notFound();
+}
+
+const chapterTitle = chapterInfo.chapterTitle;
+const subjectName = chapterInfo.subjectName;
 
   const cacheKey = getCacheKey(
     "CBSE",
@@ -177,6 +203,7 @@ export default async function CBSECHAPTERPage({
 
   return (
     <main>
+
       {/* =========================
           ✅ HERO SECTION
       ========================= */}
@@ -184,32 +211,42 @@ export default async function CBSECHAPTERPage({
       <section
         className={styles.hero}
         style={{
-          contentVisibility: "auto",
           containIntrinsicSize: "500px",
         }}
         aria-labelledby="chapter-title"
       >
         <div className={styles.heroContent}>
           <h1 id="chapter-title">
-            CBSE Class {chapterData.grade}{" "}
-            {chapterData.subject} Chapter{" "}
-            {chapterData.name} Notes
+             {chapterTitle} Notes PDF (CBSE Class {grade} {subjectName})
           </h1>
 
           <p>
-            Free CBSE Class {chapterData.grade}{" "}
-            {chapterData.subject} notes and PDF
-            study material for Chapter{" "}
-            {chapterData.name}.
+            Download free CBSE Class {grade} {subjectName}
+            {" "}notes for <strong>{chapterTitle}</strong>.
+            Chapter-wise study material, important concepts,
+            exam preparation resources and PDF notes.
           </p>
         </div>
       </section>
 
-      {/* =========================
-          ✅ TOP AD
-      ========================= */}
+      <div className="container" style={{ paddingTop: "1rem",}}>
+        <Breadcrumbs
+         items={[
+           { href: "/", label: "Home" },
+           { href: "/cbse", label: "CBSE Notes" },
+           { href: `/cbse/${grade}`, label: `Class ${grade}` },
+           { href: `/cbse/${grade}/${subject}`, label: subjectName, },
+           {
+             href: `/cbse/${grade}/${subject}/${chapterId}`,
+             label: chapterTitle,
+           },
+         ]}
+        />
+      </div> 
 
-      <AdsenseAd slot="3294419739" />
+
+
+      
 
       {/* =========================
           ✅ CONTENT SECTION
@@ -225,14 +262,19 @@ export default async function CBSECHAPTERPage({
         {/* ✅ HTML CONTENT */}
 
         {chapterData.extractedHtml ? (
+          <>
           <article
             className="prose"
             dangerouslySetInnerHTML={{
               __html: chapterData.extractedHtml,
             }}
           />
+          <AdsenseAd slot="3294419739" />
+          </>
+
         ) : (
           /* ✅ PDF VIEWER */
+
           <div
             style={{
               width: "100%",
@@ -248,23 +290,24 @@ export default async function CBSECHAPTERPage({
               {/* ✅ FIRST IMAGE */}
 
               {firstPage && (
-                <img
-                  src={firstPage}
-                  alt={`CBSE Class ${grade} ${subject} Chapter ${chapterData.name} Page 1`}
-                  width={900}
-                  height={1200}
-                  style={{
-                    width: "100%",
-                    height: "auto",
-                    display: "block",
-                    marginBottom: "1rem",
-                  }}
-                  loading="eager"
-                  fetchPriority="high"
-                  decoding="async"
+                <Image
+                   src={firstPage}
+                   alt={`CBSE Class ${grade} ${subject} Chapter ${chapterData.name} Page 1`}
+                   width={900}
+                   height={1200}
+                   priority
+                   sizes="(max-width:768px) 100vw,900px"
+                   style={{
+                     width: "100%",
+                     height: "auto",
+                     display: "block",
+                     marginBottom: "1rem",
+                   }}
                 />
               )}
 
+              
+            <AdsenseAd slot="3294419739" />
               {/* ✅ REMAINING PAGES */}
 
               <CloudinaryPDFViewer
@@ -298,6 +341,14 @@ export default async function CBSECHAPTERPage({
         </ul>
       </section>
 
+      <ChapterNavigation
+       board="CBSE"
+       grade={grade}
+       subject={subject}
+       currentChapter={chapterId}
+       chapterInfo={chapterInfo}
+      />
+
       {/* =========================
           ✅ ARTICLE SCHEMA
       ========================= */}
@@ -311,9 +362,9 @@ export default async function CBSECHAPTERPage({
 
             "@type": "Article",
 
-            headline: `CBSE Class ${grade} ${subject} Chapter ${chapterId} Notes`,
+            headline: `${chapterTitle} Notes PDF (CBSE Class ${grade} ${subjectName})`,
 
-            description: `Free CBSE Class ${grade} ${subject} Chapter ${chapterId} notes and study material.`,
+            description: `Download free CBSE Class ${grade} ${subjectName} ${chapterTitle} notes PDF and study material.`,
 
             image:
               firstPage ||
@@ -326,7 +377,12 @@ export default async function CBSECHAPTERPage({
 
             publisher: {
               "@type": "Organization",
-              name: "Pathshala Notes Hub",
+              name: "Pathshala Notes Hub",             
+            },
+
+            mainEntityOfPage: {
+             "@type": "WebPage",
+             "@id": `https://www.pathshalanoteshub.in/cbse/${grade}/${subject}/${chapterId}`,
             },
           }),
         }}
@@ -370,14 +426,14 @@ export default async function CBSECHAPTERPage({
               {
                 "@type": "ListItem",
                 position: 4,
-                name: subject,
+                name: subjectName,
                 item: `https://www.pathshalanoteshub.in/cbse/${grade}/${subject}`,
               },
 
-              {
+             {
                 "@type": "ListItem",
                 position: 5,
-                name: `Chapter ${chapterId}`,
+                name: chapterTitle,
                 item: `https://www.pathshalanoteshub.in/cbse/${grade}/${subject}/${chapterId}`,
               },
             ],

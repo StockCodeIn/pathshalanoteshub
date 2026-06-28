@@ -1,20 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useState, memo, useTransition } from "react";
+import { useState, memo,  } from "react";
 import Image from "next/image";
 import styles from "@/styles/Navbar.module.css";
 import { assets } from "@/assets/assets";
 
 const Navbar = memo(function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [isPending, startTransition] = useTransition();
-
   const toggleMenu = () => {
-    startTransition(() => {
-      setMenuOpen(!menuOpen);
-    });
-  };
+  setMenuOpen(prev => !prev);
+};
 
   return (
     <nav className={styles.navbar}>
@@ -27,6 +23,7 @@ const Navbar = memo(function Navbar() {
             width={40}
             height={40}
             className={styles.logo}
+            priority
           />
           <span className={styles.brandName}>Pathshala Notes Hub</span>
         </Link>
@@ -35,6 +32,7 @@ const Navbar = memo(function Navbar() {
         <div className={`${styles.navLinks} ${menuOpen ? styles.showMenu : ""}`}>
           <Link href="/" className={styles.link}>Home</Link>
           <Link href="/about" className={styles.link}>About</Link>
+          <Link href="/blogs" className={styles.link}>Blog Updates</Link>
           <Link href="/contact" className={styles.link}>Contact</Link>
         </div>
 
@@ -42,7 +40,8 @@ const Navbar = memo(function Navbar() {
         <button
           className={styles.menuButton}
           onClick={toggleMenu}
-          aria-label="Toggle navigation"
+          aria-expanded={menuOpen}
+          aria-controls="mobile-menu"
         >
           ☰
         </button>

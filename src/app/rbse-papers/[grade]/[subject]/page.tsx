@@ -3,6 +3,9 @@ import PastPaper from "@/models/PastPaper";
 import Link from "next/link";
 import type { Metadata } from "next";
 import styles from "@/styles/Home.module.css";
+import Breadcrumbs from "@/components/Breadcrumbs";
+import Script from "next/script";
+import AdsenseAd from "@/components/AdsenseAd";
 
 interface PageProps {
   params: Promise<{ grade: string; subject: string }>;
@@ -28,7 +31,28 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       url: `${process.env.NEXT_PUBLIC_SITE_URL}/rbse-papers/${grade}/${subject}`,
       siteName: "Pathshala Notes Hub",
       type: "website",
+      images: [
+        {
+          url: "/og-image.png",
+          width: 1200,
+          height: 630,
+          alt: "RBSE Previous Papers",
+        },
+      ],
     },
+    twitter: {
+      card: "summary_large_image",
+      title: `RBSE Class ${grade} ${subject} Previous Year Papers`,
+      description: `Access year-wise RBSE Class ${grade} ${subject} past question papers for free.`,
+      images: ["/og-image.png"]
+    },
+    alternates: {
+      canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/rbse-papers/${grade}/${subject}`
+    },
+    robots: {
+      index: true,
+      follow: true,
+    }
   };
 }
 
@@ -81,6 +105,28 @@ export default async function RBSEPastPapersPage({ params }: PageProps) {
           </p>
         </div>
       </section>
+      <div className="container" style={{ paddingTop: "1rem" }}>
+        <Breadcrumbs
+          items={[
+            {
+              href: "/",
+              label: "Home",
+            },
+            {
+              href: "/rbse-papers",
+              label: "RBSE Previous Papers",
+            },
+            {
+              href: `/rbse-papers/${grade}`,
+              label: `Class ${grade}`,
+            },
+            {
+              href: `/rbse-papers/${grade}/${subject}`,
+              label: subject,
+            },
+          ]}
+        />
+      </div>
 
       {/* ✅ SECTION TITLE – No CLS */}
       <h2 className={styles.sectionTitle}>Available Years</h2>
@@ -88,9 +134,7 @@ export default async function RBSEPastPapersPage({ params }: PageProps) {
       {/* ✅ CARD GRID – CLS + Speed Index FIX */}
       <section
         style={{
-          minHeight: "40vh",                 // ⬅ CLS FIX
-          contain: "layout paint",            // ⬅ Faster paint
-          contentVisibility: "auto",          // ⬅ Skip offscreen render
+          contain: "layout paint",
         }}
       >
         <div className={styles.cardContainer2}>
@@ -121,6 +165,8 @@ export default async function RBSEPastPapersPage({ params }: PageProps) {
         </div>
       </section>
 
+      <AdsenseAd slot="5595662634" variant="multiplex" />
+
       {/* ✅ TRUST SECTION – Deferred paint */}
       <section
         className={styles.trust}
@@ -133,6 +179,76 @@ export default async function RBSEPastPapersPage({ params }: PageProps) {
           <li>✔ Improve exam time management</li>
         </ul>
       </section>
+
+      <Script
+        id="collection-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+
+            "@context": "https://schema.org",
+
+            "@type": "CollectionPage",
+
+            name: `RBSE Class ${grade} ${subject} Previous Year Papers`,
+
+            url: `${process.env.NEXT_PUBLIC_SITE_URL}/rbse-papers/${grade}/${subject}`,
+
+            description: `RBSE Class ${grade} ${subject} Previous Year Papers.`,
+
+            mainEntity: {
+              "@type": "ItemList",
+              itemListElement: [
+                2025,
+                2024,
+                2023
+              ]
+            },
+
+          })
+        }}
+      />
+
+      <Script
+        id="breadcrumb-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+
+            "@type": "BreadcrumbList",
+
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "Home",
+                item: "https://www.pathshalanoteshub.in",
+              },
+
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "RBSE Previous Papers",
+                item: "https://www.pathshalanoteshub.in/rbse-papers",
+              },
+              {
+                "@type": "ListItem",
+                position: 3,
+                name: `Class ${grade}`,
+                item: `https://www.pathshalanoteshub.in/rbse-papers/${grade}`,
+              },
+              {
+                "@type": "ListItem",
+                position: 4,
+                name: subject,
+                item: `https://www.pathshalanoteshub.in/rbse-papers/${grade}/${subject}`,
+              },
+
+            ],
+          }),
+        }}
+      />
     </main>
   );
 }

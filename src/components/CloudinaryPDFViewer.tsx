@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styles from "./CloudinaryPDFViewer.module.css";
 import AdsenseAd from './AdsenseAd';
 
@@ -18,22 +18,31 @@ export default function CloudinaryPDFViewer({
   const AD_AFTER_PAGES = 5; // हर 5 pages के बाद ad
 
   const [visibleCount, setVisibleCount] = useState(INITIAL_PAGES);
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    const onScroll = () => {
+useEffect(() => {
+  if (!loadMoreRef.current) return;
+
+  const observer = new IntersectionObserver(
+    ([entry]) => {
       if (
-        window.innerHeight + window.scrollY >
-        document.body.offsetHeight - 800
+        entry.isIntersecting &&
+        visibleCount < pageImages.length
       ) {
-        setVisibleCount(v =>
+        setVisibleCount((v) =>
           Math.min(v + LOAD_MORE, pageImages.length)
         );
       }
-    };
+    },
+    {
+      rootMargin: "800px",
+    }
+  );
 
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, [pageImages.length]);
+  observer.observe(loadMoreRef.current);
+
+  return () => observer.disconnect();
+}, [visibleCount, pageImages.length]);
 
   return (
     <div className={styles.pdfViewer}>
@@ -59,6 +68,7 @@ export default function CloudinaryPDFViewer({
           )}
         </div>
       ))}
+        {visibleCount < pageImages.length && (<div ref={loadMoreRef} style={{ height: 1, width: "100%", }} /> )}
     </div>
   );
 }

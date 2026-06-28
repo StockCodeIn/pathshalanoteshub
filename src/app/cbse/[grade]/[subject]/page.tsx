@@ -1,9 +1,11 @@
 // src/app/cbse/[grade]/[subject]/page.tsx
 import Link from "next/link";
+import Script from "next/script";
 import { subjects } from "@/config/subjects";
 import styles from "@/styles/Home.module.css";
 import type { Metadata } from "next";
-import AdsenseAd from "@/components/AdsenseAd"; // <-- import the ad component
+import AdsenseAd from "@/components/AdsenseAd"; 
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 interface PageProps {
   params: Promise<{
@@ -82,6 +84,17 @@ export default async function CBSESubjectPage({ params }: PageProps) {
         </div>
       </section>
 
+      <div className="container" style={{ paddingTop: "1rem" }} >
+        <Breadcrumbs 
+          items={[
+            { href: "/", label: "Home", },
+            { href: "/cbse", label: "CBSE Notes", },
+            { href: `/cbse/${gradeValue}`, label: `Class ${gradeValue}`, },
+            { href: `/cbse/${gradeValue}/${subjectId}`, label: subject.name, },
+          ]}
+        />
+      </div>
+
      
 
       <AdsenseAd slot="4962547015" variant="display" />
@@ -116,8 +129,46 @@ export default async function CBSESubjectPage({ params }: PageProps) {
           <li>✔ Helps in board exam preparation</li>
         </ul>
       </section>
+ 
+     <Script
+       id="breadcrumb-schema"
+       type="application/ld+json"
+       dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "Home",
+                item: "https://www.pathshalanoteshub.in",
+              },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "CBSE",
+                item: "https://www.pathshalanoteshub.in/cbse",
+              },
+              {
+                "@type": "ListItem",
+                position: 3,
+                name: `Class ${gradeValue}`,
+                item: `https://www.pathshalanoteshub.in/cbse/${gradeValue}`,
+             },
+             {
+               "@type": "ListItem",
+               position: 4,
+               name: subject.name,
+               item: `https://www.pathshalanoteshub.in/cbse/${gradeValue}/${subjectId}`,
+             },
+           ],
+          }),
+        }}
+      />
 
-     
+
+      
 
     </main>
   );

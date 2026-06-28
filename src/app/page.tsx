@@ -174,6 +174,7 @@ const studyResources = [
   { href: "/study-plan", title: "Study Plan (पढ़ाई की योजना)" },
   { href: "/time-management", title: "Time Management (समय प्रबंधन टिप्स)" },
   { href: "/gk", title: "Indian GK & Current Affairs" },
+  { href: "/blogs", title: "Latest Blog Updates" },
 ];
 
 // FAQ Data
@@ -228,9 +229,14 @@ export default function Home() {
             </Link>
           </div>
           <div className={styles.heroButtons} style={{ marginTop: "0.75rem" }}>
+            
             <Link href="/gk" className={styles.ctaButtonTertiary}>
-              🇮🇳 Indian GK &amp; Current Affairs
+              🇮🇳 GK &amp; Current Affairs
             </Link>
+            <Link href="/blogs" className={styles.ctaButtonBlogs}>
+              🔎 Explore Blogs
+            </Link>
+            
           </div>
         </div>
       </section>
